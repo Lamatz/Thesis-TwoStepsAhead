@@ -1,0 +1,99 @@
+
+    :root {
+      --text-color: #190809;
+      --background-color: #fcf5f5;
+      --primary-color: #c64e56;
+      --secondary-color: #FFDBB5;
+      --accent-color: #ce9f66;
+    }
+    
+    body {
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .hero {
+      background: url('../icons/lands.webp') center/cover no-repeat;
+      padding: 70px 0px;
+      text-align: center;
+      position: relative;
+      color: var(--text-color);
+      
+    }
+    
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    
+    .features {
+      padding: 60px 20px;
+    }
+    
+    .feature-card {
+      background-color: var(--secondary-color); /* Using secondary color */
+      border: none;
+      border-radius: 12px;
+      padding: 30px 20px;
+      color: var(--text-color);
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+      background-color: var(--secondary-color); /* Using accent color for hover */
+    }
+    
+    .feature-card h5 {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    
+    footer {
+      background-color: var(--secondary-color);
+      text-align: center;
+      padding: 15px;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      margin-top: 42px;
+    }
+
+    footer p {
+      margin: 0;
+    }
+    
+    a.card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .feature-card img {
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover img {
+      transform: scale(1.1); /* Scale up the image slightly on hover */
+    }
+    
+
+
+  

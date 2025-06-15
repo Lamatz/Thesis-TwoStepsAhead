@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://nominatim.openstreetmap.org/ui/search.js"></script>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/nav-style.css">
+    <link rel="stylesheet" href="css/user.css">
+
+
+
+  <title>Two Step Ahead</title>
+</head>
+
+
+
+<body>
+
+
+  <div class="container-fluid">
+    <div class="row">
+
+
+
+      <!-- SIDEBAR -->
+      <div class="col-2 p-0">
+        <div class="d-flex flex-column sidebar">
+          <!-- MENU TEXT -->
+          <a href="/" class="d-block pt-3 sidebar-body menu-text mt-4 d-flex justify-content-center">
+
+              <img src="icons/logo.svg" class="pb-1" alt="logo">
+              <p class="ms-3 mb-0 pt-3">RED Rams</p>
+
+          </a>
+
+          <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+
+            <!-- Home -->
+            <li class="my-2">
+              <a href="home.html" class="nav-link" title="Dashboard" data-bs-toggle="tooltip"
+                data-bs-placement="right">
+
+                <p>Home</p>
+              </a>
+            </li>
+
+
+            <!-- Dynamic Map -->
+            <li class="my-2">
+              <a href="dynamic map.html" class="nav-link  " title="Dashboard" data-bs-toggle="tooltip"
+                data-bs-placement="right">
+
+                <p>Dynamic Map</p>
+              </a>
+            </li>
+
+            <!-- User Guide -->
+            <li class="my-2">
+              <a href="#" class="nav-link sidebar-highlight" title="User Guide" data-bs-toggle="tooltip"
+                data-bs-placement="right">
+
+                <p>User Guide</p>
+              </a>
+            </li>
+
+            <!-- Dashboard -->
+            <li class="my-2">
+              <a href="dashboard.html" class="nav-link" title="Dashboard" data-bs-toggle="tooltip" data-bs-placement="right">
+                <div class="border_box">
+
+                  <p>Dashboard</p>
+                </div>
+              </a>
+            </li>
+
+            <!-- Training Result -->
+            <li class="my-2">
+              <a href="training result.html" class="nav-link " title="Training Result" data-bs-toggle="tooltip"
+                data-bs-placement="right">
+
+                <p>Training Result</p>
+              </a>
+            </li>
+          </ul>
+
+
+        </div>
+
+
+
+      </div>
+      <!-- END OF NAVBAR -->
+
+
+      <!-- YOUR CONTENT SHOULD BE HERE -->
+      <main class="col-10">  
+           <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="container">
+          <div class="bg-light bg-opacity-75 p-4 rounded">
+          <h1>User Guide</h1>
+          <p>Learn how to navigate and utilize the RED Rams platform effectively.</p>
+        </div>
+      </div>
+      </section>
+
+      <!-- Main Content Area -->
+      <div class="col-md-9 mains">
+        <!-- Getting Started -->
+        <section id="getting-started">
+          <h2>Getting Started</h2>
+          <p>Welcome to Two Steep Ahead, your go-to platform for forecasting landslide risks across the Philippines. With this web app, you can easily access a range of tools designed to help you analyze and evaluate possible landslide occurence on a given location. Start exploring the available features and gain valuable insights to make informed decisions regarding landslide occurence in your area.</p>
+        </section>
+
+        <!-- Using the Dynamic Map -->
+        <section id="dynamic-map">
+          <h2>Using the Dynamic Map</h2>
+          <p>The Dynamic Map is a tool for landslide forecasting specifically within the Philippines. Users select a location by searching or clicking the map. Upon selection, the system automatically retrieves fixed location data (coordinates, soil type, slope). Users then select a date up to 5 days ahead to fetch dynamic weather data (rainfall) from Open-Meteo. Combining the fixed location data with the weather forecast, clicking "Predict" analyzes the variables to determine the likelihood of a landslide at that location on the specified date, providing a prediction result and a confidence score. <br><br>
+                       
+        <button class="btn explore-button">
+            <a href="dynamic map tutor.html" title="Dynamic Map">
+                Explore Dynamic Map
+            </a>
+        </button>
+
+    
+        </section>
+
+        <!-- Understanding the Dashboard -->
+        <section id="dashboard">
+          <h2>Understanding the Dashboard</h2>
+          <p>The dashboard provides a visual overview of landslide data, historical trends, and predictive analytics. Here, you can track vulnerable areas, view forecasts, and access detailed reports on landslide incidents in various regions.</p>
+        <button class="btn explore-button">
+            <a href="dashboard-tour.html" title="Dashboard">
+                Explore Dashboard
+            </a>
+        </button>
+        </section>
+
+        <!-- Viewing Training Results -->
+        <section id="training-result">
+          <h2>Viewing Training Results</h2>
+          <p>The training results section gives insights into how machine learning models predict landslide occurrences. You can analyze past data, view model accuracy, and see predictive results on future events. This section helps in understanding the power of prediction analysis in risk management.</p>
+        <button class="btn explore-button">
+            <a href="training-tour.html" title="Training Result">
+                Explore Training Result
+            </a>
+        </button>
+        </section>
+
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 RED Rams</p>
+  </footer>
+      </main>
+
+
+
+    </div>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
