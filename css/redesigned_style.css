@@ -1,11 +1,15 @@
 /* General Body & Layout */
+
+
 body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-y: hidden;
 }
 
 #map {
-    height: 100vh; /* Make map fill the vertical height of the screen */
+    height: 100vh;
+    /* Make map fill the vertical height of the screen */
     width: 100%;
 }
 
@@ -13,8 +17,9 @@ body {
     height: 100vh;
     background-color: #ffffff;
     padding: 20px;
-    overflow-y: auto; /* Allow scrolling if content is too tall */
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    /* Allow scrolling if content is too tall */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     border-right: 1px solid #dee2e6;
 }
 
@@ -23,10 +28,18 @@ body {
     font-weight: 600;
 }
 
+
+/* Changes */
+
+
+
+/* changes end */
+
+
 /* Card Styling */
 .card {
     border: 1px solid #dee2e6;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .card-header {
@@ -35,23 +48,34 @@ body {
     font-size: 1.1rem;
 }
 
-.card-header-blue { background-color: #0d6efd; }
-.card-header-red { background-color: #dc3545; }
-.card-header-green { background-color: #198754; }
+.card-header-blue {
+    background-color: #0d6efd;
+}
+
+.card-header-red {
+    background-color: #dc3545;
+}
+
+.card-header-green {
+    background-color: #198754;
+}
 
 #selected-location-body p {
     margin-bottom: 0.5rem;
 }
+
 #selected-location-body strong {
     display: inline-block;
-    min-width: 70px; /* Align text */
+    min-width: 70px;
+    /* Align text */
 }
 
 /* Search Suggestions */
 .suggestions-container {
     position: absolute;
     background: white;
-    width: calc(100% - 42px); /* Adjust width to fit inside the card body next to the button */
+    width: calc(100% - 42px);
+    /* Adjust width to fit inside the card body next to the button */
     max-height: 200px;
     overflow-y: auto;
     z-index: 1100;
@@ -88,7 +112,8 @@ body {
 /* This is a flex container now */
 
 .modal-container {
-    display: none; /* Start hidden by default */
+    display: none;
+    /* Start hidden by default */
     position: fixed;
     z-index: 1050;
     left: 0;
@@ -107,15 +132,23 @@ body {
     padding: 30px;
     border-radius: 8px;
     width: 90%;
-    max-width: 500px; /* Limit max width */
+    max-width: 500px;
+    /* Limit max width */
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .close-btn {
@@ -155,7 +188,7 @@ body {
     background-color: #fff;
     border: 1px solid #ced4da;
     border-radius: 0.375rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 .report-card .card-header {
