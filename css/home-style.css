@@ -74,10 +74,12 @@ body {
   /* background-color: var(--secondary-color); */
   /* Using secondary color */
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 30px 20px;
   color: var(--text-color);
-  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+  /* box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1); */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
