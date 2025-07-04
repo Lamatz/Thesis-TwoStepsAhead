@@ -106,10 +106,10 @@ def get_slope(lon, lat):
 
 
 # Get location data (slope & soil type)
-@app.route("/get_weather", methods=["GET"])
+@app.route("/get_location_data", methods=["GET"])
 def get_location_data():
-    latitude = request.args.get("latitude", type=float)
-    longitude = request.args.get("longitude", type=float)
+    latitude = request.args.get("lat", type=float)
+    longitude = request.args.get("lon", type=float)
 
     if latitude is None or longitude is None or abs(latitude) > 90 or abs(longitude) > 180:
         return jsonify({"error": "Invalid or missing coordinates"}), 400
