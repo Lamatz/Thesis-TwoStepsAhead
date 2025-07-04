@@ -2,9 +2,13 @@
 
 
 body {
-    background-color: #f8f9fa;
+    /* background-color: #f5f5dc; */
+    /* background-color: #e6d5b8; */
+    background-color: rgba(255, 255, 255, 0.9);
+    /* background: linear-gradient(135deg, #f5f5dc, #e6d5b8); */
+
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
 
 #map {
@@ -15,7 +19,7 @@ body {
 
 .control-panel {
     height: 100vh;
-    /* background-color: #ffffff; */
+    /* background-color: #f5f5dc; */
     background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
     overflow-y: auto;
@@ -39,7 +43,11 @@ body {
 /* Card Styling */
 .card {
     border: 1px solid #dee2e6;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-body{
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .card-header {
@@ -173,7 +181,10 @@ body {
 
 /* Report Summary Section Styling */
 #report-summary-section {
-    background-color: #e9ecef;
+    /* background-color: #e9ecef; */
+    background-color: rgba(255, 255, 255, 0.9);
+    /* background: linear-gradient(135deg, #f5f5dc, #e6d5b8); */
+    /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
     padding: 40px 20px;
 }
 
