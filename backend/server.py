@@ -286,7 +286,7 @@ def search_locations():
 
     
 
-@app.route("/get_weather_final", methods=["GET"])
+@app.route("/get_weather", methods=["GET"])
 def get_weather():
     latitude = request.args.get("latitude", type=float)
     longitude = request.args.get("longitude", type=float)
