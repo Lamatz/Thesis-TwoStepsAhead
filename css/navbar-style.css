@@ -5,9 +5,30 @@
       --dark-brown: #5C4033;
   }
 
-  html {
+  /* html {
       height: 100%;
+  } */
+
+
+
+  /* 1. Positioning and Animation */
+  #mainNavbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      transition: transform 0.3s ease-in-out;
+      z-index: 1030;
   }
+
+  #mainNavbar.navbar--hidden {
+      transform: translateY(-100%);
+  }
+
+  /* So that the navbar won't overlap with the body (height of the navbar is 56px) */
+  body {
+      padding-top: 56px;
+  }
+
 
 
   .navbar {
@@ -58,7 +79,7 @@
   } */
 
 
-/* 
+  /* 
   .parameter-item {
       margin-bottom: 15px;
       padding-bottom: 15px;
