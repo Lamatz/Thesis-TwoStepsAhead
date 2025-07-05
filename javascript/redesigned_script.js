@@ -156,6 +156,14 @@ async function fetchWeatherData(lat, lon, date) {
 
         // Populate hidden inputs (your original logic)
         document.getElementById("soil-moisture").value = data.soil_moisture?.toFixed(1) || "N/A";
+        
+        document.getElementById("rainfall-3-hr").value = data.cumulative_rainfall["3_hr"].toFixed(1);
+        document.getElementById("rainfall-6-hr").value = data.cumulative_rainfall["6_hr"].toFixed(1);
+        document.getElementById("rainfall-12-hr").value = data.cumulative_rainfall["12_hr"].toFixed(1);
+
+        document.getElementById("rain-intensity-3-hr").value = data.rain_intensity["3_hr"].toFixed(1);
+        document.getElementById("rain-intensity-6-hr").value = data.rain_intensity["6_hr"].toFixed(1);
+        document.getElementById("rain-intensity-12-hr").value = data.rain_intensity["12_hr"].toFixed(1);
         document.getElementById("rainfall-1-day").value = data.cumulative_rainfall?.["1_day"]?.toFixed(1) || "N/A";
         document.getElementById("rainfall-3-day").value = data.cumulative_rainfall?.["3_day"]?.toFixed(1) || "N/A";
         document.getElementById("rainfall-5-day").value = data.cumulative_rainfall?.["5_day"]?.toFixed(1) || "N/A";
@@ -348,6 +356,14 @@ document.getElementById("predict-btn").addEventListener("click", async () => {
         soil_type: fetchedLocationData.soil_type_snum,
         slope: parseFloat(document.getElementById("slope").value),
         soil_moisture: parseFloat(document.getElementById("soil-moisture").value),
+        
+        "rainfall-3_hr": parseFloat(document.getElementById("rainfall-3-hr").value),
+        "rainfall-6_hr": parseFloat(document.getElementById("rainfall-6-hr").value),
+        "rainfall-12_hr": parseFloat(document.getElementById("rainfall-12-hr").value),
+
+        "rain-intensity-3_hr": parseFloat(document.getElementById("rain-intensity-3-hr").value),
+        "rain-intensity-6_hr": parseFloat(document.getElementById("rain-intensity-6-hr").value),
+        "rain-intensity-12_hr": parseFloat(document.getElementById("rain-intensity-12-hr").value),
         "rainfall-1-day": parseFloat(document.getElementById("rainfall-1-day").value),
         "rainfall-3-day": parseFloat(document.getElementById("rainfall-3-day").value),
         "rainfall-5-day": parseFloat(document.getElementById("rainfall-5-day").value),

@@ -134,7 +134,7 @@ def get_location_data():
 def fetch_weather_data(latitude, longitude, end_date_str):
     try:
         end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-        start_date = end_date - timedelta(days=5) # Fetch 5 days *before* the end_date
+        start_date = end_date - timedelta(days=5)  # Fetch 5 days *before* the end_date
 
         start_date_str = start_date.strftime("%Y-%m-%d")
 
@@ -146,90 +146,93 @@ def fetch_weather_data(latitude, longitude, end_date_str):
             "start_date": start_date_str,
             "end_date": end_date_str,
             "timezone": "auto",
-             "forecast_days": 0 # Ensure it fetches historical data up to end_date if it's in the past
+            "forecast_days": 0,
+            "precipitation_unit": "inch"  # <-- CHANGED: Request precipitation in inches
         }
 
-        # Use requests library directly as openmeteo_requests/cache/retry not strictly necessary for basic fetch
-        response = requests.get(url, params=params, timeout=10) # Add timeout
-        response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
         data = response.json()
 
-        # --- Process hourly data ---
         hourly_data = data.get("hourly")
         if not hourly_data or not hourly_data.get("time") or not hourly_data.get("precipitation") or not hourly_data.get("soil_moisture_27_to_81cm"):
             return {"error": "Incomplete hourly data from weather API"}
 
         timestamps = pd.to_datetime(hourly_data["time"])
+        # The 'precipitation' key will now hold values in inches
         rain = np.array(hourly_data["precipitation"])
         soil_moisture = np.array(hourly_data["soil_moisture_27_to_81cm"])
 
-        df = pd.DataFrame({"timestamp": timestamps, "rain_mm": rain, "soil_moisture": soil_moisture})
-        df.fillna(0.0, inplace=True) # Fill NaNs
+        df = pd.DataFrame({
+            "timestamp": timestamps,
+            "rain_in": rain,  # <-- CHANGED: Renamed column for clarity
+            "soil_moisture": soil_moisture
+        })
+        df.fillna(0.0, inplace=True)
 
-        # Ensure DataFrame is not empty
         if df.empty:
-             return {"error": "No hourly data received from weather API"}
+            return {"error": "No hourly data received from weather API"}
 
-        # --- Calculate cumulative and intensity for 1, 3, 5 days ---
-        # The end_date requested corresponds to the *end* of the time series data provided by the API.
-        # We calculate cumulative/intensity *up to* this end timestamp.
         last_timestamp = df["timestamp"].iloc[-1]
 
         def compute_cumulative_rainfall(hours):
-             if len(df) == 0: return 0.0
-             start_time = last_timestamp - timedelta(hours=hours)
-             # Filter includes the start_time exactly, and up to (and including) last_timestamp
-             filtered_df = df[(df["timestamp"] >= start_time) & (df["timestamp"] <= last_timestamp)]
-             return float(filtered_df["rain_mm"].sum()) if not filtered_df.empty else 0.0
+            if len(df) == 0:
+                return 0.0
+            start_time = last_timestamp - timedelta(hours=hours)
+            filtered_df = df[(df["timestamp"] >= start_time) & (df["timestamp"] <= last_timestamp)]
+            # <-- CHANGED: Use the new column name
+            return float(filtered_df["rain_in"].sum()) if not filtered_df.empty else 0.0
 
         def compute_rain_intensity(hours):
-            if len(df) == 0: return 0.0
+            if len(df) == 0:
+                return 0.0
             start_time = last_timestamp - timedelta(hours=hours)
             period_df = df[(df["timestamp"] >= start_time) & (df["timestamp"] <= last_timestamp)]
-            # Intensity is total rainfall divided by the duration in hours.
-            # Number of intervals is len(period_df). Duration is (count - 1) hours if intervals are hourly.
-            # A safer duration is the time difference between the first and last timestamp + 1 hour (for the last interval)
-            # Or simply the number of intervals (len) if assuming perfect 1hr intervals and you want sum/count.
-            # Let's use sum / count as it's common for average intensity.
             num_intervals = len(period_df)
-            return float(period_df["rain_mm"].sum() / num_intervals) if num_intervals > 0 else 0.0
+            # <-- CHANGED: Use the new column name
+            return float(period_df["rain_in"].sum() / num_intervals) if num_intervals > 0 else 0.0
 
+        # Define all time windows to compute
+        time_windows = {
+            "3_hr": 3,
+            "6_hr": 6,
+            "12_hr": 12,
+            "1_day": 24,
+            "3_day": 72,
+            "5_day": 120
+        }
 
-        # --- Calculate Daily Cumulative and Intensity for the Report (ADDITION) ---
-        # Group hourly data by date
+        cumulative_rainfall = {}
+        rain_intensity = {}
+        for label, hours in time_windows.items():
+            cumulative_rainfall[label] = compute_cumulative_rainfall(hours)
+            rain_intensity[label] = compute_rain_intensity(hours)
+
+        # Daily summary for detailed report
         daily_summary = df.groupby(df['timestamp'].dt.date).agg(
-            daily_cumulative=('rain_mm', 'sum'), # Total rainfall for the day
-            daily_avg_intensity=('rain_mm', 'mean') # Average hourly intensity for the day
-        ).reset_index() # Keep the date as a column
+            # <-- CHANGED: Use the new column name for aggregations
+            daily_cumulative=('rain_in', 'sum'),
+            daily_avg_intensity=('rain_in', 'mean')
+        ).reset_index()
 
-        # Convert date objects and numpy floats to serializable types (strings, floats)
         daily_data_list = []
         for index, row in daily_summary.iterrows():
-             daily_data_list.append({
-                 'date': row['timestamp'].strftime('%Y-%m-%d'), # Format date as string
-                 'cumulative': float(row['daily_cumulative']), # Ensure float type
-                 'intensity': float(row['daily_avg_intensity']) # Ensure float type
-             })
+            daily_data_list.append({
+                'date': row['timestamp'].strftime('%Y-%m-%d'),
+                'cumulative': float(row['daily_cumulative']),
+                'intensity': float(row['daily_avg_intensity'])
+            })
 
-        # --- Return the data including the daily summary list ---
         return {
             "soil_moisture": float(df["soil_moisture"].iloc[-1]) if not df.empty else 0.0,
-            "cumulative_rainfall": {
-                "1_day": compute_cumulative_rainfall(24),
-                "3_day": compute_cumulative_rainfall(72),
-                "5_day": compute_cumulative_rainfall(120) # Calculate for 1, 3, 5 days as originally in HTML inputs
-            },
-            "rain_intensity": {
-                "1_day": compute_rain_intensity(24),
-                "3_day": compute_rain_intensity(72),
-                "5_day": compute_rain_intensity(120) # Calculate for 1, 3, 5 days as originally in HTML inputs
-            },
-            "daily_data": daily_data_list # ADD THIS LIST for the detailed report table
+            "cumulative_rainfall": cumulative_rainfall,
+            "rain_intensity": rain_intensity,
+            "daily_data": daily_data_list
         }
 
     except requests.exceptions.RequestException as e:
-         print(f"Network or API request error fetching weather data: {e}")
-         return {"error": f"Network or API request error fetching weather data: {e}"}
+        print(f"Network or API request error fetching weather data: {e}")
+        return {"error": f"Network or API request error fetching weather data: {e}"}
     except Exception as e:
         print(f"Error processing weather data response: {e}")
         return {"error": f"Error processing weather data: {e}"}
@@ -248,7 +251,7 @@ def search_locations():
         return jsonify({"suggestions": []}) # Return empty list for short queries
 
     # Add a User-Agent header as recommended by Nominatim
-    url = f"https://nominatim.openstreetmap.org/search?q={query_string}&format=json&limit=10&countrycodes=PH"
+    url = f"https://nominatim.openstreetmap.org/search?q={query_string}&format=json&limit=1&countrycodes=PH"
     headers = {"User-Agent": "Two-Step-Ahead (eriksonss1535@gmail.com)"}
     response = requests.get(url, headers=headers)
 
@@ -261,7 +264,7 @@ def search_locations():
 
     # Debugging output
     print("Nominatim Query:", query)
-    print("Nominatim Response (first 5):", data[:5]) # Print only first few for brevity
+    print("Nominatim Response (first 5):", data[:1]) # Print only first few for brevity
 
     if not data:
         print("No results found for Nominatim query:", query)
@@ -284,8 +287,6 @@ def search_locations():
     return jsonify({"suggestions": locations})
 
 
-    
-
 @app.route("/get_weather", methods=["GET"])
 def get_weather():
     latitude = request.args.get("latitude", type=float)
@@ -305,10 +306,10 @@ def get_weather():
 # I WILL CHANGE THIS PATHING
 
 # Load trained model and scaler
-with open("backend/model.pkl", "rb") as model_file:
+with open("backend/models.pkl", "rb") as model_file:
     model = pickle.load(model_file)
 
-with open("backend/scaler.pkl", "rb") as scaler_file:
+with open("backend/scalers.pkl", "rb") as scaler_file:
     scaler = pickle.load(scaler_file)
 
 @app.route("/predict", methods=["POST"])
@@ -319,6 +320,12 @@ def predict():
             int(data.get("soil_type", 0)),
             float(data.get("slope", 0)),
             float(data.get("soil_moisture", 0)),
+            float(data.get("rainfall-3-hr", 0)),
+            float(data.get("rainfall-6-hr", 0)),
+            float(data.get("rainfall-12-hr", 0)),
+            float(data.get("rain-intensity-3-hr", 0)),
+            float(data.get("rain-intensity-6hr", 0)),
+            float(data.get("rain-intensity-12-hr", 0)),
             float(data.get("rainfall-1-day", 0)),
             float(data.get("rainfall-3-day", 0)),
             float(data.get("rainfall-5-day", 0)),
