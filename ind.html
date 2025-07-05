@@ -18,15 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Custom CSS -->
-<<<<<<< HEAD
-<<<<<<< HEAD
     <link rel="stylesheet" href="css/homepage_style.css">
-=======
-    <link rel="stylesheet" href="style.css">
->>>>>>> 186ee6c (added some changes to the ind)
-=======
-    <link rel="stylesheet" href="css/homepage_style.css">
->>>>>>> 3716270 (Changed the ind page)
 </head>
 <body>
     <!-- Navigation -->
@@ -827,7 +819,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>none
                         </div>
 
                         <!-- Understanding Results Section -->
@@ -1023,205 +1015,10 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-<<<<<<< HEAD
-    <!-- ... your existing HTML content ... -->
-    
-    <!-- Toast Container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <!-- ... toast content ... -->
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- ================================== -->
-    <!--  ADD THIS JAVASCRIPT BLOCK        -->
-    <!-- ================================== -->
-    <script>
-        // --- Page Navigation Logic ---
-        const pages = document.querySelectorAll('.page-content');
-        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-
-        function showPage(pageId) {
-            // Hide all pages
-            pages.forEach(page => {
-                page.style.display = 'none';
-            });
-
-            // Show the selected page
-            const targetPage = document.getElementById(pageId + 'Page');
-            if (targetPage) {
-                targetPage.style.display = 'block';
-            }
-
-            // Update active state in navbar
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('onclick').includes(`'${pageId}'`)) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Initialize components if they are on the shown page
-            if (pageId === 'predictor' && !window.mapInitialized) {
-                initializePredictorPage();
-            }
-            if (pageId === 'dashboard' && !window.dashboardInitialized) {
-                initializeDashboardPage();
-            }
-            if (pageId === 'training' && !window.trainingInitialized) {
-                initializeTrainingPage();
-            }
-        }
-
-        // --- Predictor Page Logic ---
-        function initializePredictorPage() {
-            window.mapInitialized = true;
-            const map = L.map('map').setView([12.8797, 121.7740], 6); // Centered on the Philippines
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-            
-            // --- Elements ---
-            const predictBtn = document.getElementById('predictBtn');
-            const locationCard = document.getElementById('locationCard');
-            
-            // Enable prediction button only when a location is selected
-            map.on('click', function(e) {
-                document.getElementById('locationLat').textContent = e.latlng.lat.toFixed(4);
-                document.getElementById('locationLng').textContent = e.latlng.lng.toFixed(4);
-                document.getElementById('locationAddress').textContent = `Location at ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
-                locationCard.style.display = 'block';
-                predictBtn.disabled = false;
-            });
-            
-            // Set default date
-            document.getElementById('forecastDate').valueAsDate = new Date();
-            
-            // Mock Prediction
-            predictBtn.addEventListener('click', () => {
-                 // Mock loading spinner
-                const loadingSpinner = document.getElementById('loadingSpinner');
-                const predictBtnText = document.getElementById('predictBtnText');
-                const resultsCard = document.getElementById('resultsCard');
-                
-                predictBtnText.textContent = 'Analyzing...';
-                loadingSpinner.classList.remove('d-none');
-                predictBtn.disabled = true;
-
-                setTimeout(() => {
-                    // Mock data generation
-                    const probability = Math.random() * 100;
-                    let riskLevel = '';
-                    let riskBadgeClass = '';
-
-                    if (probability < 25) { riskLevel = 'Low Risk'; riskBadgeClass = 'risk-low'; }
-                    else if (probability < 50) { riskLevel = 'Moderate Risk'; riskBadgeClass = 'risk-moderate'; }
-                    else if (probability < 75) { riskLevel = 'High Risk'; riskBadgeClass = 'risk-high'; }
-                    else { riskLevel = 'Extreme Risk'; riskBadgeClass = 'risk-extreme'; }
-                    
-                    document.getElementById('riskBadge').textContent = riskLevel;
-                    document.getElementById('riskBadge').className = `badge fs-6 px-4 py-2 mb-2 ${riskBadgeClass}`;
-                    document.getElementById('probabilityText').textContent = `${probability.toFixed(1)}%`;
-                    
-                    document.getElementById('rainfallData').textContent = `${(Math.random()*50).toFixed(1)} mm | 24hr`;
-                    document.getElementById('soilMoistureData').textContent = `${(Math.random()*40+30).toFixed(1)}% | 1m depth`;
-                    document.getElementById('terrainData').textContent = `Slope: ${(Math.random()*20+5).toFixed(1)}°, Clay Loam`;
-                    
-                    resultsCard.style.display = 'block';
-                    
-                    // Reset button
-                    predictBtnText.textContent = 'Predict Landslide Risk';
-                    loadingSpinner.classList.add('d-none');
-                    predictBtn.disabled = false;
-
-                }, 1500);
-            });
-        }
-        
-        // --- Dashboard Page Logic ---
-        function initializeDashboardPage() {
-            window.dashboardInitialized = true;
-            // Mock Rainfall Chart
-            new Chart(document.getElementById('rainfallChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'],
-                    datasets: [{
-                        label: 'Rainfall (mm)',
-                        data: [12, 19, 3, 5, 22],
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                }
-            });
-            // Mock Risk Chart
-            new Chart(document.getElementById('riskChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Low', 'Moderate', 'High', 'Extreme'],
-                    datasets: [{
-                        data: [65, 20, 10, 5],
-                        backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#343a40']
-                    }]
-                }
-            });
-        }
-        
-        // --- Training Page Logic ---
-        function initializeTrainingPage() {
-            window.trainingInitialized = true;
-             // Mock Training Chart
-            new Chart(document.getElementById('trainingChart'), {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: 10}, (_, i) => `Epoch ${i*10}`),
-                    datasets: [{
-                        label: 'Training Loss',
-                        data: [0.8, 0.6, 0.45, 0.3, 0.2, 0.15, 0.12, 0.1, 0.08, 0.05],
-                        borderColor: '#dc3545',
-                        tension: 0.1
-                    }, {
-                        label: 'Validation Loss',
-                        data: [0.85, 0.68, 0.55, 0.45, 0.4, 0.38, 0.37, 0.36, 0.35, 0.34],
-                        borderColor: '#28a745',
-                        tension: 0.1
-                    }]
-                }
-            });
-            // Mock Feature Importance Chart
-            new Chart(document.getElementById('featureChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Rainfall', 'Soil Moisture', 'Slope', 'Soil Type'],
-                    datasets: [{
-                        label: 'Importance',
-                        data: [0.45, 0.30, 0.15, 0.10],
-                        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#6c757d']
-                    }]
-                },
-                options: { indexAxis: 'y' }
-            });
-        }
-        
-        // --- Initial setup ---
-        // Show the home page by default when the site loads
-        document.addEventListener('DOMContentLoaded', () => {
-            showPage('home');
-        });
-    </script>
-
-=======
     <!-- Mock Data -->
     <script src="mockData.js"></script>
     
     <!-- Main Script -->
     <script src="script.js"></script>
->>>>>>> 186ee6c (added some changes to the ind)
 </body>
 </html>
