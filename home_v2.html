@@ -33,7 +33,7 @@
     <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark ">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-mountain me-2"></i>Philippines Landslide Predictor
+                <i class="fas fa-mountain me-2"></i>Two Steps Ahead
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -70,7 +70,7 @@
         <div id="homePage" class="page-content">
             <div class="hero-section">
                 <div class="container">
-                    <div class="row align-items-center min-vh-100">
+                    <div class="row ">
                         <div class="col-lg-6">
                             <h1 class="display-2 fw-bold gradient-text mb-4">
                                 Predict Landslides
@@ -83,15 +83,15 @@
                             </p>
                             <div class="d-flex gap-3 mb-5">
                                 <button class="btn btn-gradient btn-lg px-4 py-3" onclick="showPage('predictor')">
-                                    <i class="bi bi-play-fill me-2"></i>Start Predicting
-                                </button>
-                                <button class="btn btn-outline-primary btn-lg px-4 py-3" onclick="showPage('guide')">
                                     <i class="bi bi-book me-2"></i>Learn How
+                                </button>
+                                <button class="btn learnhow-btn btn-lg px-4 py-3" onclick="showPage('guide')">
+                                    <i class="bi bi-play-fill me-2"></i>Start Predicting
                                 </button>
                             </div>
 
                             <!-- Stats -->
-                            <div class="row text-center">
+                            <!-- <div class="row text-center">
                                 <div class="col-4">
                                     <div class="stat-item">
                                         <h3 class="text-primary fw-bold">95%</h3>
@@ -110,7 +110,7 @@
                                         <p class="text-muted small">Forecast</p>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="col-lg-6">
                             <div class="hero-image">
@@ -124,7 +124,10 @@
                                     </div>
                                     <div class="card floating-card-2 shadow-lg">
                                         <div class="card-body text-center">
-                                            <i class="bi bi-mountain text-success fs-1"></i>
+                                            <i class="bi bi-pin-map-fill text-success fs-1">
+
+                                                
+                                            </i>
                                             <h5 class="mt-2">Terrain Mapping</h5>
                                             <p class="text-muted small">Advanced slope analysis</p>
                                         </div>
@@ -196,15 +199,49 @@
             </div> -->
         </div>
 
-
-
-
-
-
-
-
-
     </div>
+
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-mountain me-2"></i>Two Steps Ahead</h5>
+                    <p class="small">
+                        <!-- A predictive system for landslide risk assessment using meteorological and
+                        geospatial data. -->
+                        Stay Informed! Stay Ready! Stay Two Steps Ahead!
+                    </p>
+                    <!-- <h5 class="">Made by</h5>
+                    <div class="small">
+                        <p class="mb-0">&copy; RED Entities</p>
+                    </div> -->
+                </div>
+                <div class="col-md-6">
+                    <div class="row ">
+                        <h5>Data Sources</h5>
+                        <ul class="list-unstyled d-flex gap-5">
+                            <li><a href="https://open-meteo.com/" class="text-white">Weather and Soil Moisture
+                                    Data</a>
+                            </li>
+                            <li><a href="#" class="text-white">DEM Data</a></li>
+                            <li><a href="#" class="text-white">Soil Data</a></li>
+                            <li><a href="#" class="text-white">Landslide Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center small">
+                <p class="mb-0">&copy; RED Entities</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+
 
     <!-- Toast Container -->
     <!-- <div class="toast-container position-fixed bottom-0 end-0 p-3">
