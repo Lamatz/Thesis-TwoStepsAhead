@@ -21,6 +21,7 @@ body {
     margin: 0;
     margin-top:50px;
     padding: 0;
+    background: linear-gradient(135deg, #f5f5dc, #e6d5b8);
 }
 
 * {
@@ -32,17 +33,20 @@ body {
 ===========================*/
 .navbar {
     backdrop-filter: blur(10px);
-    background-color: rgba(33, 37, 41, 0.95) !important;
+    /* background-color: rgba(33, 37, 41, 0.95) !important; */
+    background-color: #8B4513;
 }
 
 .navbar-brand {
     font-size: 1.5rem;
+    color: white;
 }
 
 .nav-link {
     border-radius: 0.5rem;
     margin: 0 0.25rem;
     transition: all 0.3s ease;
+    color: white;
 }
 
 .nav-link:hover {
@@ -70,7 +74,8 @@ body {
   Typography
 ===========================*/
 .gradient-text {
-    background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+    /* background: linear-gradient(135deg, #2563eb 0%, #059669 100%); */
+    background-color: #5C4033;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -159,7 +164,7 @@ body {
   Sections
 ===========================*/
 .hero-section {
-    background: var(--primary-gradient);
+    /* background: var(--primary-gradient); */
     color: white;
     position: relative;
     overflow: hidden;
