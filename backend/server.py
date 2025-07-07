@@ -21,6 +21,7 @@ CORS(app, )  # Enable CORS for frontend requests
 try:
     soil_shapefile = "backend/soil map/hays.shp"
     soil_gdf = gpd.read_file(soil_shapefile)
+    soil_gdf.sindex # Build spatial index for performance
 except Exception as e:
     print(f"Error loading soil shapefile {soil_shapefile}: {e}")
     soil_gdf = None
@@ -130,113 +131,96 @@ def get_location_data():
 
 
 
-# Fetch weather data from Open-Meteo
-def fetch_weather_data(latitude, longitude, end_date_str):
+# =========================================================================
+# == MODIFIED: Fetch weather data to accept time and generate chart data ==
+# =========================================================================
+def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
     try:
-        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-        start_date = end_date - timedelta(days=5)  # Fetch 5 days *before* the end_date
-
-        start_date_str = start_date.strftime("%Y-%m-%d")
+        # Combine date and time for a precise endpoint
+        end_datetime = datetime.strptime(f"{end_date_str} {end_time_str}", "%Y-%m-%d %H:%M")
+        
+        # Fetch data for the last 6 days to ensure all windows are covered
+        api_start_date = end_datetime - timedelta(days=6)
+        api_end_date = end_datetime
 
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": latitude,
-            "longitude": longitude,
+            "latitude": latitude, "longitude": longitude,
             "hourly": "precipitation,soil_moisture_27_to_81cm",
-            "start_date": start_date_str,
-            "end_date": end_date_str,
-            "timezone": "auto",
-            "forecast_days": 0,
-            "precipitation_unit": "inch"  # <-- CHANGED: Request precipitation in inches
+            "start_date": api_start_date.strftime("%Y-%m-%d"),
+            "end_date": api_end_date.strftime("%Y-%m-%d"),
+            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "inch"
         }
-
+        
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
 
-        hourly_data = data.get("hourly")
-        if not hourly_data or not hourly_data.get("time") or not hourly_data.get("precipitation") or not hourly_data.get("soil_moisture_27_to_81cm"):
-            return {"error": "Incomplete hourly data from weather API"}
-
-        timestamps = pd.to_datetime(hourly_data["time"])
-        # The 'precipitation' key will now hold values in inches
-        rain = np.array(hourly_data["precipitation"])
-        soil_moisture = np.array(hourly_data["soil_moisture_27_to_81cm"])
-
+        hourly_data = data.get("hourly", {})
         df = pd.DataFrame({
-            "timestamp": timestamps,
-            "rain_in": rain,  # <-- CHANGED: Renamed column for clarity
-            "soil_moisture": soil_moisture
-        })
-        df.fillna(0.0, inplace=True)
+            "timestamp": pd.to_datetime(hourly_data["time"]),
+            "rain_mm": np.array(hourly_data["precipitation"]),
+            "soil_moisture": np.array(hourly_data["soil_moisture_27_to_81cm"])
+        }).fillna(0.0)
 
-        if df.empty:
-            return {"error": "No hourly data received from weather API"}
+        # Filter to only include data up to the user's selected end_datetime
+        df = df[df['timestamp'] <= end_datetime].copy()
+        if df.empty: return {"error": "No historical data available for the selected time."}
+        
+        # --- Calculations for the prediction model ---
+        def compute_cumulative(hours):
+            start_time = end_datetime - timedelta(hours=hours)
+            mask = (df["timestamp"] > start_time) & (df["timestamp"] <= end_datetime)
+            return float(df.loc[mask, "rain_mm"].sum())
 
-        last_timestamp = df["timestamp"].iloc[-1]
+        def compute_intensity(hours):
+            cumulative = compute_cumulative(hours)
+            return float(cumulative / hours) if hours > 0 else 0.0
 
-        def compute_cumulative_rainfall(hours):
-            if len(df) == 0:
-                return 0.0
-            start_time = last_timestamp - timedelta(hours=hours)
-            filtered_df = df[(df["timestamp"] >= start_time) & (df["timestamp"] <= last_timestamp)]
-            # <-- CHANGED: Use the new column name
-            return float(filtered_df["rain_in"].sum()) if not filtered_df.empty else 0.0
+        time_windows = {"3_hr": 3, "6_hr": 6, "12_hr": 12, "1_day": 24, "3_day": 72, "5_day": 120}
+        cumulative_rainfall = {label: compute_cumulative(h) for label, h in time_windows.items()}
+        rain_intensity = {label: compute_intensity(h) for label, h in time_windows.items()}
 
-        def compute_rain_intensity(hours):
-            if len(df) == 0:
-                return 0.0
-            start_time = last_timestamp - timedelta(hours=hours)
-            period_df = df[(df["timestamp"] >= start_time) & (df["timestamp"] <= last_timestamp)]
-            num_intervals = len(period_df)
-            # <-- CHANGED: Use the new column name
-            return float(period_df["rain_in"].sum() / num_intervals) if num_intervals > 0 else 0.0
-
-        # Define all time windows to compute
-        time_windows = {
-            "3_hr": 3,
-            "6_hr": 6,
-            "12_hr": 12,
-            "1_day": 24,
-            "3_day": 72,
-            "5_day": 120
-        }
-
-        cumulative_rainfall = {}
-        rain_intensity = {}
-        for label, hours in time_windows.items():
-            cumulative_rainfall[label] = compute_cumulative_rainfall(hours)
-            rain_intensity[label] = compute_rain_intensity(hours)
-
-        # Daily summary for detailed report
-        daily_summary = df.groupby(df['timestamp'].dt.date).agg(
-            # <-- CHANGED: Use the new column name for aggregations
-            daily_cumulative=('rain_in', 'sum'),
-            daily_avg_intensity=('rain_in', 'mean')
-        ).reset_index()
-
-        daily_data_list = []
-        for index, row in daily_summary.iterrows():
-            daily_data_list.append({
-                'date': row['timestamp'].strftime('%Y-%m-%d'),
-                'cumulative': float(row['daily_cumulative']),
-                'intensity': float(row['daily_avg_intensity'])
+        # --- NEW & CORRECTED: Generate clean data specifically for the 4 charts ---
+        
+        # 1. Hourly Chart Data (for the 12 hours leading up to end_datetime)
+        hourly_chart_data = []
+        # Get the last 12 data points from our filtered dataframe
+        last_12_hours_df = df.tail(12)
+        
+        running_cumulative = 0
+        for index, row in last_12_hours_df.iterrows():
+            running_cumulative += row['rain_mm']
+            hourly_chart_data.append({
+                'hour': row['timestamp'].strftime('%H:00'),
+                'cumulative': running_cumulative,  # A true running total over the 12hr window
+                'intensity': row['rain_mm']        # The intensity is just the rainfall for that single hour
             })
 
+        # 2. Daily Chart Data (for the 5 days leading up to end_date)
+        daily_df = df[df['timestamp'] >= end_datetime.replace(hour=0, minute=0, second=0) - timedelta(days=4)].copy()
+        daily_summary = daily_df.groupby(daily_df['timestamp'].dt.date).agg(
+            daily_cumulative=('rain_mm', 'sum'),
+            # The average intensity for a day is the total rain divided by 24 hours
+            daily_avg_intensity=('rain_mm', lambda x: x.sum() / 24)
+        ).reset_index()
+
+        daily_chart_data = [
+            {'date': row['timestamp'].strftime('%b %d'), 'cumulative': float(row['daily_cumulative']), 'intensity': float(row['daily_avg_intensity'])}
+            for _, row in daily_summary.iterrows()
+        ]
+
         return {
-            "soil_moisture": float(df["soil_moisture"].iloc[-1]) if not df.empty else 0.0,
+            "soil_moisture": float(df["soil_moisture"].iloc[-1]),
             "cumulative_rainfall": cumulative_rainfall,
             "rain_intensity": rain_intensity,
-            "daily_data": daily_data_list
+            "hourly_chart_data": hourly_chart_data,
+            "daily_chart_data": daily_chart_data
         }
 
-    except requests.exceptions.RequestException as e:
-        print(f"Network or API request error fetching weather data: {e}")
-        return {"error": f"Network or API request error fetching weather data: {e}"}
     except Exception as e:
-        print(f"Error processing weather data response: {e}")
+        print(f"Error processing weather data: {e}")
         return {"error": f"Error processing weather data: {e}"}
-
 
 # ... (rest of your backend routes: search_locations, get_weather endpoint handler, predict endpoint handler, model loading, main execution block) ...
 
@@ -287,20 +271,22 @@ def search_locations():
     return jsonify({"suggestions": locations})
 
 
+# ==========================================================
+# == MODIFIED: /get_weather endpoint to accept time param ==
+# ==========================================================
 @app.route("/get_weather", methods=["GET"])
 def get_weather():
     latitude = request.args.get("latitude", type=float)
     longitude = request.args.get("longitude", type=float)
     date = request.args.get("date", type=str)
+    # Get time, with a default of 23:59 if not provided
+    time = request.args.get("time", "23:59") 
 
-    if not latitude or not longitude or not date:
-        return jsonify({"error": "Missing parameters"}), 400
-
-    try:
-        data = fetch_weather_data(latitude, longitude, date)
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    if not all([latitude, longitude, date, time]):
+        return jsonify({"error": "Missing required parameters"}), 400
+    
+    data = fetch_weather_data(latitude, longitude, date, time)
+    return jsonify(data)
 
 
 # I WILL CHANGE THIS PATHING
