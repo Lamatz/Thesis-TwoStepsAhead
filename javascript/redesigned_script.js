@@ -17,11 +17,14 @@ let fetchedLocationData = { soil_type: null, slope: null };
 let lastFetchedWeatherData = null;
 let lastPredictionResult = { prediction: null, confidence: null };
 let selectedPredictionDate = null;
+let selectedPredictionTime = null; // NEW
 let selectedForecastPeriod = { value: null, text: null };
 
-// Chart instances
-let hourlyChart = null;
-let dailyChart = null;
+// MODIFIED: Chart instances (now four)
+let hourlyCumulativeChart = null;
+let hourlyIntensityChart = null;
+let dailyCumulativeChart = null;
+let dailyIntensityChart = null;
 
 // --- Soil Type Mapping (same as your original)
 const soilTypeMapping = {
@@ -40,47 +43,28 @@ function getSoilLabel(snum) { return (soilTypeMapping[snum] || soilTypeMapping["
 // == CORE FUNCTIONS (Fetch, Update UI, etc.)
 // ===================================
 
-// Resets the entire UI to its initial state
+// MODIFIED: resetUI to clear new inputs and charts
 function resetUI() {
     console.log("Resetting UI and all data.");
-
-    // Clear search and location panel
     document.getElementById("search-input").value = "";
     document.getElementById("suggestions").style.display = "none";
     document.getElementById("loc-lat").innerText = "N/A";
     document.getElementById("loc-lng").innerText = "N/A";
     document.getElementById("loc-name").innerText = "No location selected.";
-
-    // Clear forecast settings
     document.getElementById("date-picker").value = "";
+    document.getElementById("time-picker").value = ""; // NEW
     document.getElementById("forecast-period").selectedIndex = 0;
-
-    // Clear hidden data inputs
-    document.getElementById("slope").value = "";
-    document.getElementById("soil-type").value = "";
-    document.getElementById("soil-moisture").value = "";
-    document.getElementById("rainfall-1-day").value = "";
-    document.getElementById("rainfall-3-day").value = "";
-    document.getElementById("rainfall-5-day").value = "";
-    document.getElementById("rain-intensity-1-day").value = "";
-    document.getElementById("rain-intensity-3-day").value = "";
-    document.getElementById("rain-intensity-5-day").value = "";
-
-    // Remove map marker
-    if (currentMarker) {
-        map.removeLayer(currentMarker);
-        currentMarker = null;
-    }
-
-    // Reset global state variables
+    // Clear hidden inputs...
+    const hiddenInputs = document.querySelectorAll('.visually-hidden input');
+    hiddenInputs.forEach(input => input.value = "");
+    if (currentMarker) { map.removeLayer(currentMarker); currentMarker = null; }
     selectedLocation = { lat: null, lng: null, name: null };
     fetchedLocationData = { soil_type: null, slope: null };
     lastFetchedWeatherData = null;
     lastPredictionResult = { prediction: null, confidence: null };
     selectedPredictionDate = null;
+    selectedPredictionTime = null; // NEW
     selectedForecastPeriod = { value: null, text: null };
-
-    // Hide and clear the report summary
     hideAndClearReportSummary();
 }
 
@@ -142,35 +126,29 @@ async function updateLocationInfo(lat, lng) {
 }
 
 
-// Fetches weather data and updates hidden inputs
-async function fetchWeatherData(lat, lon, date) {
-    if (!lat || !lon || !date) return;
-    console.log(`Fetching weather for: ${lat}, ${lon}, on ${date}`);
+// MODIFIED: fetchWeatherData to accept and send time
+async function fetchWeatherData(lat, lon, date, time) {
+    if (!lat || !lon || !date || !time) return;
+    console.log(`Fetching weather for: ${lat}, ${lon}, on ${date} at ${time}`);
     try {
-        const response = await fetch(`http://127.0.0.1:5000/get_weather?latitude=${lat}&longitude=${lon}&date=${date}`);
+        const response = await fetch(`http://127.0.0.1:5000/get_weather?latitude=${lat}&longitude=${lon}&date=${date}&time=${time}`);
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
         lastFetchedWeatherData = data;
         selectedPredictionDate = date;
+        selectedPredictionTime = time; // NEW
 
-        // Populate hidden inputs (your original logic)
-        document.getElementById("soil-moisture").value = data.soil_moisture?.toFixed(1) || "N/A";
-        
-        document.getElementById("rainfall-3-hr").value = data.cumulative_rainfall["3_hr"].toFixed(1);
-        document.getElementById("rainfall-6-hr").value = data.cumulative_rainfall["6_hr"].toFixed(1);
-        document.getElementById("rainfall-12-hr").value = data.cumulative_rainfall["12_hr"].toFixed(1);
-
-        document.getElementById("rain-intensity-3-hr").value = data.rain_intensity["3_hr"].toFixed(1);
-        document.getElementById("rain-intensity-6-hr").value = data.rain_intensity["6_hr"].toFixed(1);
-        document.getElementById("rain-intensity-12-hr").value = data.rain_intensity["12_hr"].toFixed(1);
-        document.getElementById("rainfall-1-day").value = data.cumulative_rainfall?.["1_day"]?.toFixed(1) || "N/A";
-        document.getElementById("rainfall-3-day").value = data.cumulative_rainfall?.["3_day"]?.toFixed(1) || "N/A";
-        document.getElementById("rainfall-5-day").value = data.cumulative_rainfall?.["5_day"]?.toFixed(1) || "N/A";
-        document.getElementById("rain-intensity-1-day").value = data.rain_intensity?.["1_day"]?.toFixed(1) || "N/A";
-        document.getElementById("rain-intensity-3-day").value = data.rain_intensity?.["3_day"]?.toFixed(1) || "N/A";
-        document.getElementById("rain-intensity-5-day").value = data.rain_intensity?.["5_day"]?.toFixed(1) || "N/A";
-
+        // Populate hidden inputs (no change to logic, just sourcing from new backend response)
+        document.getElementById("soil-moisture").value = data.soil_moisture?.toFixed(3) || "N/A";
+        for (const key in data.cumulative_rainfall) {
+            const id = `rainfall-${key.replace('_', '-')}`;
+            if(document.getElementById(id)) document.getElementById(id).value = data.cumulative_rainfall[key].toFixed(4);
+        }
+        for (const key in data.rain_intensity) {
+            const id = `rain-intensity-${key.replace('_', '-')}`;
+            if(document.getElementById(id)) document.getElementById(id).value = data.rain_intensity[key].toFixed(4);
+        }
         console.log("Weather data fetched and stored.", lastFetchedWeatherData);
     } catch (error) {
         console.error("Failed to fetch weather data:", error);
@@ -179,111 +157,169 @@ async function fetchWeatherData(lat, lon, date) {
     }
 }
 
-// Populates the entire report summary section
+// ===================================
+// == CORRECTED JAVASCRIPT FUNCTION
+// ===================================
+
+
 function populateReportSummary() {
-    // Basic Details
+    // --- 1. Validation ---
+    if (!lastPredictionResult || !lastFetchedWeatherData) {
+        alert("Cannot generate report: Critical data is missing. Please try the prediction again.");
+        return;
+    }
+
+    // --- 2. Show the report section ---
+    const reportSection = document.getElementById("report-summary-section");
+    reportSection.style.display = "block";
+
+    // --- 3. Populate all text fields ---
     document.getElementById("report-location-name").innerText = selectedLocation.name || "N/A";
     document.getElementById("report-coords").innerText = selectedLocation.lat ? `${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)}` : "N/A";
-    document.getElementById("report-prediction-date").innerText = selectedPredictionDate || "N/A";
+    document.getElementById("report-prediction-date").innerText = (selectedPredictionDate && selectedPredictionTime) ? `${selectedPredictionDate} at ${selectedPredictionTime}` : "N/A";
     document.getElementById("report-prediction").innerText = lastPredictionResult.prediction || "N/A";
     document.getElementById("report-confidence").innerText = lastPredictionResult.confidence || "N/A";
-
-    // Environmental Variables
     document.getElementById("report-slope").innerText = fetchedLocationData.slope ?? "N/A";
     document.getElementById("report-soil-type").innerText = fetchedLocationData.soil_type_label || "N/A";
-    document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData?.soil_moisture?.toFixed(1) ?? "N/A";
-
-    // Rainfall for Selected Period
-    document.getElementById("report-forecast-period").innerText = selectedForecastPeriod.text || "N/A";
-    const periodKey = selectedForecastPeriod.value; // e.g., "3_days"
-    if (periodKey && lastFetchedWeatherData) {
-         document.getElementById("report-cumulative-rain").innerText = lastFetchedWeatherData.cumulative_rainfall?.[periodKey]?.toFixed(1) ?? "N/A";
-         document.getElementById("report-intensity-rain").innerText = lastFetchedWeatherData.rain_intensity?.[periodKey]?.toFixed(2) ?? "N/A";
+    document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData.soil_moisture?.toFixed(1) ?? "N/A";
+    
+    const forecastSelect = document.getElementById("forecast-period");
+    const periodValue = forecastSelect.value;
+    const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
+    document.getElementById("report-forecast-period").innerText = periodText;
+    if (periodValue !== 'none') {
+        document.getElementById("report-cumulative-rain").innerText = lastFetchedWeatherData.cumulative_rainfall?.[periodValue]?.toFixed(1) ?? "N/A";
+        document.getElementById("report-intensity-rain").innerText = lastFetchedWeatherData.rain_intensity?.[periodValue]?.toFixed(2) ?? "N/A";
+    } else {
+        document.getElementById("report-cumulative-rain").innerText = "N/A";
+        document.getElementById("report-intensity-rain").innerText = "N/A";
     }
 
-    // --- CHART GENERATION ---
-    // Destroy old charts if they exist to prevent artifacts
-    if (hourlyChart) hourlyChart.destroy();
-    if (dailyChart) dailyChart.destroy();
+    // --- 4. Destroy old charts ---
+    if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
+    if (hourlyIntensityChart) hourlyIntensityChart.destroy();
+    if (dailyCumulativeChart) dailyCumulativeChart.destroy();
+    if (dailyIntensityChart) dailyIntensityChart.destroy();
 
-    // Chart 1: Hourly Rainfall (Using placeholder data)
-    // TODO: The backend needs to be updated to provide real hourly data in `lastFetchedWeatherData`.
-    const hourlyCtx = document.getElementById('hourly-rainfall-chart').getContext('2d');
-    const placeholderHourlyData = {
-        labels: ['-12h', '-11h', '-10h', '-9h', '-8h', '-7h', '-6h', '-5h', '-4h', '-3h', '-2h', '-1h'],
-        data: [0, 0, 0.5, 1.2, 2.5, 1.0, 0.8, 0.2, 0, 0, 0, 0] // Example data
-    };
-    hourlyChart = new Chart(hourlyCtx, {
-        type: 'bar',
-        data: {
-            labels: placeholderHourlyData.labels,
-            datasets: [{
-                label: 'Rainfall (mm/hr)',
-                data: placeholderHourlyData.data,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
+    // --- 5. Generate all four new charts with FULL CONFIGURATIONS ---
+    const hourlyData = lastFetchedWeatherData.hourly_chart_data || [];
+    const dailyData = lastFetchedWeatherData.daily_chart_data || [];
 
-    // Chart 2: Daily Rainfall (Using real fetched data)
-    const dailyCtx = document.getElementById('daily-rainfall-chart').getContext('2d');
-    let dailyLabels = ['Day -5', 'Day -4', 'Day -3', 'Day -2', 'Day -1'];
-    let dailyData = [0, 0, 0, 0, 0];
-    if(lastFetchedWeatherData && lastFetchedWeatherData.daily_data) {
-        dailyLabels = lastFetchedWeatherData.daily_data.map(d => d.date);
-        dailyData = lastFetchedWeatherData.daily_data.map(d => d.cumulative);
-    }
-    dailyChart = new Chart(dailyCtx, {
-        type: 'bar',
+    // Chart 1: Hourly Cumulative
+    hourlyCumulativeChart = new Chart(document.getElementById('hourly-cumulative-chart').getContext('2d'), {
+        type: 'line',
         data: {
-            labels: dailyLabels.slice(-5), // Ensure only 5 days
+            labels: hourlyData.map(d => d.hour),
             datasets: [{
                 label: 'Cumulative Rainfall (mm)',
-                data: dailyData.slice(-5),
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
+                data: hourlyData.map(d => d.cumulative),
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                fill: true
             }]
         },
         options: { scales: { y: { beginAtZero: true } } }
     });
 
+    // Chart 2: Hourly Intensity
+    hourlyIntensityChart = new Chart(document.getElementById('hourly-intensity-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: hourlyData.map(d => d.hour),
+            datasets: [{
+                label: 'Intensity (mm/hr)',
+                data: hourlyData.map(d => d.intensity),
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)'
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    // Chart 3: Daily Cumulative
+    dailyCumulativeChart = new Chart(document.getElementById('daily-cumulative-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: dailyData.map(d => d.date),
+            datasets: [{
+                label: 'Cumulative Rainfall (mm)',
+                data: dailyData.map(d => d.cumulative),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)'
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    // Chart 4: Daily Intensity
+    dailyIntensityChart = new Chart(document.getElementById('daily-intensity-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: dailyData.map(d => d.date),
+            datasets: [{
+                label: 'Avg. Intensity (mm/hr)',
+                data: dailyData.map(d => d.intensity),
+                backgroundColor: 'rgba(255, 206, 86, 0.5)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                fill: true
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
     
+    // --- 6. Scroll the report into view ---
+    reportSection.scrollIntoView({ behavior: 'smooth' });
 }
-
-
-
+// MODIFIED: hideAndClearReportSummary to destroy all four charts
 function hideAndClearReportSummary() {
     const reportSection = document.getElementById("report-summary-section");
     if (reportSection) {
         reportSection.style.display = "none";
         document.getElementById("report-detailed-description").value = "";
-        // Destroy charts when hiding to free up memory
-        if (hourlyChart) hourlyChart.destroy();
-        if (dailyChart) dailyChart.destroy();
-        hourlyChart = null;
-        dailyChart = null;
+        if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
+        if (hourlyIntensityChart) hourlyIntensityChart.destroy();
+        if (dailyCumulativeChart) dailyCumulativeChart.destroy();
+        if (dailyIntensityChart) dailyIntensityChart.destroy();
+        hourlyCumulativeChart = hourlyIntensityChart = dailyCumulativeChart = dailyIntensityChart = null;
     }
 }
-
 
 // ===================================
 // == EVENT LISTENERS
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Helper function to get a date in YYYY-MM-DD format for the local timezone ---
+    function toLocalISOString(date) {
+        const year = date.getFullYear();
+        // getMonth() is zero-based, so we add 1
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        // Pad with a leading zero if needed
+        if (month < 10) {
+            month = '0' + month;
+        }
+        if (day < 10) {
+            day = '0' + day;
+        }
+
+        return `${year}-${month}-${day}`;
+    }
+
     resetUI(); // Initialize the UI on load
 
-    // Restrict date picker
+    // --- Restrict date picker using the local timezone ---
     const datePicker = document.getElementById("date-picker");
     const today = new Date();
+    
+    // Set the minimum date to today (local time)
+    datePicker.min = toLocalISOString(today);
+
+    // Set the maximum date to 5 days from now
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + 5);
-    datePicker.min = today.toISOString().split("T")[0];
-    datePicker.max = maxDate.toISOString().split("T")[0];
+    datePicker.max = toLocalISOString(maxDate);
 });
 
 // Map click event
@@ -329,15 +365,20 @@ document.addEventListener("click", (e) => {
 document.getElementById('search-btn-icon').addEventListener('click', () => searchInput.dispatchEvent(new Event('input')));
 
 
-// Date picker change event
-document.getElementById("date-picker").addEventListener("change", function () {
-    if (selectedLocation.lat) {
-        fetchWeatherData(selectedLocation.lat, selectedLocation.lng, this.value);
-    } else {
+// MODIFIED: Combined listener for Date and Time pickers
+function handleDateTimeChange() {
+    const date = document.getElementById("date-picker").value;
+    const time = document.getElementById("time-picker").value;
+    if (selectedLocation.lat && date && time) {
+        fetchWeatherData(selectedLocation.lat, selectedLocation.lng, date, time);
+    } else if (date && time) {
         alert("Please select a location first.");
-        this.value = "";
+        document.getElementById("date-picker").value = "";
+        document.getElementById("time-picker").value = "";
     }
-});
+}
+document.getElementById("date-picker").addEventListener("change", handleDateTimeChange);
+document.getElementById("time-picker").addEventListener("change", handleDateTimeChange);
 
 // Predict button click
 document.getElementById("predict-btn").addEventListener("click", async () => {
@@ -346,8 +387,8 @@ document.getElementById("predict-btn").addEventListener("click", async () => {
     selectedForecastPeriod.value = forecastSelect.value;
     selectedForecastPeriod.text = forecastSelect.options[forecastSelect.selectedIndex].text;
 
-    if (!selectedLocation.lat || !selectedPredictionDate || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
-        alert("Validation Error: Please ensure a Location, a valid Date, and a Forecast Period are selected, and all data is loaded.");
+     if (!selectedLocation.lat || !selectedPredictionDate || !selectedPredictionTime || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
+        alert("Validation Error: Please ensure a Location, a valid Date, Time, and Forecast Period are selected.");
         return;
     }
     

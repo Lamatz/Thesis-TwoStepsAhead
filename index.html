@@ -104,27 +104,28 @@
                         </div>
                     </div>
 
-                    <!-- Card 3: Forecast Settings -->
+                    <!-- MODIFIED: Forecast Settings Card -->
                     <div class="card">
                         <div class="card-header card-header-green">
                             <i class="fas fa-sliders-h me-2"></i> Forecast Settings
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label for="date-picker" class="form-label"><strong>Forecast Date:</strong></label>
-                                <input type="date" id="date-picker" class="form-control">
+                                <label for="date-picker" class="form-label"><strong>Forecast Date & Time:</strong></label>
+                                <div class="input-group">
+                                    <input type="date" id="date-picker" class="form-control">
+                                    <!-- NEW: Time Input -->
+                                    <input type="time" id="time-picker" class="form-control">
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label for="forecast-hour" class="form-label"><strong>Time Period:</strong></label>
+                                <label for="forecast-period" class="form-label"><strong>Time Period:</strong></label>
                                 <select class="form-select" id="forecast-period">
-                                    
-                                    <option  value="none" selected>None</option>
+                                    <option value="none" selected>None</option>
                                     <option disabled value="">Choose...</option>
                                     <option value="3_hours">3 Hours</option>
                                     <option value="6_hours">6 Hours</option>
                                     <option value="12_hours">12 Hours</option>
-                                    
-
                                 </select>
                             </div>
                             <div class="d-grid">
@@ -178,106 +179,114 @@
     </div>
 
 
-    <!-- ============================== -->
-    <!-- == NEW: REPORT SUMMARY SECTION == -->
-    <!-- ============================== -->
-    <div class="container " id="report-summary-section" style="display: none;">
-        <h2 class="text-center mb-4 report-title">Prediction Report Summary</h2>
+      
+<!-- ======================================================= -->
+<!-- == REPLACE THE OLD REPORT SECTION WITH THIS ENTIRE BLOCK == -->
+<!-- ======================================================= -->
 
-        <!-- Card: Report Details -->
-        <div class="card report-card mb-4">
-            <div class="card-header">
-                <strong><i class="fas fa-info-circle me-2"></i>Report Details</strong>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Location Name:</strong> <span id="report-location-name">N/A</span></p>
-                        <p><strong>Coordinates:</strong> <span id="report-coords">N/A</span></p>
-                        <p><strong>Prediction Date:</strong> <span id="report-prediction-date">N/A</span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Prediction:</strong> <span id="report-prediction" class="fw-bold">N/A</span></p>
-                        <p><strong>Confidence:</strong> <span id="report-confidence" class="fw-bold">N/A</span></p>
-                    </div>
+<div class="container" id="report-summary-section" style="display: none;">
+    <h2 class="text-center mb-4 report-title">Prediction Report Summary</h2>
+
+    <!-- Card: Report Details -->
+    <div class="card report-card mb-4">
+        <div class="card-header">
+            <strong><i class="fas fa-info-circle me-2"></i>Report Details</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Location Name:</strong> <span id="report-location-name">N/A</span></p>
+                    <p><strong>Coordinates:</strong> <span id="report-coords">N/A</span></p>
+                    <p><strong>Prediction Date:</strong> <span id="report-prediction-date">N/A</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Prediction:</strong> <span id="report-prediction" class="fw-bold">N/A</span></p>
+                    <p><strong>Confidence:</strong> <span id="report-confidence" class="fw-bold">N/A</span></p>
                 </div>
             </div>
         </div>
-
-        <div class="row mb-4">
-            <!-- Card: Environmental Variables -->
-            <div class="col-md-6">
-                <div class="card report-card h-100 mb-4">
-                    <div class="card-header">
-                        <strong><i class="fas fa-mountain me-2"></i>Environmental Variables</strong>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Slope:</strong> <span id="report-slope">N/A</span></p>
-                        <p><strong>Soil Type:</strong> <span id="report-soil-type">N/A</span></p>
-                        <p><strong>Soil Moisture (%/day):</strong> <span id="report-soil-moisture">N/A</span></p>
-                    </div>
-                </div>
-            </div>
-            <!-- Card: Rainfall for Selected Period -->
-            <div class="col-md-6">
-                <div class="card report-card h-100 mb-4">
-                    <div class="card-header">
-                        <strong><i class="fas fa-cloud-showers-heavy me-2"></i>Rainfall (for <span
-                                id="report-forecast-period">N/A</span> period)</strong>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Cumulative Rainfall (mm):</strong> <span id="report-cumulative-rain">N/A</span></p>
-                        <p><strong>Average Intensity (mm/hr):</strong> <span id="report-intensity-rain">N/A</span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card: Rainfall Charts -->
-        <div class="card report-card mb-4">
-            <div class="card-header">
-                <strong><i class="fas fa-chart-bar me-2"></i>Rainfall Analysis</strong>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Past 12 Hours Rainfall (mm/hr)</h6>
-                        <canvas id="hourly-rainfall-chart"></canvas>
-                        <small class="text-muted text-center d-block mt-2">*Hourly data required from backend for
-                            accuracy.</small>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Past 5 Days Cumulative Rainfall (mm)</h6>
-                        <canvas id="daily-rainfall-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card: Detailed Description -->
-        <div class="card report-card mb-4">
-            <div class="card-header">
-                <strong><i class="fas fa-pen me-2"></i>Detailed Description</strong>
-            </div>
-            <div class="card-body">
-                <textarea id="report-detailed-description" class="form-control" rows="4"
-                    placeholder="Summarize findings, observations, and recommendations here..."></textarea>
-            </div>
-        </div>
-
-        <!-- === MODIFICATION: Action Buttons Row === -->
-        <div class="text-center">
-            <button id="reset-btn" class="btn btn-danger btn-lg"><i class="fas fa-trash-alt me-2"></i>Reset All</button>
-            <!-- === ADDITION: Download PDF Button === -->
-            <button id="download-pdf-btn" class="btn btn-info btn-lg ms-2"><i class="fas fa-file-pdf me-2"></i>Download
-                Report (PDF)</button>
-        </div>
-
-
-         <button id="scrollTopBtn" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
     </div>
 
+    <div class="row mb-4">
+        <!-- Card: Environmental Variables -->
+        <div class="col-md-6">
+            <div class="card report-card h-100 mb-4">
+                <div class="card-header">
+                    <strong><i class="fas fa-mountain me-2"></i>Environmental Variables</strong>
+                </div>
+                <div class="card-body">
+                    <p><strong>Slope:</strong> <span id="report-slope">N/A</span></p>
+                    <p><strong>Soil Type:</strong> <span id="report-soil-type">N/A</span></p>
+                    <p><strong>Soil Moisture (%/day):</strong> <span id="report-soil-moisture">N/A</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Card: Rainfall for Selected Period -->
+        <div class="col-md-6">
+            <div class="card report-card h-100 mb-4">
+                <div class="card-header">
+                    <strong><i class="fas fa-cloud-showers-heavy me-2"></i>Rainfall (for <span id="report-forecast-period">N/A</span> period)</strong>
+                </div>
+                <div class="card-body">
+                    <!-- THESE ARE THE IDs THE SCRIPT IS LOOKING FOR -->
+                    <p><strong>Cumulative Rainfall (mm):</strong> <span id="report-cumulative-rain">N/A</span></p>
+                    <p><strong>Average Intensity (mm/hr):</strong> <span id="report-intensity-rain">N/A</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Card: Rainfall Charts -->
+    <div class="card report-card mb-4">
+        <div class="card-header">
+            <strong><i class="fas fa-chart-bar me-2"></i>Rainfall Analysis</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- THESE ARE THE 4 CANVAS IDs THE SCRIPT NEEDS -->
+                <div class="col-md-6 mb-4">
+                    <h6>Past 12 Hours Cumulative Rainfall (mm)</h6>
+                    <canvas id="hourly-cumulative-chart"></canvas>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h6>Past 12 Hours Rainfall Intensity (mm/hr)</h6>
+                    <canvas id="hourly-intensity-chart"></canvas>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Past 5 Days Cumulative Rainfall (mm)</h6>
+                    <canvas id="daily-cumulative-chart"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h6>Past 5 Days Average Intensity (mm/hr)</h6>
+                    <canvas id="daily-intensity-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card: Detailed Description -->
+    <div class="card report-card mb-4">
+        <div class="card-header">
+            <strong><i class="fas fa-pen me-2"></i>Detailed Description</strong>
+        </div>
+        <div class="card-body">
+            <textarea id="report-detailed-description" class="form-control" rows="4" placeholder="Summarize findings, observations, and recommendations here..."></textarea>
+        </div>
+    </div>
+
+    <!-- Action Buttons Row -->
+    <div class="text-center">
+        <button id="reset-btn" class="btn btn-danger btn-lg"><i class="fas fa-trash-alt me-2"></i>Reset All</button>
+        <button id="download-pdf-btn" class="btn btn-info btn-lg ms-2"><i class="fas fa-file-pdf me-2"></i>Download Report (PDF)</button>
+    </div>
+
+    <button id="scrollTopBtn" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
+</div>
+
+    
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- Bootstrap 5 JS -->
