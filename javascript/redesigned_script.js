@@ -415,3 +415,37 @@ document.getElementById("report-btn").addEventListener("click", () => {
 
 // Reset All button
 document.getElementById("reset-btn").addEventListener("click", resetUI);
+
+
+
+
+// ===================================
+// == SCROLL BUTTON
+// ===================================
+
+
+let scrollTopButton = document.getElementById("scrollTopBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {
+  scrollFunction();
+};
+
+function scrollFunction() {
+  // The threshold for showing the button (e.g., 100 pixels)
+  const showButtonThreshold = 500;
+
+  if (document.body.scrollTop > showButtonThreshold || document.documentElement.scrollTop > showButtonThreshold) {
+    scrollTopButton.style.display = "block";
+  } else {
+    scrollTopButton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document smoothly
+scrollTopButton.addEventListener("click", function() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
