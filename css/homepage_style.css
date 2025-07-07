@@ -18,11 +18,18 @@ body {
     margin-top:50px;
     padding: 0;
 }
+/*===========================
+  Training Images
+===========================*/
 
 * {
     transition: all 0.2s ease;
 }
 
+.placeholder-img img {
+  width: 350px;
+  height: 260px;
+}
 /*===========================
   Navigation
 ===========================*/

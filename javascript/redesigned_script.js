@@ -125,8 +125,8 @@ async function updateLocationInfo(lat, lng) {
 
 
         // --- 6. Update UI with final data ---
-        document.getElementById("loc-name").innerText = selectedLocation.name;
-        currentMarker.bindPopup(`<b>${selectedLocation.name}</b><br>Slope: ${fetchedLocationData.slope}<br>Soil: ${fetchedLocationData.soil_type_label}`).openPopup();
+        document.getElementById("loc-name").innerText = selectedLocation.name;;
+        currentMarker.bindPopup(`Location: <b>${selectedLocation.name}</b><br>Slope: <b>${fetchedLocationData.slope}</b><br>Soil: <b>${fetchedLocationData.soil_type_label}</b>`).openPopup();
 
         // --- 7. Fetch weather if date is already selected ---
         const date = document.getElementById("date-picker").value;
