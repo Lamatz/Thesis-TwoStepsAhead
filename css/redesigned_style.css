@@ -1,10 +1,15 @@
 /* General Body & Layout */
 
+:root{
+    --background-1:#FCFAF7;
+    /* --background-1:#F5F5F5; */
+}
+
 
 body {
     /* background-color: #f5f5dc; */
-    /* background-color: #e6d5b8; */
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--background-1);
+    /* background-color: rgba(255, 255, 255, 0.9); */
     /* background: linear-gradient(135deg, #f5f5dc, #e6d5b8); */
 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +25,9 @@ body {
 .control-panel {
     height: 100vh;
     /* background-color: #f5f5dc; */
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color:var(--background-1);
+    /* background-color: #; */
+
     padding: 20px;
     overflow-y: auto;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -182,7 +189,8 @@ body {
 /* Report Summary Section Styling */
 #report-summary-section {
     /* background-color: #e9ecef; */
-    background-color: rgba(255, 255, 255, 0.9);
+    /* background-color: rgba(255, 255, 255, 0.9); */
+    background-color: var(--background-1);
     /* background: linear-gradient(135deg, #f5f5dc, #e6d5b8); */
     /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
     padding: 40px 20px;
