@@ -360,3 +360,370 @@
     </script>
 </body>
 </html>
+
+
+
+
+<!-- OLD BUTTON DESIGN -->
+<!-- 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Forecast UI</title>
+    <style>
+        /* Basic Page Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* The Main Component Card */
+        .forecast-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+
+        .forecast-header {
+            background-color: #2E7D32; /* Green header */
+            color: white;
+            padding: 16px 24px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .forecast-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-step h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111;
+        }
+
+        /* 1. Date Selector */
+        .date-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .date-selector button {
+            flex-grow: 1;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .date-selector button:hover {
+            border-color: #999;
+        }
+
+        .date-selector button.active {
+            background-color: #2E7D32;
+            color: white;
+            border-color: #2E7D32;
+            font-weight: 600;
+        }
+
+        /* 2. Time Selector */
+        #time-select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: white;
+        }
+        
+        #time-select:disabled {
+            background-color: #f1f1f1;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* 3. Duration Selector */
+        .duration-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .duration-selector label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .duration-selector input[type="radio"] {
+            accent-color: #2E7D32;
+            width: 18px;
+            height: 18px;
+        }
+
+        .duration-selector input[type="radio"]:checked + span {
+            font-weight: 600;
+        }
+        
+        .duration-selector label:has(input:checked) {
+             border-color: #2E7D32;
+             background-color: #F1F8E9; /* Light green background */
+        }
+        
+        /* Visual Summary Timeline */
+        .visual-summary {
+            background-color: #fafafa;
+            border-radius: 6px;
+            padding: 16px;
+            border: 1px solid #eee;
+        }
+        
+        .visual-summary p {
+            margin: 0 0 12px 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .visual-summary strong {
+            color: #2E7D32;
+        }
+        
+        .timeline-track {
+            width: 100%;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            position: relative;
+        }
+        
+        #timeline-selection {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background-color: #388E3C;
+            border-radius: 6px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .hour-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 6px;
+            padding: 0 2px;
+        }
+
+        /* Final Predict Button */
+        .predict-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #388E3C;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .predict-btn:hover {
+            background-color: #2E7D32;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="forecast-card">
+        <div class="forecast-header">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="18" x2="8" y2="18"></line><line x1="12" y1="14" x2="12" y2="22"></line><line x1="20" y1="10" x2="4" y2="10"></line><line x1="18" y1="6" x2="6" y2="6"></line><line x1="14" y1="2" x2="10" y2="2"></line></svg>
+            Forecast Settings
+        </div>
+        <div class="forecast-body">
+            
+            <div class="form-step">
+                <h4>1. Select a Day</h4>
+                <div class="date-selector" id="date-selector-container">
+                   
+                </div>
+            </div>
+
+            <div class="form-step">
+                <h4>2. Select a Start Time</h4>
+                <select id="time-select">
+                   
+                </select>
+            </div>
+
+            <div class="form-step">
+                <h4>3. Select a Forecast Duration</h4>
+                <div class="duration-selector" id="duration-selector">
+                    <label>
+                        <input type="radio" name="duration" value="3" checked>
+                        <span>3 Hours</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="duration" value="6">
+                        <span>6 Hours</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="duration" value="12">
+                        <span>12 Hours</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="duration" value="24">
+                        <span>Entire Day</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="visual-summary">
+                <p>Forecasting for <strong id="forecast-summary-text"></strong></p>
+                <div class="timeline-track">
+                    <div id="timeline-selection"></div>
+                </div>
+                <div class="hour-labels">
+                    <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span>
+                </div>
+            </div>
+
+            <button class="predict-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                Predict Landslide Risk
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const dateContainer = document.getElementById('date-selector-container');
+            const timeSelect = document.getElementById('time-select');
+            const durationSelector = document.getElementById('duration-selector');
+            const summaryText = document.getElementById('forecast-summary-text');
+            const timelineSelection = document.getElementById('timeline-selection');
+
+            // --- Helper Functions ---
+            const formatHour = (hour) => {
+                const h = hour % 12 === 0 ? 12 : hour % 12;
+                const period = hour < 12 ? 'AM' : 'PM';
+                return `${h}:00 ${period}`;
+            };
+            
+            // --- Initial Setup Functions ---
+            function generateDateButtons() {
+                const today = new Date();
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                for (let i = 0; i < 6; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    const button = document.createElement('button');
+                    button.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', options);
+                    button.dataset.dateValue = date.toISOString().split('T')[0];
+                    button.dataset.dateLabel = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
+                    if (i === 0) button.classList.add('active');
+                    dateContainer.appendChild(button);
+                }
+            }
+
+            function populateTimeDropdown() {
+                for (let i = 0; i < 24; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = formatHour(i);
+                    timeSelect.appendChild(option);
+                }
+                timeSelect.value = "17"; // Default to 5 PM
+            }
+
+            // --- Main Update Function ---
+            function updateForecast() {
+                // 1. Get current values
+                const activeDateButton = dateContainer.querySelector('.active');
+                const selectedDateLabel = activeDateButton.dataset.dateLabel;
+                
+                const selectedStartHour = parseInt(timeSelect.value, 10);
+                const selectedDuration = parseInt(document.querySelector('input[name="duration"]:checked').value, 10);
+
+                // 2. Handle "Entire Day" logic
+                const isEntireDay = selectedDuration === 24;
+                timeSelect.disabled = isEntireDay;
+
+                const startHour = isEntireDay ? 0 : selectedStartHour;
+                const duration = isEntireDay ? 24 : selectedDuration;
+                
+                // Cap duration at the end of the day
+                const effectiveDuration = Math.min(duration, 24 - startHour);
+                const endHour = startHour + effectiveDuration;
+                
+                // 3. Update summary text
+                if (isEntireDay) {
+                    summaryText.textContent = `the ${selectedDateLabel}`;
+                } else {
+                    summaryText.textContent = `${selectedDateLabel} from ${formatHour(startHour)} to ${formatHour(endHour)}`;
+                }
+
+                // 4. Update timeline visualization
+                const leftPercent = (startHour / 24) * 100;
+                const widthPercent = (effectiveDuration / 24) * 100;
+
+                timelineSelection.style.left = `${leftPercent}%`;
+                timelineSelection.style.width = `${widthPercent}%`;
+            }
+
+            // --- Event Listeners ---
+            dateContainer.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    dateContainer.querySelector('.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    updateForecast();
+                }
+            });
+
+            timeSelect.addEventListener('change', updateForecast);
+            durationSelector.addEventListener('change', updateForecast);
+
+            // --- Initialization ---
+            generateDateButtons();
+            populateTimeDropdown();
+            updateForecast(); // Initial call to set the default state
+        });
+    </script>
+</body>
+</html> -->
