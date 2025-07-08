@@ -54,38 +54,8 @@
             color: #111;
         }
 
-        /* 1. Date Selector */
-        .date-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .date-selector button {
-            flex-grow: 1;
-            padding: 8px 12px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .date-selector button:hover {
-            border-color: #999;
-        }
-
-        .date-selector button.active {
-            background-color: #2E7D32;
-            color: white;
-            border-color: #2E7D32;
-            font-weight: 600;
-        }
-
-        /* 2. Time Selector */
-        #time-select {
+        /* 1. Dropdown Selector */
+        #date-select {
             width: 100%;
             padding: 10px;
             font-size: 1rem;
@@ -93,14 +63,8 @@
             border-radius: 6px;
             background-color: white;
         }
-        
-        #time-select:disabled {
-            background-color: #f1f1f1;
-            color: #999;
-            cursor: not-allowed;
-        }
 
-        /* 3. Duration Selector */
+        /* 2. Duration Selector */
         .duration-selector {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -133,7 +97,7 @@
              background-color: #F1F8E9; /* Light green background */
         }
         
-        /* Visual Summary Timeline */
+        /* Visual Summary & Time Slider */
         .visual-summary {
             background-color: #fafafa;
             border-radius: 6px;
@@ -142,7 +106,7 @@
         }
         
         .visual-summary p {
-            margin: 0 0 12px 0;
+            margin: 0 0 16px 0; /* Increased margin */
             font-size: 0.9rem;
             text-align: center;
         }
@@ -151,15 +115,24 @@
             color: #2E7D32;
         }
         
-        .timeline-track {
-            width: 100%;
-            height: 12px;
-            background-color: #e0e0e0;
-            border-radius: 6px;
+        .timeline-container {
             position: relative;
+            height: 12px;
         }
         
-        #timeline-selection {
+        .timeline-track {
+            width: 100%;
+            height: 100%;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* MODIFICATION: Style is now shared between the two selection bars */
+        #timeline-selection-start,
+        #timeline-selection-end {
             position: absolute;
             top: 0;
             height: 100%;
@@ -167,13 +140,59 @@
             border-radius: 6px;
             transition: all 0.3s ease-in-out;
         }
+        
+        /* Time Slider styles */
+        #time-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        #time-slider:focus {
+            outline: none;
+        }
+        
+        #time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            margin-top: -6px; 
+        }
+
+        #time-slider::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+
+        #time-slider:disabled {
+            cursor: not-allowed;
+        }
+        
+        #time-slider:disabled::-webkit-slider-thumb,
+        #time-slider:disabled::-moz-range-thumb {
+            background: transparent;
+        }
+
 
         .hour-labels {
             display: flex;
             justify-content: space-between;
             font-size: 0.75rem;
             color: #666;
-            margin-top: 6px;
+            margin-top: 12px;
             padding: 0 2px;
         }
 
@@ -198,11 +217,9 @@
         .predict-btn:hover {
             background-color: #2E7D32;
         }
-
     </style>
 </head>
 <body>
-
     <div class="forecast-card">
         <div class="forecast-header">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="18" x2="8" y2="18"></line><line x1="12" y1="14" x2="12" y2="22"></line><line x1="20" y1="10" x2="4" y2="10"></line><line x1="18" y1="6" x2="6" y2="6"></line><line x1="14" y1="2" x2="10" y2="2"></line></svg>
@@ -212,20 +229,13 @@
             
             <div class="form-step">
                 <h4>1. Select a Day</h4>
-                <div class="date-selector" id="date-selector-container">
-                    <!-- Date buttons will be generated by JS -->
-                </div>
-            </div>
-
-            <div class="form-step">
-                <h4>2. Select a Start Time</h4>
-                <select id="time-select">
-                    <!-- Time options will be generated by JS -->
+                <select id="date-select">
+                    <!-- Date options will be generated by JS -->
                 </select>
             </div>
-
+            
             <div class="form-step">
-                <h4>3. Select a Forecast Duration</h4>
+                <h4>2. Select a Forecast Duration</h4>
                 <div class="duration-selector" id="duration-selector">
                     <label>
                         <input type="radio" name="duration" value="3" checked>
@@ -248,8 +258,12 @@
 
             <div class="visual-summary">
                 <p>Forecasting for <strong id="forecast-summary-text"></strong></p>
-                <div class="timeline-track">
-                    <div id="timeline-selection"></div>
+                <div class="timeline-container">
+                    <div class="timeline-track"></div>
+                    <!-- MODIFICATION: Two selection bars to handle day wrapping -->
+                    <div id="timeline-selection-start"></div>
+                    <div id="timeline-selection-end"></div>
+                    <input type="range" id="time-slider" min="0" max="23" value="17" step="1">
                 </div>
                 <div class="hour-labels">
                     <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span>
@@ -266,11 +280,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DOM Elements ---
-            const dateContainer = document.getElementById('date-selector-container');
-            const timeSelect = document.getElementById('time-select');
+            const dateSelect = document.getElementById('date-select');
             const durationSelector = document.getElementById('duration-selector');
             const summaryText = document.getElementById('forecast-summary-text');
-            const timelineSelection = document.getElementById('timeline-selection');
+            // MODIFICATION: Get references to both selection bars
+            const timelineSelectionStart = document.getElementById('timeline-selection-start');
+            const timelineSelectionEnd = document.getElementById('timeline-selection-end');
+            const timeSlider = document.getElementById('time-slider');
 
             // --- Helper Functions ---
             const formatHour = (hour) => {
@@ -280,81 +296,80 @@
             };
             
             // --- Initial Setup Functions ---
-            function generateDateButtons() {
+            function populateDateDropdown() {
                 const today = new Date();
-                const options = { weekday: 'short', month: 'short', day: 'numeric' };
-                for (let i = 0; i < 6; i++) {
+                const dateFormatOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+                for (let i = 0; i < 7; i++) {
                     const date = new Date(today);
                     date.setDate(today.getDate() + i);
-                    const button = document.createElement('button');
-                    button.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', options);
-                    button.dataset.dateValue = date.toISOString().split('T')[0];
-                    button.dataset.dateLabel = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
-                    if (i === 0) button.classList.add('active');
-                    dateContainer.appendChild(button);
-                }
-            }
-
-            function populateTimeDropdown() {
-                for (let i = 0; i < 24; i++) {
                     const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = formatHour(i);
-                    timeSelect.appendChild(option);
+                    
+                    option.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', dateFormatOptions);
+                    option.value = date.toISOString().split('T')[0];
+                    option.dataset.dateLabel = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
+                    
+                    dateSelect.appendChild(option);
                 }
-                timeSelect.value = "17"; // Default to 5 PM
             }
-
+            
             // --- Main Update Function ---
             function updateForecast() {
                 // 1. Get current values
-                const activeDateButton = dateContainer.querySelector('.active');
-                const selectedDateLabel = activeDateButton.dataset.dateLabel;
+                const selectedDateOption = dateSelect.options[dateSelect.selectedIndex];
+                const selectedDateLabel = selectedDateOption.dataset.dateLabel;
                 
-                const selectedStartHour = parseInt(timeSelect.value, 10);
+                const selectedStartHour = parseInt(timeSlider.value, 10);
                 const selectedDuration = parseInt(document.querySelector('input[name="duration"]:checked').value, 10);
 
-                // 2. Handle "Entire Day" logic
+                // 2. Handle "Entire Day" logic & calculate times
                 const isEntireDay = selectedDuration === 24;
-                timeSelect.disabled = isEntireDay;
+                timeSlider.disabled = isEntireDay;
 
                 const startHour = isEntireDay ? 0 : selectedStartHour;
                 const duration = isEntireDay ? 24 : selectedDuration;
-                
-                // Cap duration at the end of the day
-                const effectiveDuration = Math.min(duration, 24 - startHour);
-                const endHour = startHour + effectiveDuration;
+
+                // BUG FIX: The core logic change is here
+                const endHourRaw = startHour + duration;
+                const endHour = endHourRaw % 24;
+                const wrapsToNextDay = endHourRaw > 24;
                 
                 // 3. Update summary text
                 if (isEntireDay) {
-                    summaryText.textContent = `the ${selectedDateLabel}`;
+                    summaryText.textContent = `all of ${selectedDateLabel}`;
+                } else if (wrapsToNextDay) {
+                    const nextDayOption = dateSelect.options[dateSelect.selectedIndex + 1];
+                    const nextDayLabel = nextDayOption ? nextDayOption.dataset.dateLabel : 'the next day';
+                    summaryText.innerHTML = `${selectedDateLabel} from <strong>${formatHour(startHour)}</strong> to ${nextDayLabel} at <strong>${formatHour(endHour)}</strong>`;
                 } else {
                     summaryText.textContent = `${selectedDateLabel} from ${formatHour(startHour)} to ${formatHour(endHour)}`;
                 }
 
                 // 4. Update timeline visualization
-                const leftPercent = (startHour / 24) * 100;
-                const widthPercent = (effectiveDuration / 24) * 100;
+                if (wrapsToNextDay) {
+                    // First bar: from start time to midnight
+                    const firstBarWidth = 24 - startHour;
+                    timelineSelectionStart.style.left = `${(startHour / 24) * 100}%`;
+                    timelineSelectionStart.style.width = `${(firstBarWidth / 24) * 100}%`;
 
-                timelineSelection.style.left = `${leftPercent}%`;
-                timelineSelection.style.width = `${widthPercent}%`;
+                    // Second bar: from midnight to end time
+                    timelineSelectionEnd.style.display = 'block';
+                    timelineSelectionEnd.style.left = `0%`;
+                    timelineSelectionEnd.style.width = `${(endHour / 24) * 100}%`;
+                } else {
+                    // Single bar for selections within one day
+                    timelineSelectionEnd.style.display = 'none'; // Hide the second bar
+                    timelineSelectionStart.style.left = `${(startHour / 24) * 100}%`;
+                    timelineSelectionStart.style.width = `${(duration / 24) * 100}%`;
+                }
             }
 
             // --- Event Listeners ---
-            dateContainer.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    dateContainer.querySelector('.active').classList.remove('active');
-                    e.target.classList.add('active');
-                    updateForecast();
-                }
-            });
-
-            timeSelect.addEventListener('change', updateForecast);
+            dateSelect.addEventListener('change', updateForecast);
             durationSelector.addEventListener('change', updateForecast);
+            timeSlider.addEventListener('input', updateForecast);
 
             // --- Initialization ---
-            generateDateButtons();
-            populateTimeDropdown();
+            populateDateDropdown();
             updateForecast(); // Initial call to set the default state
         });
     </script>
