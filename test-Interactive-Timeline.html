@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dropdown & Slider Forecast UI</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Basic Page Styles */
         body {
@@ -29,7 +33,8 @@
         }
 
         .forecast-header {
-            background-color: #2E7D32; /* Green header */
+            background-color: #2E7D32;
+            /* Green header */
             color: white;
             padding: 16px 24px;
             font-size: 1.25rem;
@@ -52,7 +57,7 @@
             align-items: center;
             margin-bottom: 12px;
         }
-        
+
         .form-step h4 {
             margin: 0;
             font-size: 1rem;
@@ -60,13 +65,15 @@
             color: #111;
         }
 
-        #time-slider-value {
+        #time-slider-value,
+        #date-slider-value {
             font-weight: 700;
             color: #2E7D32;
             background-color: #F1F8E9;
             padding: 2px 8px;
             border-radius: 4px;
         }
+
 
         /* 1. Date Selector */
         #date-select {
@@ -89,7 +96,7 @@
             border-radius: 5px;
             transition: opacity .2s;
         }
-        
+
         #time-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -99,7 +106,7 @@
             cursor: pointer;
             border-radius: 50%;
             border: 2px solid white;
-            box-shadow: 0 0 2px rgba(0,0,0,0.3);
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
         }
 
         #time-slider::-moz-range-thumb {
@@ -110,13 +117,18 @@
             border-radius: 50%;
             border: 2px solid white;
         }
-        
+
         #time-slider:disabled {
             opacity: 0.5;
         }
-        
-        #time-slider:disabled::-webkit-slider-thumb { cursor: not-allowed; }
-        #time-slider:disabled::-moz-range-thumb { cursor: not-allowed; }
+
+        #time-slider:disabled::-webkit-slider-thumb {
+            cursor: not-allowed;
+        }
+
+        #time-slider:disabled::-moz-range-thumb {
+            cursor: not-allowed;
+        }
 
         /* 3. Duration Selector */
         .duration-selector {
@@ -124,7 +136,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-        
+
         .duration-selector label {
             display: flex;
             align-items: center;
@@ -135,38 +147,110 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
-        .duration-selector input[type="radio"] { accent-color: #2E7D32; }
-        .duration-selector input[type="radio"]:checked + span { font-weight: 600; }
-        .duration-selector label:has(input:checked) {
-             border-color: #2E7D32;
-             background-color: #F1F8E9;
+
+        .duration-selector input[type="radio"] {
+            accent-color: #2E7D32;
         }
-        
+
+        .duration-selector input[type="radio"]:checked+span {
+            font-weight: 600;
+        }
+
+        .duration-selector label:has(input:checked) {
+            border-color: #2E7D32;
+            background-color: #F1F8E9;
+        }
+
         /* Visual Summary Timeline */
-        .visual-summary { background-color: #fafafa; border-radius: 6px; padding: 16px; border: 1px solid #eee; }
-        .visual-summary p { margin: 0 0 12px 0; font-size: 0.9rem; text-align: center; }
-        .visual-summary strong { color: #2E7D32; }
-        .timeline-track { width: 100%; height: 12px; background-color: #e0e0e0; border-radius: 6px; position: relative; }
-        #timeline-selection { position: absolute; top: 0; height: 100%; background-color: #388E3C; border-radius: 6px; transition: all 0.3s ease-in-out; }
-        .hour-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; margin-top: 6px; padding: 0 2px; }
+        .visual-summary {
+            background-color: #fafafa;
+            border-radius: 6px;
+            padding: 16px;
+            border: 1px solid #eee;
+        }
+
+        .visual-summary p {
+            margin: 0 0 12px 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .visual-summary strong {
+            color: #2E7D32;
+        }
+
+        .timeline-track {
+            width: 100%;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        #timeline-selection {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background-color: #388E3C;
+            border-radius: 6px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .hour-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 6px;
+            padding: 0 2px;
+        }
 
         /* Final Predict Button */
-        .predict-btn { width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 600; color: white; background-color: #388E3C; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .predict-btn:hover { background-color: #2E7D32; }
+        .predict-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #388E3C;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .predict-btn:hover {
+            background-color: #2E7D32;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="forecast-card">
         <div class="forecast-header">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="18" x2="8" y2="18"></line><line x1="12" y1="14" x2="12" y2="22"></line><line x1="20" y1="10" x2="4" y2="10"></line><line x1="18" y1="6" x2="6" y2="6"></line><line x1="14" y1="2" x2="10" y2="2"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="16" y1="18" x2="8" y2="18"></line>
+                <line x1="12" y1="14" x2="12" y2="22"></line>
+                <line x1="20" y1="10" x2="4" y2="10"></line>
+                <line x1="18" y1="6" x2="6" y2="6"></line>
+                <line x1="14" y1="2" x2="10" y2="2"></line>
+            </svg>
             Forecast Settings
         </div>
         <div class="forecast-body">
-            
+
             <div class="form-step">
-                <h4>1. Select a Day</h4>
+                <div class="step-header mb-1">
+                    <h4>1. Select a Day</h4>
+                    <span id="date-slider-value"></span>
+                </div>
+
                 <select id="date-select"></select>
             </div>
 
@@ -174,8 +258,13 @@
                 <div class="step-header">
                     <h4>2. Select a Start Time</h4>
                     <span id="time-slider-value">5:00 PM</span>
+
                 </div>
+
                 <input type="range" id="time-slider" min="0" max="23" step="1" value="17">
+                <div class="hour-labels">
+                    <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>12am</span>
+                </div>
             </div>
 
             <div class="form-step">
@@ -199,7 +288,11 @@
             </div>
 
             <button class="predict-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
                 Predict Landslide Risk
             </button>
         </div>
@@ -211,6 +304,7 @@
             const dateSelect = document.getElementById('date-select');
             const timeSlider = document.getElementById('time-slider');
             const timeSliderValue = document.getElementById('time-slider-value');
+            const dateSliderValue = document.getElementById('date-slider-value');
             const durationSelector = document.getElementById('duration-selector');
             const summaryText = document.getElementById('forecast-summary-text');
             const timelineSelection = document.getElementById('timeline-selection');
@@ -221,7 +315,21 @@
                 const period = hour < 12 || hour === 24 ? 'AM' : 'PM';
                 return `${h}:00 ${period}`;
             };
-            
+
+
+            // <<< NEW HELPER FUNCTION >>>
+            /**
+             * Converts a JavaScript Date object to YYYY-MM-DD format.
+             * @param {Date} dateObject - The JavaScript Date object to format.
+             * @returns {string} The formatted date string, e.g., "2024-07-10".
+             */
+            const formatDateToYYYYMMDD = (dateObject) => {
+                const year = dateObject.getFullYear();
+                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                const day = String(dateObject.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
             // --- Initial Setup Functions ---
             function generateDateOptions() {
                 const today = new Date();
@@ -231,6 +339,7 @@
                     date.setDate(today.getDate() + i);
                     const option = document.createElement('option');
                     option.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', options);
+                    option.value = formatDateToYYYYMMDD(date);
                     option.dataset.dateLabel = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' });
                     dateSelect.appendChild(option);
                 }
@@ -250,11 +359,11 @@
 
                 const startHour = isEntireDay ? 0 : selectedStartHour;
                 const duration = isEntireDay ? 24 : selectedDuration;
-                
+
                 // Cap duration at the end of the day
                 const effectiveDuration = Math.min(duration, 24 - startHour);
                 const endHour = (startHour + effectiveDuration);
-                
+
                 // 3. Update summary text
                 if (isEntireDay) {
                     summaryText.textContent = `the ${selectedDateLabel}`;
@@ -267,18 +376,23 @@
                 const widthPercent = (effectiveDuration / 24) * 100;
                 timelineSelection.style.left = `${leftPercent}%`;
                 timelineSelection.style.width = `${widthPercent}%`;
+
+                // 5. Update day label
+                const dateForBackend = dateSelect.value;
+                dateSliderValue.textContent = dateForBackend;
+                console.log("Date for backend:", dateForBackend);
             }
 
             // --- Event Listeners ---
             dateSelect.addEventListener('change', updateForecast);
-            
+
             timeSlider.addEventListener('input', () => {
                 // Update the visual text label in real-time
                 timeSliderValue.textContent = formatHour(parseInt(timeSlider.value, 10));
                 // Recalculate everything
                 updateForecast();
             });
-            
+
             durationSelector.addEventListener('change', updateForecast);
 
             // --- Initialization ---
@@ -287,6 +401,7 @@
         });
     </script>
 </body>
+
 </html>
 
 
