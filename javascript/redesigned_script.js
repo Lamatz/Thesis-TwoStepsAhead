@@ -74,7 +74,7 @@ async function updateLocationInfo(lat, lng) {
     selectedLocation = { lat, lng, name: "Fetching..." };
     fetchedLocationData = { soil_type: null, slope: null };
     lastFetchedWeatherData = null;
-    hideAndClearReportSummary();
+    //hideAndClearReportSummary();
 
     // --- 2. Update UI immediately with "Fetching..." status ---
     document.getElementById("loc-lat").innerText = lat.toFixed(4);
