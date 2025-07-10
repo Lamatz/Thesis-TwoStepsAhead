@@ -292,10 +292,10 @@ def get_weather():
 # I WILL CHANGE THIS PATHING
 
 # Load trained model and scaler
-with open("backend/model_v2.pkl", "rb") as model_file:
+with open("backend/model_2.pkl", "rb") as model_file:
     model = pickle.load(model_file)
 
-with open("backend/scaler_v2.pkl", "rb") as scaler_file:
+with open("backend/scaler_2.pkl", "rb") as scaler_file:
     scaler = pickle.load(scaler_file)
 
 @app.route("/predict", methods=["POST"])
