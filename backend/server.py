@@ -137,7 +137,7 @@ def get_location_data():
 def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
     try:
         # Combine date and time for a precise endpoint
-        end_datetime = datetime.strptime(f"{end_date_str} {end_time_str}", "%Y-%m-%d %H:%M")
+        end_datetime = datetime.strptime(f"{end_date_str} {end_time_str}", "%Y-%m-%d %H")
         
         # Fetch data for the last 6 days to ensure all windows are covered
         api_start_date = end_datetime - timedelta(days=6)
