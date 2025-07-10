@@ -115,6 +115,7 @@ async function updateLocationInfo(lat, lng) {
         // --- 7. Fetch weather if date is already selected ---
         const date = document.getElementById("date-picker").value;
         const time = document.getElementById("time-picker").value;
+   
         if (date) {
             fetchWeatherData(lat, lng, date, time);
         }
@@ -124,7 +125,10 @@ async function updateLocationInfo(lat, lng) {
         alert("Could not fetch all data for this location. " + error.message);
         document.getElementById("loc-name").innerText = "Error fetching data.";
     }
+    
 }
+    
+
 
 
 // MODIFIED: fetchWeatherData to accept and send time
@@ -144,11 +148,11 @@ async function fetchWeatherData(lat, lon, date, time) {
         document.getElementById("soil-moisture").value = data.soil_moisture?.toFixed(3) || "N/A";
         for (const key in data.cumulative_rainfall) {
             const id = `rainfall-${key.replace('_', '-')}`;
-            if(document.getElementById(id)) document.getElementById(id).value = data.cumulative_rainfall[key].toFixed(4);
+            if (document.getElementById(id)) document.getElementById(id).value = data.cumulative_rainfall[key].toFixed(4);
         }
         for (const key in data.rain_intensity) {
             const id = `rain-intensity-${key.replace('_', '-')}`;
-            if(document.getElementById(id)) document.getElementById(id).value = data.rain_intensity[key].toFixed(4);
+            if (document.getElementById(id)) document.getElementById(id).value = data.rain_intensity[key].toFixed(4);
         }
         console.log("Weather data fetched and stored.", lastFetchedWeatherData);
     } catch (error) {
@@ -164,6 +168,9 @@ async function fetchWeatherData(lat, lon, date, time) {
 
 
 function populateReportSummary() {
+
+    console.log("Populating");
+
     // --- 1. Validation ---
     if (!lastPredictionResult || !lastFetchedWeatherData) {
         alert("Cannot generate report: Critical data is missing. Please try the prediction again.");
@@ -173,6 +180,8 @@ function populateReportSummary() {
     // --- 2. Show the report section ---
     const reportSection = document.getElementById("report-summary-section");
     reportSection.style.display = "block";
+
+    console.log("Populating");
 
     // --- 3. Populate all text fields ---
     document.getElementById("report-location-name").innerText = selectedLocation.name || "N/A";
@@ -187,7 +196,18 @@ function populateReportSummary() {
     const forecastSelect = document.getElementById("forecast-period");
     const periodValue = forecastSelect.value;
     const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
-    
+    document.getElementById("report-forecast-period").innerText = periodText;
+    if (periodValue !== 'none') {
+        document.getElementById("report-cumulative-rain").innerText = lastFetchedWeatherData.cumulative_rainfall?.[periodValue]?.toFixed(1) ?? "N/A";
+        document.getElementById("report-intensity-rain").innerText = lastFetchedWeatherData.rain_intensity?.[periodValue]?.toFixed(2) ?? "N/A";
+    } else {
+        document.getElementById("report-cumulative-rain").innerText = "N/A";
+        document.getElementById("report-intensity-rain").innerText = "N/A";
+    }
+
+
+
+    console.log("Populating");
 
     // --- 4. Destroy old charts ---
     if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
@@ -198,6 +218,16 @@ function populateReportSummary() {
     // --- 5. Generate all four new charts with FULL CONFIGURATIONS ---
     const hourlyData = lastFetchedWeatherData.hourly_chart_data || [];
     const dailyData = lastFetchedWeatherData.daily_chart_data || [];
+
+
+    console.log("populating123");
+
+    // Now log the results to see what they became
+    console.log("Resulting 'hourlyData':", hourlyData);
+    console.log("Resulting 'dailyData':", dailyData);
+
+    // Pro-tip: If you expect an array of objects, console.table is fantastic!
+    console.table(hourlyData);
 
     // Chart 1: Hourly Cumulative
     hourlyCumulativeChart = new Chart(document.getElementById('hourly-cumulative-chart').getContext('2d'), {
@@ -230,6 +260,8 @@ function populateReportSummary() {
         options: { scales: { y: { beginAtZero: true } } }
     });
 
+
+
     // Chart 3: Daily Cumulative
     dailyCumulativeChart = new Chart(document.getElementById('daily-cumulative-chart').getContext('2d'), {
         type: 'bar',
@@ -260,7 +292,7 @@ function populateReportSummary() {
         },
         options: { scales: { y: { beginAtZero: true } } }
     });
-    
+
     // --- 6. Scroll the report into view ---
     reportSection.scrollIntoView({ behavior: 'smooth' });
 }
@@ -306,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Restrict date picker using the local timezone ---
     const datePicker = document.getElementById("date-picker");
     const today = new Date();
-    
+
     // Set the minimum date to today (local time)
     datePicker.min = toLocalISOString(today);
 
@@ -363,6 +395,10 @@ document.getElementById('search-btn-icon').addEventListener('click', () => searc
 function handleDateTimeChange() {
     const date = document.getElementById("date-picker").value;
     const time = document.getElementById("time-picker").value;
+
+    console.log("date: " + date);
+    console.log("time: " + time);
+
     if (selectedLocation.lat && date && time) {
         fetchWeatherData(selectedLocation.lat, selectedLocation.lng, date, time);
     } else if (date && time) {
@@ -376,22 +412,61 @@ document.getElementById("time-picker").addEventListener("change", handleDateTime
 
 // Predict button click
 document.getElementById("predict-btn").addEventListener("click", async () => {
-    // --- 1. Validation ---
-    const forecastSelect = document.getElementById("forecast-period");
-    selectedForecastPeriod.value = forecastSelect.value;
-    selectedForecastPeriod.text = forecastSelect.options[forecastSelect.selectedIndex].text;
 
-     if (!selectedLocation.lat || !selectedPredictionDate || !selectedPredictionTime || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
+    console.log("button clicked");
+
+
+
+    // 126 CHANGES ----------->
+
+    // Find the radio button that is currently checked
+    const checkedRadioButton = document.querySelector('input[name="duration"]:checked');
+
+    // Check if a radio button was actually selected
+    if (!checkedRadioButton) {
+        alert("Validation Error: Please select a Forecast Duration.");
+        return;
+    }
+
+
+    // Now get the value and text from the correct elements
+    const selectedValue = checkedRadioButton.value; // This will be "3", "6", "12", or "24"
+    const selectedText = checkedRadioButton.nextElementSibling.textContent; // Gets the text from the <span> next to the input
+
+
+    // Assuming 'selectedForecastPeriod' is an object you want to update
+    selectedForecastPeriod.value = selectedValue;
+    selectedForecastPeriod.text = selectedText;
+
+    // 126 CHANGES ----------->
+
+
+
+    // --- 1. Validation ---
+    // const forecastSelect = document.getElementById("forecast-period");
+    // selectedForecastPeriod.value = forecastSelect.value;
+    // selectedForecastPeriod.text = forecastSelect.options[forecastSelect.selectedIndex].text;
+
+    console.log("PredictionDate " + selectedPredictionDate);
+    console.log("PredictionTime: " + selectedPredictionTime);
+    console.log("ForecastedPeriod: " + selectedForecastPeriod.value);
+    // The Right Way
+    console.log("WeatherData:", lastFetchedWeatherData);
+
+    if (!selectedLocation.lat || !selectedPredictionDate || !selectedPredictionTime || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
         alert("Validation Error: Please ensure a Location, a valid Date, Time, and Forecast Period are selected.");
         return;
     }
-    
+
+    console.log("button clicked - 1");
+
+
     // Your original model needs all 6 rainfall features. We still send them.
     const requestData = {
         soil_type: fetchedLocationData.soil_type_snum,
         slope: parseFloat(document.getElementById("slope").value),
         soil_moisture: parseFloat(document.getElementById("soil-moisture").value),
-        
+
         "rainfall-3_hr": parseFloat(document.getElementById("rainfall-3-hr").value),
         "rainfall-6_hr": parseFloat(document.getElementById("rainfall-6-hr").value),
         "rainfall-12_hr": parseFloat(document.getElementById("rainfall-12-hr").value),
@@ -406,10 +481,10 @@ document.getElementById("predict-btn").addEventListener("click", async () => {
         "rain-intensity-3-day": parseFloat(document.getElementById("rain-intensity-3-day").value),
         "rain-intensity-5-day": parseFloat(document.getElementById("rain-intensity-5-day").value),
     };
-    
+
     // Check for NaN values before sending
-    for(const key in requestData) {
-        if(isNaN(requestData[key])) {
+    for (const key in requestData) {
+        if (isNaN(requestData[key])) {
             alert(`Validation Error: Invalid data for "${key}". Cannot predict.`);
             return;
         }
@@ -427,7 +502,7 @@ document.getElementById("predict-btn").addEventListener("click", async () => {
         if (result.error) throw new Error(result.error);
 
         lastPredictionResult = { prediction: result.prediction, confidence: result.confidence };
-        
+
         // --- 3. Show Modal ---
         document.getElementById("modal-body").innerHTML = `<p><strong>Prediction:</strong> ${result.prediction}</p><p><strong>Confidence:</strong> ${result.confidence}</p>`;
         document.getElementById("prediction-modal").style.display = "flex";
@@ -446,6 +521,8 @@ document.getElementById("report-btn").addEventListener("click", () => {
     const reportSection = document.getElementById("report-summary-section");
     reportSection.style.display = "block";
     reportSection.scrollIntoView({ behavior: 'smooth' });
+
+    console.log("clicked");
 });
 
 // Reset All button
@@ -462,25 +539,25 @@ document.getElementById("reset-btn").addEventListener("click", resetUI);
 let scrollTopButton = document.getElementById("scrollTopBtn");
 
 // When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {
-  scrollFunction();
+window.onscroll = function () {
+    scrollFunction();
 };
 
 function scrollFunction() {
-  // The threshold for showing the button (e.g., 100 pixels)
-  const showButtonThreshold = 500;
+    // The threshold for showing the button (e.g., 100 pixels)
+    const showButtonThreshold = 500;
 
-  if (document.body.scrollTop > showButtonThreshold || document.documentElement.scrollTop > showButtonThreshold) {
-    scrollTopButton.style.display = "block";
-  } else {
-    scrollTopButton.style.display = "none";
-  }
+    if (document.body.scrollTop > showButtonThreshold || document.documentElement.scrollTop > showButtonThreshold) {
+        scrollTopButton.style.display = "block";
+    } else {
+        scrollTopButton.style.display = "none";
+    }
 }
 
 // When the user clicks on the button, scroll to the top of the document smoothly
-scrollTopButton.addEventListener("click", function() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+scrollTopButton.addEventListener("click", function () {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 });
