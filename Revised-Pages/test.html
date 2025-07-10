@@ -7,13 +7,13 @@
     <title>Landslide Risk Prediction</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Leaflet CSS -->
+    <!-- Leaflet CSS (Can be removed if only using Mapbox) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Bootstrap Icons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-      <!-- Mapbox GL JS CSS -->
+    <!-- Mapbox GL JS CSS -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
 
     <!-- Custom CSS -->
@@ -21,33 +21,30 @@
     <link rel="stylesheet" href="../css/homepage_style-v2.css">
     <link rel="stylesheet" href="../css/navbar-style.css">
 
-    <!-- Inside the <head> section -->
+    <!-- ============================================= -->
+    <!-- == ADDITION 1: CSS FOR MAP SIZING == -->
+    <!-- ============================================= -->
     <style>
-        /* Add this to your existing style block or create a new one */
+        main.col-lg-9, main.col-md-8 {
+            position: relative;
+            /* Full viewport height minus navbar height (adjust 56px if your navbar is taller/shorter) */
+            height: calc(100vh - 56px); 
+        }
+
         #map {
             position: absolute;
             top: 0;
+            left: 0;
+            right: 0;
             bottom: 0;
             width: 100%;
             height: 100%;
         }
-
-        /* The parent column needs to be positioned for the map to fill it */
-        main.col-lg-9 {
-            position: relative;
-            height: calc(100vh - 56px); /* Full viewport height minus navbar height */
-        }
-    </style>
-
-
-
-    <style>
-        /* Small style block for any quick overrides if needed */
     </style>
 </head>
 
 <body>
-<!-- Navbar -->
+    <!-- Navbar -->
     <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark ">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -183,7 +180,7 @@
         </div> <!-- End Main Row -->
     </div> <!-- End Main Container -->
 
-    <!-- ========================= -->
+ <!-- ========================= -->
     <!-- == PREDICTION MODAL == -->
     <!-- ========================= -->
     <div id="prediction-modal" class="modal-container">
@@ -305,26 +302,59 @@
 </div>
 
     
-    <!-- Leaflet JS -->
+    <!-- Leaflet JS (Can be removed if only using Mapbox) -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- === ADDITION: jsPDF and html2canvas for PDF download === -->
+    <!-- jsPDF and html2canvas for PDF download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+    
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    
     <!-- Your custom script -->
     <script src="../javascript/redesigned_script.js"></script>
 
     <!-- NAVBAR JS -->
     <script src="../javascript/navbar.js"></script>
+    
+    <!-- =================================================== -->
+    <!-- == ADDITION 2: JAVASCRIPT FOR MAP INITIALIZATION == -->
+    <!-- =================================================== -->
+    <script>
+        // --- MAPBOX INITIALIZATION ---
 
-        
-    <!-- Mapbox GL JS -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+        // 1. SET YOUR ACCESS TOKEN
+        // Go to account.mapbox.com to get your token
+        mapboxgl.accessToken = 'pk.eyJ1IjoibGFtYXR6IiwiYSI6ImNtY2l0M3g4ZTBhcnIyanF2dTY2Y284ZHMifQ.2BdFI8Lqjg8TXi2LGH7xUA'; // <-- IMPORTANT: REPLACE THIS!
+
+        // 2. INITIALIZE THE MAP
+        const map = new mapboxgl.Map({
+            container: 'map', // The ID of the container DIV
+            style: 'mapbox://styles/lamatz/cmcvi5j5g00g601sr0rva51xp', // The map style to use
+            center: [121.7740, 12.8797], // Starting position [longitude, latitude] (Center of Philippines)
+            zoom: 5 // Starting zoom level
+        });
+
+        // 3. (OPTIONAL) ADD CONTROLS
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // Now, your 'redesigned_script.js' can interact with this 'map' object.
+        // For example, to handle a map click:
+        map.on('click', (e) => {
+            const lng = e.lngLat.lng;
+            const lat = e.lngLat.lat;
+            console.log(`Map clicked at: Lng: ${lng}, Lat: ${lat}`);
+            // Here you would call the functions that are currently in your script
+            // to update the "Selected Location" card.
+            document.getElementById('loc-lat').textContent = lat.toFixed(6);
+            document.getElementById('loc-lng').textContent = lng.toFixed(6);
+            // You'd also need a function to get the location name from coordinates (reverse geocoding)
+        });
+    </script>
 
 </body>
 

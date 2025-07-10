@@ -29,7 +29,12 @@ body {
 }
 
 
-
+/*===========================
+            Images
+===========================*/
+.placeholder-img img{
+    width: 300px;
+}
 /*===========================
   Page Layout
 ===========================*/
@@ -159,7 +164,7 @@ button.learnhow-btn:hover{
 .hover-card:hover,
 .feature-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1) !important;
 }
 
 .factor-card {
@@ -168,7 +173,7 @@ button.learnhow-btn:hover{
 
 .factor-card:hover {
     transform: translateX(10px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Floating Cards */
