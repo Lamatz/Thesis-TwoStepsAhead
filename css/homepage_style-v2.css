@@ -128,13 +128,13 @@ body {
     transform: none;
 }
 
-button.learnhow-btn{
+a.learnhow-btn{
     /* outline: #00f2fe; */
     color: #8B4513;
     border: #8B4513 solid 1px;
 }
 
-button.learnhow-btn:hover{
+a.learnhow-btn:hover{
     /* outline: #00f2fe; */
     color: #8B4513;
     border: #8B4513 solid 1px;
