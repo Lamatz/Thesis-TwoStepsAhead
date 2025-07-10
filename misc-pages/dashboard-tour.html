@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="css/nav-style.css">
+  <!-- Shepherd CSS - Added back -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css"/>
+
+
+  <title>Two Step Ahead</title>
+
+  <style>
+    :root {
+      --text-color: #190809;
+      --background-color: #fcf5f5;
+      --primary-color: #603F26; /* This seems different from #603F26 and #6C4E31 used before. I will stick to the previous example's button colors for consistency with the tutorial modal styling you requested. */
+      --secondary-color: #FFDBB5;
+      --accent-color: #ce9f66;
+    }
+
+    .select {
+      background-color: #FFDBB5;
+    }
+
+    body {
+      padding-top: 15px; /* Keeping this padding */
+      background-color: var(--background-color);
+      color: #190809; /* Changed color to text-color variable for readability */
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-section {
+      border: 1px solid #ddd; /* Lighter border */
+      background-color: white; /* Lighter background */
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      margin-left: 15px;
+      margin-right: 15px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add a subtle shadow */
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 15px; /* Increased margin */
+      color: #603F26; /* Using the sidebar text color for consistency */
+      text-align: center; /* Center the title */
+    }
+
+    .map-panel {
+      height: 600px;
+      background-color: var(--background-color); /* Map panel background */
+      border-radius: 8px;
+      position: relative;
+      padding: 5px;
+      margin-bottom: 20px;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    /* The stat-box styles are in the previous example, let's keep them if needed,
+       but they don't seem to be used in this dashboard HTML structure. */
+    
+    .stat-box {
+      background-color: var(--secondary-color);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .stat-box h4 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .stat-box p {
+      font-size: 1.5rem;
+      color: #f77;
+    }
+    
+
+     /* --- Tutorial Modal Styles (Copied from previous example) --- */
+        .tutorial-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1050; /* Sit on top (Bootstrap modal default z-index) */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tutorial-modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Center the modal */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be responsive */
+            max-width: 400px; /* Max width */
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tutorial-modal-content h2 {
+            margin-top: 0;
+            color: #603F26; /* Match sidebar text */
+        }
+
+        .tutorial-modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+     /* --- End Tutorial Modal Styles --- */
+
+    /* --- Shepherd Button Styles (Copied from previous example) --- */
+        /* Add some basic styling for Shepherd buttons to look like Bootstrap buttons */
+        .shepherd-button {
+            padding: .375rem .75rem !important;
+            border-radius: .25rem !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            cursor: pointer !important;
+            border: 1px solid transparent !important;
+        }
+
+        .shepherd-button.shepherd-button-primary {
+            color: #fff !important;
+            background-color: #6C4E31 !important; /* Darker brown from previous example */
+            border-color: #6C4E31 !important;
+        }
+
+        .shepherd-button.shepherd-button-primary:hover {
+             background-color: #533c27 !important; /* Slightly darker on hover */
+             border-color: #533c27 !important;
+        }
+
+
+        .shepherd-button.shepherd-button-secondary {
+             color: #6C4E31 !important; /* Darker brown text */
+             background-color: transparent !important;
+             border-color: #6C4E31 !important; /* Darker brown border */
+        }
+         .shepherd-button.shepherd-button-secondary:hover {
+             color: #fff !important;
+             background-color: #6C4E31 !important; /* Darker brown on hover */
+             border-color: #6C4E31 !important;
+         }
+
+     /* --- End Shepherd Button Styles --- */
+
+
+        /* --- Custom Z-index for Shepherd (Copied from previous example) --- */
+        /* Ensure Shepherd overlay is on top */
+        .shepherd-modal-overlay {
+            z-index: 99998 !important; /* Slightly lower than tooltip */
+        }
+
+        /* Ensure Shepherd tooltip/element is on top */
+        .shepherd-element {
+             z-index: 99999 !important; /* A very high value */
+        }
+         /* --- End Custom Z-index --- */
+
+         /* Custom class for Shepherd step background (Copied from previous example) */
+        .my-custom-step-background {
+            background-color: #fff; /* White background for step */
+            color: #190809; /* Ensure text is readable on white */
+        }
+         /* Ensure Shepherd's text is dark on the white background */
+        .my-custom-step-background .shepherd-text {
+            color: #190809 !important;
+        }
+        .my-custom-step-background .shepherd-header {
+             border-bottom-color: #eee; /* Add a subtle line below header */
+        }
+        .my-custom-step-background .shepherd-arrow:before {
+             border-color: transparent #fff !important; /* Ensure arrow matches background */
+        }
+        .my-custom-step-background.shepherd-has-title .shepherd-arrow:before {
+            border-color: transparent #fff !important; /* Ensure arrow matches background with title */
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="top"] .shepherd-arrow:before {
+            border-top-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="bottom"] .shepherd-arrow:before {
+            border-bottom-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="left"] .shepherd-arrow:before {
+            border-left-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="right"] .shepherd-arrow:before {
+            border-right-color: #fff !important;
+        }
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- SIDEBAR -->
+      <div class="col-2 p-0">
+        <div class="d-flex flex-column sidebar">
+          <a href="/" class="d-block pt-3 sidebar-body menu-text mt-4 d-flex justify-content-center">
+            <img src="icons/logo.svg" class="pb-1" alt="logo">
+            <p class="ms-3 mb-0 pt-3" style="color:#603F26">RED Rams</p>
+          </a>
+
+          <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li class="my-2"><a href="home.html" class="nav-link"><p>Home</p></a></li>
+            <li class="my-2"><a href="dynamic map.html" class="nav-link"><p>Dynamic Map</p></a></li>
+            <li class="my-2"><a href="user guide.html" class="nav-link"><p>User Guide</p></a></li>
+            <li class="my-2"><a href="dashboard.html" class="nav-link sidebar-highlight"><div class="border_box"><p>Dashboard</p></div></a></li>
+            <li class="my-2"><a href="training result.html" class="nav-link"><p>Training Result</p></a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <main class="col-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 style="color:black;">Landslide Forecasting Dashboard</h2>
+          <div class="d-flex gap-3 region">
+            <select id="regionSelect" class="form-select" style="background-color: white; box-sizing: border-box;">
+              <option value="" selected>Choose Region</option>
+              <option value="Region I - Ilocos Region">Region I - Ilocos Region</option>
+              <option value="Region II - Cagayan Valley">Region II - Cagayan Valley</option> <!-- <-- Look closely here! -->
+              <option value="Region III - Central Luzon">Region III - Central Luzon</option>
+              <option value="Region IV-A - CALABARZON">Region IV-A - CALABARZON</option>
+              <option value="Region IV-B - MIMAROPA">Region IV-B - MIMAROPA</option>
+              <option value="Region V - Bicol Region">Region V - Bicol Region</option>
+              <option value="Region VI - Western Visayas">Region VI - Western Visayas</option>
+              <option value="Region VII - Central Visayas">Region VII - Central Visayas</option>
+              <option value="Region VIII - Eastern Visayas">Region VIII - Eastern Visayas</option>
+              <option value="Region IX - Zamboanga Peninsula">Region IX - Zamboanga Peninsula</option>
+              <option value="Region X - Northern Mindanao">Region X - Northern Mindanao</option>
+              <option value="Region XI - Davao Region">Region XI - Davao Region</option>
+              <option value="Region XII - SOCCSKSARGEN">Region XII - SOCCSKSARGEN</option>
+              <option value="Region XIII - Caraga">Region XIII - Caraga</option>
+              <option value="NCR - National Capital Region">NCR - National Capital Region</option>
+              <option value="CAR - Cordillera Administrative Region">CAR - Cordillera Administrative Region</option>
+              <option value="BARMM - Bangsamoro Autonomous Region in Muslim Mindanao">BARMM - Bangsamoro Autonomous Region in Muslim Mindanao</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Top Charts - Added ID for tutorial targeting -->
+        <div id="top-charts-container" class="d-flex justify-content-center flex-wrap gap-3 mb-4">
+          <div class="dashboard-section" style="width: 400px;">
+            <div class="section-title">Early Warning Alerts vs Actual Events</div>
+            <canvas id="structureChart"></canvas>
+          </div>
+          <div class="dashboard-section" style="width: 400px;">
+            <div class="section-title">History of Landslides Occurence (Monthly)</div>
+            <canvas id="roadsChart"></canvas>
+          </div>
+          <div class="dashboard-section" style="width: 400px;">
+            <div class="section-title">Regions with most landslide occurence</div>
+            <canvas id="agriChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="d-flex justify-content-center">
+          <div class="dashboard-section map-panel mb-4" style="width: 95%; max-width: 1200px;">
+            <div id="map"></div>
+          </div>
+        </div>
+
+        <!-- Vulnerability Section - Added ID for tutorial targeting -->
+        <div id="vulnerability-charts-container" class="d-flex justify-content-center flex-wrap gap-3 mb-4">
+          <div class="dashboard-section " style="width: 500px;">
+            <div class="section-title">Soil Vulnerability by Type</div>
+            <canvas id="soilPieChart"></canvas>
+          </div>
+          <div class="dashboard-section" style="width: 450px; height:300px">
+            <div class="section-title">Slope Type Vulnerabilities</div>
+            <canvas id="rainChart"></canvas>
+          </div>
+        </div>
+
+      
+        </div>
+      </main>
+    </div>
+  </div>
+
+    <!-- Initial Tutorial Modal HTML - Added back -->
+    <div id="tutorial-modal" class="tutorial-modal">
+        <div class="tutorial-modal-content">
+            <h2>Welcome!</h2>
+            <p style="color: black;">Would you like to take a quick tour to understand how to use this dashboard page?</p>
+            <div class="tutorial-modal-buttons">
+                <button id="tutorial-continue-btn" class="btn" style="background-color:#6C4E31; color:#fff">Continue Tour</button>
+                <button id="tutorial-skip-btn" class="btn" style="background-color:#FFEAC5; color:black">Skip Tour</button>
+            </div>
+        </div>
+    </div>
+    <!-- End of Initial Tutorial Modal HTML -->
+
+
+  <!-- External Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Shepherd JavaScript library - Added back -->
+  <script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script>
+
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+
+  <!-- Custom Scripts -->
+  <script>
+      // Data for all regions
+      const allDataa = { // Renamed to allDataa to avoid conflict with the CSV data variable 'allData'
+        labels: [
+            'Region I - Ilocos Region', 'Region II - Cagayan Valley', 'Region III - Central Luzon',
+            'Region IV-A - CALABARZON', 'Region IV-B - MIMAROPA', 'Region V - Bicol Region',
+            'Region VI - Western Visayas', 'Region VII - Central Visayas', 'Region VIII - Eastern Visayas',
+            'Region IX - Zamboanga Peninsula', 'Region X - Northern Mindanao', 'Region XI - Davao Region',
+            'Region XII - SOCCSKSARGEN', 'Region XIII - Caraga', 'NCR - National Capital Region',
+            'CAR - Cordillera Administrative Region', 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao'
+        ],
+        datasets: [
+            {
+                label: 'Alerts Issued',
+                // Sample data - replace with actual data if available
+                data: [10, 15, 12, 8, 13, 7, 9, 14, 6, 11, 10, 13, 15, 12, 14, 9, 16],
+                backgroundColor: '#007BFF'
+            },
+            {
+                label: 'Actual Landslides',
+                 // Sample data - replace with actual data if available
+                data: [8, 16, 10, 12, 9, 10, 8, 13, 7, 15, 14, 11, 9, 10, 13, 8, 12],
+                backgroundColor: '#FF4136'
+            }
+        ]
+      };
+
+      // Create chart for Structures Exposed to Landslides (Renamed/Repurposed to Alerts vs Actual for the tutorial)
+      const ctxAlerts = document.getElementById('structureChart').getContext('2d'); // Changed ctx name
+      const alertsChart = new Chart(ctxAlerts, { // Changed chart variable name
+        type: 'bar',
+        data: {
+            labels: [],  // Empty initially, will show selected region
+            datasets: [
+                {
+                    label: 'Alerts Issued',
+                    data: [0], // Initial empty data
+                    backgroundColor: '#007BFF'
+                },
+                {
+                    label: 'Actual Landslides',
+                    data: [0], // Initial empty data
+                    backgroundColor: '#FF4136'
+                }
+            ]
+        },
+        options: {
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { beginAtZero: true } }
+        }
+      });
+
+
+      // Sample monthly landslide data for each region
+      const regionMonthlyData = {
+        'Region I - Ilocos Region': [3, 5, 12, 20, 35, 42, 50, 45, 30, 15, 8, 4],
+        'Region II - Cagayan Valley': [2, 4, 8, 15, 25, 30, 38, 35, 25, 12, 6, 3],
+        'Region III - Central Luzon': [1, 3, 6, 10, 18, 25, 30, 28, 20, 10, 5, 2],
+        'Region IV-A - CALABARZON': [4, 6, 10, 18, 28, 35, 40, 38, 25, 14, 7, 3],
+        'Region IV-B - MIMAROPA': [2, 3, 7, 12, 22, 30, 34, 32, 20, 9, 4, 2],
+        'Region V - Bicol Region': [3, 5, 9, 16, 26, 33, 37, 35, 22, 11, 6, 3],
+        'Region VI - Western Visayas': [2, 4, 6, 14, 24, 28, 32, 31, 19, 10, 5, 2],
+        'Region VII - Central Visayas': [3, 5, 8, 13, 21, 27, 29, 28, 18, 9, 4, 2],
+        'Region VIII - Eastern Visayas': [2, 4, 7, 11, 20, 26, 30, 29, 17, 8, 4, 1],
+        'Region IX - Zamboanga Peninsula': [1, 3, 5, 10, 18, 24, 28, 27, 16, 7, 3, 1],
+        'Region X - Northern Mindanao': [2, 4, 6, 12, 20, 25, 27, 26, 15, 7, 3, 1],
+        'Region XI - Davao Region': [2, 5, 7, 13, 22, 28, 30, 29, 18, 8, 4, 2],
+        'Region XII - SOCCSKSARGEN': [1, 3, 5, 11, 19, 24, 26, 25, 14, 6, 2, 1],
+        'Region XIII - Caraga': [2, 4, 6, 12, 21, 27, 29, 28, 17, 8, 3, 1],
+        'NCR - National Capital Region': [1, 2, 4, 8, 15, 20, 22, 21, 12, 6, 3, 1],
+        'CAR - Cordillera Administrative Region': [3, 6, 9, 14, 23, 29, 33, 31, 19, 10, 5, 2],
+        'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao': [2, 4, 6, 10, 18, 22, 25, 24, 14, 6, 3, 1]
+      };
+
+
+    // History of Landslides Occurence (Monthly) Chart
+    const ctxHistory = document.getElementById('roadsChart').getContext('2d'); // Changed ctx name
+    const historyChart = new Chart(ctxHistory, { // Changed chart variable name
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Landslides',
+          data: [], // Initially empty or regionMonthlyData['Region I']
+          backgroundColor: '#E67300'
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+
+    // Soil Vulnerability Pie Chart (Static Data)
+    const ctxSoil = document.getElementById('soilPieChart').getContext('2d'); // Changed ctx name
+    const soilChart = new Chart(ctxSoil, { // Changed chart variable name
+      type: 'pie',
+      data: {
+        labels: ['1 - Sandy Loam', '2 - Loam', '3 - Clay Loam', '4 - Sandy Clay Loam', '5 - Clay'],
+        datasets: [{
+          data: [10, 15, 35, 20, 40], // Static data
+          backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6']
+        }]
+      },
+       options: {
+          plugins: { legend: { display: true, position: 'right' } }, // Show legend
+       }
+    });
+
+
+    // Slope Type Vulnerabilities Bar Chart (Static Data)
+    const ctxSlope = document.getElementById('rainChart').getContext('2d'); // Changed ctx name
+    const slopeChart = new Chart(ctxSlope, { // Changed chart variable name
+      type: 'bar',
+      data: {
+        labels: [
+          '1 - <10° Flat',
+          '2 - 10°-20° Gentle Slope',
+          '3 - 20°-30° Moderate Slope',
+          '4 - 30°-40° Substantial Slope',
+          '5 - 40°-50° Steep Slope',
+          '6 - >50° Very Steep Slope'
+        ],
+        datasets: [{
+          label: 'Slope Vulnerability Level',
+          data: [5, 10, 15, 20, 25 , 30], // Static data
+          backgroundColor: '#2980b9'
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+
+   let map;
+    let heatLayer;
+    let allData = []; // Variable to store CSV data
+
+    function initializeMap() {
+      map = L.map('map', {
+        maxBounds: [[4, 116], [21, 127]],
+        maxBoundsViscosity: 1.0
+      }).setView([12.8797, 121.7740], 6); // Centered on the Philippines
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+    }
+
+    function updateHeatmap(selectedRegion) {
+      if (heatLayer) {
+        map.removeLayer(heatLayer);
+      }
+
+      const filteredHeatData = [];
+
+      // --- --- --- MODIFIED HEATMAP LOGIC --- --- ---
+      // Access using the CORRECT lowercase header names from your CSV: lat, long, region
+
+      allData.forEach(function(row) { // No index needed when header: true
+        // PapaParse with header:true automatically skips the header row and provides objects
+        // Check if the row object exists and has the necessary properties
+        if (row) {
+            const lat = parseFloat(row.lat);    // Access using row.lat
+            const lng = parseFloat(row.long);   // Access using row.long
+            const region = row.region;          // Access using row.region
+
+            // console.log(`Processing row: Lat=${lat}, Lng=${lng}, Region=${region}`); // Debug: check parsed values
+
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+              // Check if lat/lng are within reasonable bounds for the Philippines (optional but good practice)
+              if (lat >= 4 && lat <= 21 && lng >= 116 && lng <= 127) {
+                 if (selectedRegion === '' || region === selectedRegion) {
+                     // Use occurrence count or a default value for intensity if available in CSV
+                     // Assuming a simple intensity for visualization based on presence:
+                    filteredHeatData.push([lat, lng, 0.5]); // Add intensity value (e.g., 0.5)
+                  }
+              } else {
+                  // console.warn(`Skipping row with out-of-bounds coordinates:`, row);
+              }
+            } else {
+                // console.warn(`Skipping row with invalid coordinates:`, row);
+            }
+        } else {
+            // console.warn("Skipping empty or invalid row:", row); // Handle potentially empty rows from CSV end
+        }
+      });
+      // --- --- --- END MODIFIED HEATMAP LOGIC --- --- ---
+
+
+      heatLayer = L.heatLayer(filteredHeatData, {
+        radius: 25,
+        blur: 15,
+        maxZoom: 9,
+        gradient: {
+          0.2: 'blue',
+          0.4: 'lime',
+          0.6: 'yellow',
+          0.8: 'orange',
+          1.0: 'red'
+        }
+      });
+
+      heatLayer.addTo(map);
+    }
+
+   
+  document.addEventListener('DOMContentLoaded', function() {
+
+        // --- Tutorial Modal & Shepherd Initialization ---
+        // Get modal elements
+        const tutorialModal = document.getElementById('tutorial-modal');
+        const continueBtn = document.getElementById('tutorial-continue-btn');
+        const skipBtn = document.getElementById('tutorial-skip-btn');
+        const regionSelect = document.getElementById('regionSelect');
+
+
+        // Show the initial modal on page load
+        // Check if the user has already skipped the tour (optional, requires localStorage logic)
+        // const tourSkipped = localStorage.getItem('dashboardTourSkipped');
+        // if (tourSkipped) {
+        //     if (tutorialModal) tutorialModal.style.display = 'none';
+        // } else {
+            if (tutorialModal) {
+                 tutorialModal.style.display = 'flex'; // Otherwise, show the modal
+            } else {
+                 console.error("Initial tutorial modal element with ID 'tutorial-modal' not found!");
+            }
+        // }
+
+        // Handle Skip button click
+        if (skipBtn) {
+             skipBtn.addEventListener('click', () => {
+                if (tutorialModal) tutorialModal.style.display = 'none';
+                // Optional: Save that the user skipped the tour
+                // localStorage.setItem('dashboardTourSkipped', 'true');
+            });
+        } else {
+            console.error("Skip button with ID 'tutorial-skip-btn' not found!");
+        }
+
+
+        // Handle Continue button click
+        if (continueBtn) {
+            continueBtn.addEventListener('click', () => {
+                if (tutorialModal) tutorialModal.style.display = 'none'; // Hide the initial modal
+                startShepherdTour(); // Start the Shepherd tour
+            });
+        } else {
+             console.error("Continue button with ID 'tutorial-continue-btn' not found!");
+        }
+
+
+        function startShepherdTour() {
+            // Check if Shepherd is actually defined
+            if (typeof Shepherd === 'undefined') {
+                console.error("Shepherd.js failed to load!");
+                alert("The interactive tour feature is currently unavailable. Please check your internet connection or try again later.");
+                return;
+            }
+
+            const tour = new Shepherd.Tour({
+                useModalOverlay: true, // Dim the background and highlight the target element
+                defaultStepOptions: {
+                    cancelIcon: { enabled: true },
+                    scrollTo: { behavior: 'smooth', block: 'center' },
+                    classes: 'my-custom-step-background' // Use the custom class
+                }
+            });
+
+            tour.addStep({
+                id: 'region-select-step',
+                text: 'Welcome to the Dashboard! Use this dropdown to filter the data displayed on the dashboard by selecting a specific region.',
+                attachTo: {
+                    element: '#regionSelect',
+                    on: 'bottom'
+                },
+                canClickTarget: true, // Allow selecting a region during the tour
+                buttons: [
+                    {
+                        text: 'Next',
+                        action: tour.next,
+                        classes: 'shepherd-button shepherd-button-primary'
+                    }
+                ]
+            });
+
+             tour.addStep({
+                id: 'top-charts-step',
+                text: 'This section presents key summary charts, including Early Warning Alerts vs Actual Events, Monthly Landslide Occurrences, and the Regions with the Most Landslides.',
+                attachTo: {
+                    element: '#top-charts-container', // Target the container holding the charts
+                    on: 'top' // Position above the charts
+                },
+                canClickTarget: false, // No interaction needed here
+                buttons: [
+                    {
+                        text: 'Back',
+                        action: tour.back,
+                        classes: 'shepherd-button shepherd-button-secondary'
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next,
+                        classes: 'shepherd-button shepherd-button-primary'
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'map-step',
+                text: 'The map displays a heatmap showing the density of recorded landslide incidents or vulnerable areas, which updates based on the selected region.',
+                attachTo: {
+                    element: '#map', // Target the map div
+                    on: 'right' // Position to the right of the map
+                },
+                canClickTarget: true, // Allow interacting with the map (panning, zooming)
+                buttons: [
+                    {
+                        text: 'Back',
+                        action: tour.back,
+                        classes: 'shepherd-button shepherd-button-secondary'
+                    },
+                    {
+                        text: 'Next',
+                        action: tour.next,
+                        classes: 'shepherd-button shepherd-button-primary'
+                    }
+                ]
+            });
+
+
+            tour.addStep({
+                id: 'vulnerability-charts-step',
+                text: 'These charts illustrate the vulnerability breakdown based on crucial factors like different Soil Types and terrain Slope categories.',
+                attachTo: {
+                    element: '#vulnerability-charts-container', // Target the container holding these charts
+                    on: 'top' // Position above the charts
+                },
+                canClickTarget: false, // No interaction needed here
+                buttons: [
+                    {
+                        text: 'Back',
+                        action: tour.back,
+                        classes: 'shepherd-button shepherd-button-secondary'
+                    },
+                    {
+                        text: 'Finish',
+                        action: tour.complete, // This is the last step
+                        classes: 'shepherd-button shepherd-button-primary'
+                    }
+                ]
+            });
+
+
+            // Start the tour
+            tour.start();
+        }
+        // --- End Tutorial Modal & Shepherd Initialization ---
+
+
+
+      // --- Initialize Bootstrap Tooltips (Keep this part) ---
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
+          if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+              return new bootstrap.Tooltip(tooltipTriggerEl);
+          } else {
+              console.warn("Bootstrap Tooltip not available.");
+              return null;
+          }
+      }).filter(tooltip => tooltip !== null);
+      // --- End Tooltip Initialization ---
+
+
+      // Initialize Map *before* attempting to load CSV data
+      initializeMap();
+
+      // --- --- --- MODIFIED PAPAPARSE CALL --- --- ---
+      Papa.parse("datas.csv", {
+        download: true,
+        header: true, // <--- KEEPING true
+        complete: function(results) {
+          allData = results.data; // Store parsed CSV data (now array of objects)
+
+          // Filter out potentially empty rows at the end of the CSV if any
+          allData = allData.filter(row => row && row.lat && row.long && row.region);
+
+          console.log("CSV data loaded and filtered:", allData); // Check the structure now
+
+
+          const regionSelect = document.getElementById('regionSelect');
+
+          // Handle Region Select change for heatmap update and linked charts
+          if (regionSelect) { // Check if the element exists
+               regionSelect.addEventListener('change', function() {
+                  console.log("Region selected:", this.value);
+                  updateHeatmap(this.value); // Update heatmap based on selection
+
+                   // Update the Alerts vs Actual chart (still uses static data 'allDataa')
+                  const selectedRegion = this.value;
+                  const regionIndexInStatic = allDataa.labels.indexOf(selectedRegion); // Index in static labels
+
+                  if (regionIndexInStatic !== -1) {
+                      alertsChart.data.labels = [allDataa.labels[regionIndexInStatic]];
+                      alertsChart.data.datasets[0].data = [allDataa.datasets[0].data[regionIndexInStatic]];
+                      alertsChart.data.datasets[1].data = [allDataa.datasets[1].data[regionIndexInStatic]];
+                  } else {
+                       // If "Choose Region" or not found, clear this chart
+                      alertsChart.data.labels = [];
+                      alertsChart.data.datasets[0].data = [];
+                      alertsChart.data.datasets[1].data = [];
+                  }
+                  alertsChart.update();
+
+
+                  // Update the Monthly History chart (still uses static data 'regionMonthlyData')
+                  if (regionMonthlyData[selectedRegion]) {
+                      historyChart.data.datasets[0].data = regionMonthlyData[selectedRegion];
+                  } else {
+                      // If "Choose Region" or not found, clear this chart
+                      historyChart.data.datasets[0].data = [];
+                  }
+                  historyChart.update();
+
+            });
+
+             // Manually trigger the change event to load initial data for charts linked to dropdown
+             // and the heatmap for the default empty selected value
+             regionSelect.dispatchEvent(new Event('change'));
+          } else {
+               console.error("Region select element with ID 'regionSelect' not found!");
+          }
+
+
+          // --- --- --- MODIFIED AGRI CHART LOGIC --- --- ---
+          // Update agriChart (Top 3 regions with highest landslide counts) based on CSV data
+          const regionCounts = {};
+
+          // Count how many points per region from the loaded CSV data
+          allData.forEach(function(row) { // No index needed
+            // Use the correct lowercase header name 'region'
+            const region = row.region;
+
+            // Ensure region is a non-empty string
+            if (typeof region === 'string' && region.trim() !== '') {
+               // Use region.trim() to remove leading/trailing whitespace
+              const cleanedRegion = region.trim();
+              regionCounts[cleanedRegion] = (regionCounts[cleanedRegion] || 0) + 1;
+            } else {
+                 // console.warn(`Skipping row for counting due to missing region:`, row); // Debugging
+            }
+          });
+
+          // Convert object into an array of [region, count]
+          const sortedRegions = Object.entries(regionCounts)
+            .sort((a, b) => b[1] - a[1]) // Sort descending by count
+            .slice(0, 3); // Get top 3
+
+          const topRegions = sortedRegions.map(entry => entry[0]);
+          const topCounts = sortedRegions.map(entry => entry[1]);
+
+           console.log("Top 3 Regions Data:", sortedRegions); // Debug: check the data for the chart
+
+
+          // Find the agriChart instance and update its data
+          const ctxAgri = document.getElementById('agriChart').getContext('2d');
+          // Check if the chart instance already exists before creating a new one (important if CSV loads multiple times)
+          // However, PapaParse 'complete' should only run once per parse.
+          // Let's assume it's the first time and create it.
+          const agriChart = new Chart(ctxAgri, { // Storing chart instance
+              type: 'bar',
+              data: {
+                labels: topRegions, // Use calculated top regions
+                datasets: [{
+                  label: 'Landslide Points', // Label
+                  data: topCounts, // Use calculated counts
+                  backgroundColor: ['#3498db', '#1abc9c', '#9b59b6'] // Example colors
+                }]
+              },
+              options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+              }
+          });
+
+           // This chart is populated based on ALL data from the CSV, not the selected region,
+           // so it doesn't need to be inside the regionSelect change listener.
+
+
+        }, // End PapaParse complete
+        error: function(err, file, inputElem, reason) {
+          console.error("Error parsing CSV:", reason);
+        }
+      });
+      // --- --- --- END MODIFIED PAPAPARSE CALL --- --- ---
+
+
+    }); // End DOMContentLoaded
+  </script>
+
+
+
+</body>
+</html>
