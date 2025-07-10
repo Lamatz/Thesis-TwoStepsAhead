@@ -116,11 +116,14 @@ async function updateLocationInfo(lat, lng) {
         const date = document.getElementById("date-picker").value;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         const time = document.getElementById("time-picker").value;
         if (date) {
 =======
 =======
 >>>>>>> ad83d1f (fix: fixed: bug in redesign script)
+=======
+>>>>>>> 991f0d6 (rebasing)
         const time = document.getElementById("time-picker").value
         console.log("testingDate: " + date);
         console.log("time-test: " + time);
@@ -133,7 +136,17 @@ async function updateLocationInfo(lat, lng) {
         const time = document.getElementById("time-picker").value;
         if (date) {
 >>>>>>> c469c25 (fix: fixed a bug in the redesign script)
+<<<<<<< HEAD
 >>>>>>> ad83d1f (fix: fixed: bug in redesign script)
+=======
+=======
+        const time = document.getElementById("time-picker").value
+        console.log("testingDate: " + date);
+        console.log("time-test: " + time);
+        if (date) {
+            console.log("time-test: " + time);
+>>>>>>> 741eb83 (trying to merge with main)
+>>>>>>> 991f0d6 (rebasing)
             fetchWeatherData(lat, lng, date, time);
         }
 
