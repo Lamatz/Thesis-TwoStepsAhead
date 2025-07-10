@@ -187,14 +187,7 @@ function populateReportSummary() {
     const forecastSelect = document.getElementById("forecast-period");
     const periodValue = forecastSelect.value;
     const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
-    document.getElementById("report-forecast-period").innerText = periodText;
-    if (periodValue !== 'none') {
-        document.getElementById("report-cumulative-rain").innerText = lastFetchedWeatherData.cumulative_rainfall?.[periodValue]?.toFixed(1) ?? "N/A";
-        document.getElementById("report-intensity-rain").innerText = lastFetchedWeatherData.rain_intensity?.[periodValue]?.toFixed(2) ?? "N/A";
-    } else {
-        document.getElementById("report-cumulative-rain").innerText = "N/A";
-        document.getElementById("report-intensity-rain").innerText = "N/A";
-    }
+    
 
     // --- 4. Destroy old charts ---
     if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
