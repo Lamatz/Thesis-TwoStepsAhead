@@ -235,7 +235,9 @@ def search_locations():
         return jsonify({"suggestions": []}) # Return empty list for short queries
 
     # Add a User-Agent header as recommended by Nominatim
-    url = f"https://nominatim.openstreetmap.org/search?q={query_string}&format=json&limit=1&countrycodes=PH"
+    query = request.args.get("query")  # This line likely exists already
+    url = f"https://nominatim.openstreetmap.org/search?q={query}&format=json&limit=1&countrycodes=PH"
+
     headers = {"User-Agent": "Two-Step-Ahead (eriksonss1535@gmail.com)"}
     response = requests.get(url, headers=headers)
 
@@ -292,11 +294,10 @@ def get_weather():
 # I WILL CHANGE THIS PATHING
 
 # Load trained model and scaler
-with open("backend/model_2.pkl", "rb") as model_file:
+with open("backend/model_3.pkl", "rb") as model_file:
     model = pickle.load(model_file)
 
-with open("backend/scaler_2.pkl", "rb") as scaler_file:
-    scaler = pickle.load(scaler_file)
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -320,12 +321,10 @@ def predict():
             float(data.get("rain-intensity-5-day", 0))
         ]
 
-        features_scaled = scaler.transform([features])
-        probabilities = model.predict_proba(features_scaled)[0]
+        # Predict directly without scaling
+        probabilities = model.predict_proba([features])[0]
         prediction = int(np.argmax(probabilities))
-        print(features)
-        print(features_scaled)
-        print(probabilities)
+
         return jsonify({
             "prediction": "Landslide" if prediction == 1 else "No Landslide",
             "confidence": f"{max(probabilities) * 100:.2f}%"
