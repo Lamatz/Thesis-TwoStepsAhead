@@ -1,0 +1,197 @@
+
+    :root {
+      --text-color: #190809;
+      --background-color: #fcf5f5;
+      --primary-color: #603F26; /* This seems different from #603F26 and #6C4E31 used before. I will stick to the previous example's button colors for consistency with the tutorial modal styling you requested. */
+      --secondary-color: #FFDBB5;
+      --accent-color: #ce9f66;
+    }
+
+    .select {
+      background-color: #FFDBB5;
+    }
+
+    body {
+      padding-top: 15px; /* Keeping this padding */
+      background-color: var(--background-color);
+      color: #190809; /* Changed color to text-color variable for readability */
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-section {
+      border: 1px solid #ddd; /* Lighter border */
+      background-color: white; /* Lighter background */
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      margin-left: 15px;
+      margin-right: 15px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add a subtle shadow */
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 15px; /* Increased margin */
+      color: #603F26; /* Using the sidebar text color for consistency */
+      text-align: center; /* Center the title */
+    }
+
+    .map-panel {
+      height: 600px;
+      background-color: var(--background-color); /* Map panel background */
+      border-radius: 8px;
+      position: relative;
+      padding: 5px;
+      margin-bottom: 20px;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    /* The stat-box styles are in the previous example, let's keep them if needed,
+       but they don't seem to be used in this dashboard HTML structure. */
+    
+    .stat-box {
+      background-color: var(--secondary-color);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .stat-box h4 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .stat-box p {
+      font-size: 1.5rem;
+      color: #f77;
+    }
+    
+
+     /* --- Tutorial Modal Styles (Copied from previous example) --- */
+        .tutorial-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1050; /* Sit on top (Bootstrap modal default z-index) */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tutorial-modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Center the modal */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be responsive */
+            max-width: 400px; /* Max width */
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tutorial-modal-content h2 {
+            margin-top: 0;
+            color: #603F26; /* Match sidebar text */
+        }
+
+        .tutorial-modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+     /* --- End Tutorial Modal Styles --- */
+
+    /* --- Shepherd Button Styles (Copied from previous example) --- */
+        /* Add some basic styling for Shepherd buttons to look like Bootstrap buttons */
+        .shepherd-button {
+            padding: .375rem .75rem !important;
+            border-radius: .25rem !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            cursor: pointer !important;
+            border: 1px solid transparent !important;
+        }
+
+        .shepherd-button.shepherd-button-primary {
+            color: #fff !important;
+            background-color: #6C4E31 !important; /* Darker brown from previous example */
+            border-color: #6C4E31 !important;
+        }
+
+        .shepherd-button.shepherd-button-primary:hover {
+             background-color: #533c27 !important; /* Slightly darker on hover */
+             border-color: #533c27 !important;
+        }
+
+
+        .shepherd-button.shepherd-button-secondary {
+             color: #6C4E31 !important; /* Darker brown text */
+             background-color: transparent !important;
+             border-color: #6C4E31 !important; /* Darker brown border */
+        }
+         .shepherd-button.shepherd-button-secondary:hover {
+             color: #fff !important;
+             background-color: #6C4E31 !important; /* Darker brown on hover */
+             border-color: #6C4E31 !important;
+         }
+
+     /* --- End Shepherd Button Styles --- */
+
+
+        /* --- Custom Z-index for Shepherd (Copied from previous example) --- */
+        /* Ensure Shepherd overlay is on top */
+        .shepherd-modal-overlay {
+            z-index: 99998 !important; /* Slightly lower than tooltip */
+        }
+
+        /* Ensure Shepherd tooltip/element is on top */
+        .shepherd-element {
+             z-index: 99999 !important; /* A very high value */
+        }
+         /* --- End Custom Z-index --- */
+
+         /* Custom class for Shepherd step background (Copied from previous example) */
+        .my-custom-step-background {
+            background-color: #fff; /* White background for step */
+            color: #190809; /* Ensure text is readable on white */
+        }
+         /* Ensure Shepherd's text is dark on the white background */
+        .my-custom-step-background .shepherd-text {
+            color: #190809 !important;
+        }
+        .my-custom-step-background .shepherd-header {
+             border-bottom-color: #eee; /* Add a subtle line below header */
+        }
+        .my-custom-step-background .shepherd-arrow:before {
+             border-color: transparent #fff !important; /* Ensure arrow matches background */
+        }
+        .my-custom-step-background.shepherd-has-title .shepherd-arrow:before {
+            border-color: transparent #fff !important; /* Ensure arrow matches background with title */
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="top"] .shepherd-arrow:before {
+            border-top-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="bottom"] .shepherd-arrow:before {
+            border-bottom-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="left"] .shepherd-arrow:before {
+            border-left-color: #fff !important;
+        }
+         .my-custom-step-background.shepherd-element[data-popper-placement^="right"] .shepherd-arrow:before {
+            border-right-color: #fff !important;
+        }
+
+

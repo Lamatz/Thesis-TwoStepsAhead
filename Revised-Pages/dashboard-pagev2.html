@@ -125,22 +125,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto d-flex gap-3">
-                    <li class="nav-item">
-                        <a class="nav-link " href="home_v2.html"><i class="fas fa-home me-1"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html"><i class="fa-solid fa-map-location-dot me-1"></i></i>
-                            Dynamic Map</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="user-guide-page.html"><i class="fa-solid fa-circle-info me-1"></i> User Guide</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="dashboard-page.html"><i class="bi bi-grid-1x2-fill me-1"></i></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="training-page.html"><i class="bi bi-diagram-3-fill me-1"></i></i> Training Result</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="home_v2.html"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-map-location-dot me-1"></i> Dynamic Map</a></li>
+                    <li class="nav-item"><a class="nav-link" href="user-guide-page.html"><i class="fa-solid fa-circle-info me-1"></i> User Guide</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="training-page.html"><i class="bi bi-diagram-3-fill me-1"></i> Training Result</a></li>
                 </ul>
             </div>
         </div>
@@ -341,7 +330,7 @@
         // --- Chart Instantiation ---
         const alertsChart = new Chart(document.getElementById('structureChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [ { label: 'Alerts Issued', data: [0], backgroundColor: '#007BFF' }, { label: 'Actual Landslides', data: [0], backgroundColor: '#FF4136' } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
         const historyChart = new Chart(document.getElementById('roadsChart').getContext('2d'), { type: 'bar', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Landslides', data: [], backgroundColor: '#E67300' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
-        const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Clay', '2 - Clay Loam', '3 - Sandy Loam', '4 - Loam'], datasets: [{ data: [ 15, 40, 20, 30], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
+        const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Sandy Loam', '2 - Loam', '3 - Clay Loam', '4 - Sandy Clay Loam', '5 - Clay'], datasets: [{ data: [10, 15, 35, 20, 40], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
         const slopeChart = new Chart(document.getElementById('rainChart').getContext('2d'), { type: 'bar', data: { labels: [ '1 - <10° Flat', '2 - 10°-20° Gentle', '3 - 20°-30° Moderate', '4 - 30°-40° Substantial', '5 - 40°-50° Steep', '6 - >50° Very Steep' ], datasets: [{ label: 'Slope Vulnerability Level', data: [5, 10, 15, 20, 25 , 30], backgroundColor: '#2980b9' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
         let agriChart; // Will be created after data loads
         
@@ -421,7 +410,75 @@
         });
 
 
+        // --- TUTORIAL MODAL & SHEPHERD TOUR ---
+        const tutorialModal = document.getElementById('tutorial-modal');
+        const continueBtn = document.getElementById('tutorial-continue-btn');
+        const skipBtn = document.getElementById('tutorial-skip-btn');
+
+        // Show the initial modal on page load
+        if (tutorialModal) tutorialModal.style.display = 'flex';
         
+        if (skipBtn) skipBtn.addEventListener('click', () => { if (tutorialModal) tutorialModal.style.display = 'none'; });
+        if (continueBtn) continueBtn.addEventListener('click', () => {
+            if (tutorialModal) tutorialModal.style.display = 'none';
+            startShepherdTour();
+        });
+
+        function startShepherdTour() {
+            if (typeof Shepherd === 'undefined') {
+                console.error("Shepherd.js failed to load!");
+                return;
+            }
+
+            const tour = new Shepherd.Tour({
+                useModalOverlay: true,
+                defaultStepOptions: {
+                    cancelIcon: { enabled: true },
+                    scrollTo: { behavior: 'smooth', block: 'center' },
+                    classes: 'my-custom-step-background'
+                }
+            });
+
+            tour.addStep({
+                id: 'region-select-step',
+                text: 'Welcome to the Dashboard! Use this dropdown to filter all data by selecting a specific region.',
+                attachTo: { element: '#regionSelect', on: 'bottom' },
+                buttons: [{ text: 'Next', action: tour.next, classes: 'shepherd-button shepherd-button-primary' }]
+            });
+
+             tour.addStep({
+                id: 'top-charts-step',
+                text: 'This section presents key summary charts. These update based on your selected region.',
+                attachTo: { element: '#top-charts-container', on: 'bottom' },
+                buttons: [
+                    { text: 'Back', action: tour.back, classes: 'shepherd-button shepherd-button-secondary' },
+                    { text: 'Next', action: tour.next, classes: 'shepherd-button shepherd-button-primary' }
+                ]
+            });
+
+            tour.addStep({
+                id: 'map-step',
+                text: 'The interactive map displays recorded landslide incidents. It will filter points as you select a region.',
+                attachTo: { element: '#map', on: 'top' },
+                buttons: [
+                    { text: 'Back', action: tour.back, classes: 'shepherd-button shepherd-button-secondary' },
+                    { text: 'Next', action: tour.next, classes: 'shepherd-button shepherd-button-primary' }
+                ]
+            });
+
+            tour.addStep({
+                id: 'vulnerability-charts-step',
+                text: 'These charts illustrate vulnerability breakdowns based on static factors like Soil Types and terrain Slopes.',
+                attachTo: { element: '#vulnerability-charts-container', on: 'top' },
+                buttons: [
+                    { text: 'Back', action: tour.back, classes: 'shepherd-button shepherd-button-secondary' },
+                    { text: 'Finish', action: tour.complete, classes: 'shepherd-button shepherd-button-primary' }
+                ]
+            });
+
+            tour.start();
+        }
+
     }); // End DOMContentLoaded
     </script>
 
