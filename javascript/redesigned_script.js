@@ -115,15 +115,25 @@ async function updateLocationInfo(lat, lng) {
         // --- 7. Fetch weather if date is already selected ---
         const date = document.getElementById("date-picker").value;
 <<<<<<< HEAD
+<<<<<<< HEAD
         const time = document.getElementById("time-picker").value;
         if (date) {
 =======
+=======
+>>>>>>> ad83d1f (fix: fixed: bug in redesign script)
         const time = document.getElementById("time-picker").value
         console.log("testingDate: " + date);
         console.log("time-test: " + time);
         if (date) {
             console.log("time-test: " + time);
+<<<<<<< HEAD
 >>>>>>> 5745d79 (implemented the new forecast setting style)
+=======
+=======
+        const time = document.getElementById("time-picker").value;
+        if (date) {
+>>>>>>> c469c25 (fix: fixed a bug in the redesign script)
+>>>>>>> ad83d1f (fix: fixed: bug in redesign script)
             fetchWeatherData(lat, lng, date, time);
         }
 
