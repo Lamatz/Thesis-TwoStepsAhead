@@ -149,7 +149,7 @@ def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
             "hourly": "precipitation,soil_moisture_27_to_81cm",
             "start_date": api_start_date.strftime("%Y-%m-%d"),
             "end_date": api_end_date.strftime("%Y-%m-%d"),
-            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "inch"
+            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "in"
         }
         
         response = requests.get(url, params=params, timeout=10)
@@ -294,8 +294,11 @@ def get_weather():
 # I WILL CHANGE THIS PATHING
 
 # Load trained model and scaler
-with open("backend/model_3.pkl", "rb") as model_file:
+with open("backend/model_4.pkl", "rb") as model_file:
     model = pickle.load(model_file)
+
+with open("backend/scaler_4.pkl", "rb") as scaler_file:
+    scaler = pickle.load(scaler_file)
 
 
 
@@ -321,10 +324,12 @@ def predict():
             float(data.get("rain-intensity-5-day", 0))
         ]
 
-        # Predict directly without scaling
-        probabilities = model.predict_proba([features])[0]
+        features_scaled = scaler.transform([features])
+        probabilities = model.predict_proba(features_scaled)[0]
         prediction = int(np.argmax(probabilities))
-
+        print(features)
+        print(features_scaled)
+        print(probabilities)
         return jsonify({
             "prediction": "Landslide" if prediction == 1 else "No Landslide",
             "confidence": f"{max(probabilities) * 100:.2f}%"
