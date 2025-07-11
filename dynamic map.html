@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two Steep Ahead</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Removed Nominatim UI search JS - you likely need the data, not the UI -->
+    <!-- <script src="https://nominatim.openstreetmap.org/ui/search.js"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+
+    <link rel="stylesheet" href="css/nav-style.css">
+    <link rel="stylesheet" href="css/dynamic_map.css">
+    <!-- Shepherd CSS - REMOVED -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css"/> -->
+
+
+    <style>
+        /* Basic styles for the initial tutorial modal - REMOVED as the modal is removed */
+        /*
+        .tutorial-modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tutorial-modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tutorial-modal-content h2 {
+            margin-top: 0;
+        }
+
+        .tutorial-modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+        */
+
+        /* Add some basic styling for Shepherd buttons to look like Bootstrap buttons if needed - REMOVED */
+        /*
+        .shepherd-button {
+            padding: .375rem .75rem !important;
+            border-radius: .25rem !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            cursor: pointer !important;
+            border: 1px solid transparent !important;
+        }
+
+        .shepherd-button.shepherd-button-primary {
+            color: #fff !important;
+            background-color: #6C4E31 !important;
+            border-color: #6C4E31 !important;
+        }
+
+        .shepherd-button.shepherd-button-secondary {
+             color: #6C4E31 !important;
+             background-color: transparent !important;
+             border-color: #6C4E31 !important;
+        }
+         .shepherd-button.shepherd-button-secondary:hover {
+             color: #fff !important;
+             background-color: #6C4E31 !important;
+             border-color: #6C4E31 !important;
+         }
+        */
+
+        /* --- Custom Z-index for Shepherd --- - REMOVED */
+        /*
+        .shepherd-modal-overlay {
+            z-index: 99998 !important;
+        }
+
+        .shepherd-element {
+             z-index: 99999 !important;
+        }
+        */
+         /* --- End Custom Z-index --- */
+
+        /* Add this to your css/style.css file */
+        .info-icon {
+            font-size: 0.9em; /* Make icon slightly smaller */
+            margin-left: -2px; /* Add a little space to the left */
+            margin-bottom: 10px;
+            color: #6c757d; /* Optional: change color to a lighter grey */
+            cursor: pointer; /* Indicate that it's interactive */
+            vertical-align: middle; /* Helps align it vertically with the text */
+        }
+
+        /* Optional: Change color on hover */
+        .info-icon:hover {
+            color: #603F26; /* Bootstrap primary blue on hover */
+        }
+
+        /* Adjust margin for the paragraphs holding the rainfall titles if needed */
+        .info-box p.mb-1 {
+            margin-bottom: 0.5rem !important; /* Ensure consistent spacing, adjust as needed */
+        }
+
+        /* Ensure labels have some bottom margin if they don't already */
+        .info-box label.form-label {
+            display: block; /* Ensure label takes full width if needed */
+            margin-bottom: 0.25rem; /* Add small space below label */
+        }
+
+        /* Adjust margin below the icon if placed inline with label text and it causes issues */
+        .info-box label.form-label i.info-icon {
+            margin-left: 5px;
+            /* Add specific vertical alignment if middle isn't perfect */
+            /* vertical-align: text-top; */
+        }
+        /* Removed custom Shepherd background class */
+        /*
+        .my-custom-step-background {
+        background-color: #fff;
+        }
+        */
+    </style>
+
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+      <!-- SIDEBAR -->
+      <div class="col-2 p-0">
+        <div class="d-flex flex-column sidebar">
+          <!-- MENU TEXT -->
+          <a href="/" class="d-block pt-3 sidebar-body menu-text mt-4 d-flex justify-content-center">
+              <img src="icons/logo.svg" class="pb-1" alt="logo">
+              <p class="ms-3 mb-0 pt-3" style="color:#603F26">RED Rams</p>
+          </a>
+
+          <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <!-- Home -->
+            <li class="my-2">
+              <a href="home.html" class="nav-link"  data-bs-placement="right">
+                <p>Home</p>
+              </a>
+            </li>
+
+            <!-- Dynamic Map -->
+            <li class="my-2">
+              <a href="#" class="nav-link sidebar-highlight "  data-bs-placement="right">
+                <p>Dynamic Map</p>
+              </a>
+            </li>
+
+            <!-- User Guide -->
+            <li class="my-2">
+              <a href="user guide.html" class="nav-link border_bottom"   data-bs-placement="right">
+                <p>User Guide</p>
+              </a>
+            </li>
+
+            <!-- Dashboard -->
+            <li class="my-2">
+              <a href="dashboard.html" class="nav-link"   data-bs-placement="right">
+                <div class="border_box">
+                  <p>Dashboard</p>
+                </div>
+              </a>
+            </li>
+
+            <!-- Training Result -->
+            <li class="my-2">
+              <a href="training result.html" class="nav-link border_top" data-bs-placement="right">
+                <p>Training Result</p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- END OF NAVBAR -->
+
+      <!-- YOUR CONTENT SHOULD BE HERE -->
+      <main class="col-10">
+        <h2 class="title" style="color:#603F26">Two Step Ahead</h2>
+
+        <div class="row mt-3">
+            <div class="col-md-4 search-container">
+                <!-- Added Label Here -->
+                <label for="search-input" class="form-label"><strong>Location:</strong></label>
+                <i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="The amount of water present in the soil, expressed as a percentage, for the selected prediction date."></i>
+                <input type="text" id="search-input" class="form-control" placeholder="Search for location">
+                <div id="suggestions" class="suggestions-container"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="searchs" type="icon">
+                    <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
+                </svg>
+            </div>
+            <div class="col-md-4">
+                <!-- Added Label Here -->
+                <label for="date-picker" class="form-label"><strong>Date to Predict:</strong></label>
+                <i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="The amount of water present in the soil, expressed as a percentage, for the selected prediction date."></i>
+                <input type="date" id="date-picker" class="form-control">
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-md-8">
+                <div id="map"></div>
+                <p id="location-info" class="mt-2"><strong>Location:</strong> Click on the map to see details.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="info-box">
+                    <h5><strong>Variables used for prediction</strong></h5>
+
+                    <label class="form-label"><strong>Slope:</strong><i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Represents the steepness or gradient of the terrain at the selected location."></i>
+                    </label>
+                    <input type="text" id="slope" class="inputs form-control mb-2" disabled>
+
+                    <label class="form-label"><strong>Soil Type:</strong><i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Describes the composition and characteristics of the soil, influencing its water retention and stability."></i>
+                    </label>
+                    <input type="text" id="soil-type" class="inputs form-control mb-2" disabled>
+
+                    <label class="form-label"><strong>Soil Moisture (%/day):</strong><i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="The amount of water present in the soil, expressed as a percentage, for the selected prediction date."></i>
+                    </label>
+                    <input type="text" id="soil-moisture" class="inputs form-control mb-2" disabled>
+
+                    <p class="mb-1"><strong>Cumulative Rainfall (mm):</strong>
+                        <i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Total amount of rainfall accumulated over the specified number of days (1, 3, or 5 days) leading up to the prediction date."></i>
+                    </p>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="form-label">
+                            <label class="form-label ">1day:</label>
+                            <input id="rainfall-1-day" type="text" class="form-control custom-input" disabled >
+                        </div>
+                        <div class="form-label">
+                            <label class="form-label">3day:</label>
+                            <input id="rainfall-3-day" type="text" class="form-control custom-input" disabled >
+                        </div>
+                        <div class="form-label">
+                            <label class="form-label">5day:</label>
+                            <input id="rainfall-5-day" type="text" class="form-control custom-input"  disabled>
+                        </div>
+                    </div>
+
+                    <p class="mb-1"><strong>Rainfall Intensity (mm/hr):</strong>
+                        <i class="fas fa-circle-question info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="The average rate of rainfall in millimeters per hour over the specified number of days (1, 3, or 5 days) leading up to the prediction date."></i>
+                    </p>
+
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="form-label">
+                            <label class="form-label ">1day:</label>
+                            <input id="rain-intensity-1-day" type="text" class="form-control custom-input" disabled >
+                        </div>
+                        <div class="form-label">
+                            <label class="form-label">3day:</label>
+                            <input id="rain-intensity-3-day" type="text" class="form-control custom-input" disabled >
+                        </div>
+                        <div class="form-label">
+                            <label class="form-label">5day:</label>
+                            <input id="rain-intensity-5-day" type="text" class="form-control custom-input" disabled >
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex">
+                        <button id ="predict-btn"class="btn  w-75 me-2"style="background-color:#603F26; color:#fff">Predict</button>
+                        <button id ="reset-btn" class="btn  w-25 "style="background-color:#FFDBB5; color:#black">Reset</button>
+                    </div>
+
+                    <!-- Prediction Modal -->
+                    <div id="prediction-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('prediction-modal').style.display='none'">×</span>
+                        <h2>Prediction Result</h2>
+                        <div id="modal-body"></div>
+                        <button id ="report" class="btn  w-50 "style="background-color:#FFDBB5; color:#black; margin-left:110px;">Report Summary</button>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </main>
+          </main>
+
+      <!-- ADD THIS REPORT SUMMARY SECTION -->
+      <div class="col-10 offset-2" id="report-summary-section" style="display: none;">
+          <h4>Prediction Report Summary</h4>
+
+          <div class="row">
+              <div class="col-md-6">
+                  <h6><strong>Location Details</strong></h6>
+                  <p><strong>Coordinates:</strong> <span id="report-coords">N/A</span></p>
+                  <p><strong>Location Name:</strong> <span id="report-location-name">N/A</span></p>
+                  <p><strong>Date to Predict:</strong> <span id="report-prediction-date">N/A</span></p>
+                  <p><strong>Soil Type:</strong> <span id="report-soil-type">N/A</span></p>
+                  <p><strong>Slope:</strong> <span id="report-slope">N/A</span></p>
+                  <p><strong>Soil Moisture (%/day):</strong> <span id="report-soil-moisture">N/A</span></p>
+              </div>
+              <div class="col-md-6">
+                  <h6><strong>Cumulative Rainfall (mm)</strong></h6>
+                   <p><strong>1-day:</strong> <span id="report-rainfall-1-day">N/A</span></p>
+                   <p><strong>3-day:</strong> <span id="report-rainfall-3-day">N/A</span></p>
+                   <p><strong>5-day:</strong> <span id="report-rainfall-5-day">N/A</span></p>
+
+                  <h6><strong>Rainfall Intensity (mm/hr)</strong></h6>
+                   <p><strong>1-day:</strong> <span id="report-rain-intensity-1-day">N/A</span></p>
+                   <p><strong>3-day:</strong> <span id="report-rain-intensity-3-day">N/A</span></p>
+                   <p><strong>5-day:</strong> <span id="report-rain-intensity-5-day">N/A</span></p>
+              </div>
+          </div>
+
+          <hr>
+
+          <h6><strong>Detailed Daily Rainfall Data (Past 5 Days + Prediction Date)</strong></h6>
+          <table class="table table-bordered daily-rainfall-table">
+              <thead>
+                  <tr>
+                      <th>Date</th>
+                      <th>Cumulative Rainfall (mm)</th>
+                      <th>Average Intensity (mm/hr)</th>
+                  </tr>
+              </thead>
+              <tbody id="report-daily-rainfall-body">
+                  <!-- Daily rainfall data will be inserted here by JS -->
+                  <tr><td colspan="3">No daily data available.</td></tr>
+              </tbody>
+          </table>
+
+          <hr>
+
+          <h6><strong>Prediction Result</strong></h6>
+          <p><strong>Prediction:</strong> <span id="report-prediction">N/A</span></p>
+          <p><strong>Confidence:</strong> <span id="report-confidence">N/A</span></p>
+
+          <hr>
+
+          <h6><strong>Detailed Description</strong></h6>
+          <textarea id="report-detailed-description" placeholder="Summarize findings here..."></textarea>
+          <button id ="reset-btn" class="btn  w-25 "style="background-color:#FFDBB5; color:#black">Reset</button>
+
+      </div>
+      <!-- END ADDITION -->
+
+    </div> <!-- Ensure this closes the row containing sidebar and main content -->
+</div> <!-- Ensure this closes the container-fluid -->
+
+<!-- Rest of your HTML... -->
+
+<!-- Initial Tutorial Modal HTML - REMOVED -->
+<!--
+<div id="tutorial-modal" class="tutorial-modal">
+  <div class="tutorial-modal-content">
+    <h2>Welcome!</h2>
+    <p>Would you like to take a quick tour to understand how to use this page?</p>
+    <div class="tutorial-modal-buttons">
+      <button id="tutorial-continue-btn" class="btn " style="background-color:#6C4E31; color:#fff">Continue Tour</button>
+      <button id="tutorial-skip-btn" class="btn " style="background-color:#FFEAC5; color:black">Skip Tour</button>
+    </div>
+  </div>
+</div>
+-->
+<!-- End of Initial Tutorial Modal HTML -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- Shepherd JavaScript library - REMOVED -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script> -->
+
+<!-- Your custom script -->
+<script src="javascript/script.js"></script>
+
+<!-- Your inline script for Shepherd Initialization (placed after script.js) - MODIFIED -->
+<script>
+    // --- Initialize Bootstrap Tooltips ---
+    // Select all elements that have the data-bs-toggle="tooltip" attribute
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    // Create a new Bootstrap Tooltip instance for each selected element
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
+        // Check if Bootstrap is available before initializing
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        } else {
+            console.warn("Bootstrap Tooltip not available. Tooltips will not be initialized.");
+            return null; // Return null if Bootstrap is not ready
+        }
+    }).filter(tooltip => tooltip !== null); // Filter out null entries
+
+    // --- Shepherd Tour Initialization - REMOVED ---
+    // The entire DOMContentLoaded listener block and the Shepherd-related code inside it are removed.
+    // Only the Bootstrap tooltip initialization remains, which doesn't strictly need the DOMContentLoaded listener
+    // when placed at the end of the body, but keeping it inside is also fine if other DOM-dependent code was there.
+    // However, in this case, the listener only contained the tutorial/shepherd logic, so it's removed entirely.
+</script>
+</body>
+</html>

@@ -26,17 +26,15 @@
     <style>
         /* Add this to your existing style block or create a new one */
         #map {
-            position: absolute;
-            top: 0;
-            bottom: 0;
+          
             width: 100%;
             height: 100%;
         }
 
         /* The parent column needs to be positioned for the map to fill it */
         main.col-lg-9 {
-            position: relative;
             height: calc(100vh - 56px); /* Full viewport height minus navbar height */
+            overflow: hidden;
         }
     </style>
 
@@ -263,9 +261,9 @@
 
 
 
-    <!-- ======================================================= -->
-    <!-- == REPLACE THE OLD REPORT SECTION WITH THIS ENTIRE BLOCK == -->
-    <!-- ======================================================= -->
+<div class="container" id="report-summary-section" style="display: none;">
+    <h2 class="text-center mb-4 report-title">Prediction Report Summary</h2>
+     <div id="report-content">
 
     <div class="container" id="report-summary-section" style="display: none;">
         <h2 class="text-center mb-4 report-title">Prediction Report Summary</h2>
@@ -290,18 +288,12 @@
             </div>
         </div>
 
-        <div class="row mb-4">
-            <!-- Card: Environmental Variables -->
-            <div class="col-md-6">
-                <div class="card report-card h-100 mb-4">
-                    <div class="card-header">
-                        <strong><i class="fas fa-mountain me-2"></i>Environmental Variables</strong>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Slope:</strong> <span id="report-slope">N/A</span></p>
-                        <p><strong>Soil Type:</strong> <span id="report-soil-type">N/A</span></p>
-                        <p><strong>Soil Moisture (%/day):</strong> <span id="report-soil-moisture">N/A</span></p>
-                    </div>
+    <div class="row mb-4">
+        <!-- Card: Environmental Variables -->
+        <div class="col-md-12">
+            <div class="card report-card h-100 mb-4">
+                <div class="card-header">
+                    <strong><i class="fas fa-mountain me-2"></i>Environmental Variables</strong>
                 </div>
             </div>
             <!-- Card: Rainfall for Selected Period -->
@@ -321,42 +313,26 @@
                 </div>
             </div>
         </div>
+        <!-- Card: Rainfall for Selected Period -->
+        
+    </div>
 
-        <!-- Card: Rainfall Charts -->
-        <div class="card report-card mb-4">
-            <div class="card-header">
-                <strong><i class="fas fa-chart-bar me-2"></i>Rainfall Analysis</strong>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- THESE ARE THE 4 CANVAS IDs THE SCRIPT NEEDS -->
-                    <div class="col-md-6 mb-4">
-                        <h6>Past 12 Hours Cumulative Rainfall (mm)</h6>
-                        <canvas id="hourly-cumulative-chart"></canvas>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                        <h6>Past 12 Hours Rainfall Intensity (mm/hr)</h6>
-                        <canvas id="hourly-intensity-chart"></canvas>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Past 5 Days Cumulative Rainfall (mm)</h6>
-                        <canvas id="daily-cumulative-chart"></canvas>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Past 5 Days Average Intensity (mm/hr)</h6>
-                        <canvas id="daily-intensity-chart"></canvas>
-                    </div>
-                </div>
-            </div>
+    <!-- Card: Rainfall Charts -->
+    <div class="card report-card mb-4" >
+        <div class="card-header">
+            <strong><i class="fas fa-chart-bar me-2"></i>Rainfall Analysis</strong>
         </div>
-
-        <!-- Card: Detailed Description -->
-        <div class="card report-card mb-4">
-            <div class="card-header">
-                <strong><i class="fas fa-pen me-2"></i>Detailed Description</strong>
+        <div class="card-body">
+            <div class="row">
+                <!-- THESE ARE THE 4 CANVAS IDs THE SCRIPT NEEDS -->
+                <div class="col-md-6 mb-4">
+                    <h6>Past 12 Hours Cumulative Rainfall (mm)</h6>
+                    <canvas id="hourly-cumulative-chart"></canvas>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h6>Past 12 Hours Rainfall Intensity (mm/hr)</h6>
+                    <canvas id="hourly-intensity-chart"></canvas>
+                </div>
             </div>
             <div class="card-body">
                 <textarea id="report-detailed-description" class="form-control" rows="4"
@@ -373,6 +349,7 @@
         </div>
 
         <button id="scrollTopBtn" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
+    </div>
     </div>
 
 

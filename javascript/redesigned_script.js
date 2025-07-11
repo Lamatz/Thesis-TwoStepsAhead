@@ -379,33 +379,93 @@ map.on("click", (e) => {
     updateLocationInfo(e.latlng.lat, e.latlng.lng);
 });
 
-// Search input event
+// ===================================
+// == SEARCH FUNCTIONALITY (Corrected & Enhanced)
+// ===================================
+
 const searchInput = document.getElementById("search-input");
-searchInput.addEventListener("input", async () => {
-    const query = searchInput.value;
-    const suggestionsContainer = document.getElementById("suggestions");
-    if (query.length < 3) {
+const suggestionsContainer = document.getElementById("suggestions");
+
+// A dedicated, reusable function to fetch and display search suggestions
+async function getSearchSuggestions(query) {
+    if (!query || query.length < 3) {
         suggestionsContainer.innerHTML = "";
         suggestionsContainer.style.display = "none";
         return;
     }
-    const response = await fetch(`http://127.0.0.1:5000/search_locations?query=${query}`);
-    const data = await response.json();
-    suggestionsContainer.innerHTML = "";
-    if (data.suggestions && data.suggestions.length > 0) {
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/search_locations?query=${query}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+
+        suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+
+        // Handle case where no suggestions are returned
+        if (!data.suggestions || data.suggestions.length === 0) {
+            const noResult = document.createElement("div");
+            noResult.innerText = "No matching locations found.";
+            noResult.className = "suggestion-item no-results"; // Add class for styling
+            suggestionsContainer.appendChild(noResult);
+            suggestionsContainer.style.display = "block";
+            return;
+        }
+
+        // Create and append suggestion items
         data.suggestions.forEach(loc => {
             const item = document.createElement("div");
             item.className = "suggestion-item";
             item.innerText = loc.name;
+
+            // When a suggestion is clicked...
             item.onclick = () => {
-                searchInput.value = loc.name;
-                suggestionsContainer.style.display = "none";
-                map.setView([loc.lat, loc.lon], 14);
+                searchInput.value = loc.name; // Set search box value
+                suggestionsContainer.style.display = "none"; // Hide dropdown
+                map.setView([loc.lat, loc.lon], 14); // Zoom to location
+                
+                // Call the main function to handle all data fetching and UI updates
                 updateLocationInfo(parseFloat(loc.lat), parseFloat(loc.lon));
             };
             suggestionsContainer.appendChild(item);
         });
+
         suggestionsContainer.style.display = "block";
+
+    } catch (error) {
+        console.error("Error fetching search suggestions:", error);
+        suggestionsContainer.innerHTML = `<div class="suggestion-item no-results">Error fetching suggestions.</div>`;
+        suggestionsContainer.style.display = "block";
+    }
+}
+
+// --- Event Listeners for Search ---
+
+// 1. Listen for typing in the search box
+searchInput.addEventListener("input", () => {
+    getSearchSuggestions(searchInput.value.trim());
+});
+
+// 2. Listen for the 'Enter' key press
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent form submission
+        // Hide suggestions and remove focus from the input
+        suggestionsContainer.style.display = "none";
+        searchInput.blur();
+    }
+});
+
+// 3. Listen for a click on the search icon
+document.getElementById('search-btn-icon').addEventListener('click', () => {
+    // Manually trigger the search with the current input value
+    getSearchSuggestions(searchInput.value.trim());
+});
+
+// 4. Hide suggestions when clicking anywhere else on the page
+document.addEventListener("click", (e) => {
+    // Check if the click was outside the search input and the suggestions container
+    if (e.target !== searchInput && !suggestionsContainer.contains(e.target)) {
+        suggestionsContainer.style.display = "none";
     }
 });
 // Hide suggestions when clicking outside
@@ -581,9 +641,120 @@ function scrollFunction() {
 }
 
 // When the user clicks on the button, scroll to the top of the document smoothly
-scrollTopButton.addEventListener("click", function () {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+scrollTopButton.addEventListener("click", function() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+
+
+document.getElementById("download-pdf-btn").addEventListener("click", function () {
+  const { jsPDF } = window.jspdf;
+
+  const reportSection = document.getElementById("report-content");
+  const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
+
+  const pdf = new jsPDF();
+  let y = 10;
+
+  // Title
+  pdf.setFontSize(16);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
+  y += 10;
+
+  // Get report values
+  const locationName = document.getElementById("report-location-name").innerText;
+  const coords = document.getElementById("report-coords").innerText;
+  const date = document.getElementById("report-prediction-date").innerText;
+  const prediction = document.getElementById("report-prediction").innerText;
+  const confidence = document.getElementById("report-confidence").innerText;
+  const slope = document.getElementById("report-slope").innerText;
+  const soilType = document.getElementById("report-soil-type").innerText;
+  const soilMoisture = document.getElementById("report-soil-moisture").innerText;
+
+  // General Info
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Location: ${locationName}`, 10, y); y += 7;
+  pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
+  pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
+
+  // Prediction
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Prediction:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
+  pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
+
+  // Environmental Variables
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Environmental Variables:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Slope: ${slope}`, 10, y); y += 7;
+  pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
+  pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
+
+ 
+
+  const chartIds = [
+    { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
+    { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
+    { id: "daily-cumulative-chart", label: "Past 5 Days Cumulative Rainfall" },
+    { id: "daily-intensity-chart", label: "Past 5 Days Average Intensity" }
+];
+
+const chartsPerRow = 2;
+const chartWidth = 90;  // half of 180
+const chartHeight = 60;
+const marginX = 10;
+const spacingX = 10;
+const spacingY = 10;
+let chartX = marginX;
+let rowHeight = chartHeight + 10;
+
+pdf.setFont("helvetica", "bold");
+pdf.text("Rainfall Analysis Charts:", 10, y);
+y += 6;
+
+chartIds.forEach((chartInfo, index) => {
+    const canvas = document.getElementById(chartInfo.id);
+    if (canvas) {
+        const imgData = canvas.toDataURL("image/png", 1.0);
+
+        // Add label above each chart
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(chartInfo.label, chartX, y);
+
+        // Move down to draw the chart
+        pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
+
+        // Next column or new row
+        if ((index + 1) % chartsPerRow === 0) {
+            y += rowHeight + spacingY;
+            chartX = marginX;
+            if (y + chartHeight > 280) {
+                pdf.addPage();
+                y = 20;
+            }
+        } else {
+            chartX += chartWidth + spacingX;
+        }
+    }
+});
+
+
+ // Description
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Detailed Description:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+
+  const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
+  pdf.text(lines, 10, y);
+  y += lines.length * 7;
+  // Save the PDF
+  pdf.save("Landslide_Prediction_Report.pdf");
 });
