@@ -484,3 +484,114 @@ scrollTopButton.addEventListener("click", function() {
     behavior: 'smooth'
   });
 });
+
+
+
+document.getElementById("download-pdf-btn").addEventListener("click", function () {
+  const { jsPDF } = window.jspdf;
+
+  const reportSection = document.getElementById("report-content");
+  const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
+
+  const pdf = new jsPDF();
+  let y = 10;
+
+  // Title
+  pdf.setFontSize(16);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
+  y += 10;
+
+  // Get report values
+  const locationName = document.getElementById("report-location-name").innerText;
+  const coords = document.getElementById("report-coords").innerText;
+  const date = document.getElementById("report-prediction-date").innerText;
+  const prediction = document.getElementById("report-prediction").innerText;
+  const confidence = document.getElementById("report-confidence").innerText;
+  const slope = document.getElementById("report-slope").innerText;
+  const soilType = document.getElementById("report-soil-type").innerText;
+  const soilMoisture = document.getElementById("report-soil-moisture").innerText;
+
+  // General Info
+  pdf.setFontSize(12);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Location: ${locationName}`, 10, y); y += 7;
+  pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
+  pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
+
+  // Prediction
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Prediction:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
+  pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
+
+  // Environmental Variables
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Environmental Variables:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+  pdf.text(`Slope: ${slope}`, 10, y); y += 7;
+  pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
+  pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
+
+ 
+
+  const chartIds = [
+    { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
+    { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
+    { id: "daily-cumulative-chart", label: "Past 5 Days Cumulative Rainfall" },
+    { id: "daily-intensity-chart", label: "Past 5 Days Average Intensity" }
+];
+
+const chartsPerRow = 2;
+const chartWidth = 90;  // half of 180
+const chartHeight = 60;
+const marginX = 10;
+const spacingX = 10;
+const spacingY = 10;
+let chartX = marginX;
+let rowHeight = chartHeight + 10;
+
+pdf.setFont("helvetica", "bold");
+pdf.text("Rainfall Analysis Charts:", 10, y);
+y += 6;
+
+chartIds.forEach((chartInfo, index) => {
+    const canvas = document.getElementById(chartInfo.id);
+    if (canvas) {
+        const imgData = canvas.toDataURL("image/png", 1.0);
+
+        // Add label above each chart
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(chartInfo.label, chartX, y);
+
+        // Move down to draw the chart
+        pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
+
+        // Next column or new row
+        if ((index + 1) % chartsPerRow === 0) {
+            y += rowHeight + spacingY;
+            chartX = marginX;
+            if (y + chartHeight > 280) {
+                pdf.addPage();
+                y = 20;
+            }
+        } else {
+            chartX += chartWidth + spacingX;
+        }
+    }
+});
+
+
+ // Description
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Detailed Description:", 10, y); y += 7;
+  pdf.setFont("helvetica", "normal");
+
+  const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
+  pdf.text(lines, 10, y);
+  y += lines.length * 7;
+  // Save the PDF
+  pdf.save("Landslide_Prediction_Report.pdf");
+});
