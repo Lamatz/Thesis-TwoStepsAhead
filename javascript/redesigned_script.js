@@ -321,33 +321,93 @@ map.on("click", (e) => {
     updateLocationInfo(e.latlng.lat, e.latlng.lng);
 });
 
-// Search input event
+// ===================================
+// == SEARCH FUNCTIONALITY (Corrected & Enhanced)
+// ===================================
+
 const searchInput = document.getElementById("search-input");
-searchInput.addEventListener("input", async () => {
-    const query = searchInput.value;
-    const suggestionsContainer = document.getElementById("suggestions");
-    if (query.length < 3) {
+const suggestionsContainer = document.getElementById("suggestions");
+
+// A dedicated, reusable function to fetch and display search suggestions
+async function getSearchSuggestions(query) {
+    if (!query || query.length < 3) {
         suggestionsContainer.innerHTML = "";
         suggestionsContainer.style.display = "none";
         return;
     }
-    const response = await fetch(`http://127.0.0.1:5000/search_locations?query=${query}`);
-    const data = await response.json();
-    suggestionsContainer.innerHTML = "";
-    if (data.suggestions && data.suggestions.length > 0) {
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/search_locations?query=${query}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+
+        suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+
+        // Handle case where no suggestions are returned
+        if (!data.suggestions || data.suggestions.length === 0) {
+            const noResult = document.createElement("div");
+            noResult.innerText = "No matching locations found.";
+            noResult.className = "suggestion-item no-results"; // Add class for styling
+            suggestionsContainer.appendChild(noResult);
+            suggestionsContainer.style.display = "block";
+            return;
+        }
+
+        // Create and append suggestion items
         data.suggestions.forEach(loc => {
             const item = document.createElement("div");
             item.className = "suggestion-item";
             item.innerText = loc.name;
+
+            // When a suggestion is clicked...
             item.onclick = () => {
-                searchInput.value = loc.name;
-                suggestionsContainer.style.display = "none";
-                map.setView([loc.lat, loc.lon], 14);
+                searchInput.value = loc.name; // Set search box value
+                suggestionsContainer.style.display = "none"; // Hide dropdown
+                map.setView([loc.lat, loc.lon], 14); // Zoom to location
+                
+                // Call the main function to handle all data fetching and UI updates
                 updateLocationInfo(parseFloat(loc.lat), parseFloat(loc.lon));
             };
             suggestionsContainer.appendChild(item);
         });
+
         suggestionsContainer.style.display = "block";
+
+    } catch (error) {
+        console.error("Error fetching search suggestions:", error);
+        suggestionsContainer.innerHTML = `<div class="suggestion-item no-results">Error fetching suggestions.</div>`;
+        suggestionsContainer.style.display = "block";
+    }
+}
+
+// --- Event Listeners for Search ---
+
+// 1. Listen for typing in the search box
+searchInput.addEventListener("input", () => {
+    getSearchSuggestions(searchInput.value.trim());
+});
+
+// 2. Listen for the 'Enter' key press
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent form submission
+        // Hide suggestions and remove focus from the input
+        suggestionsContainer.style.display = "none";
+        searchInput.blur();
+    }
+});
+
+// 3. Listen for a click on the search icon
+document.getElementById('search-btn-icon').addEventListener('click', () => {
+    // Manually trigger the search with the current input value
+    getSearchSuggestions(searchInput.value.trim());
+});
+
+// 4. Hide suggestions when clicking anywhere else on the page
+document.addEventListener("click", (e) => {
+    // Check if the click was outside the search input and the suggestions container
+    if (e.target !== searchInput && !suggestionsContainer.contains(e.target)) {
+        suggestionsContainer.style.display = "none";
     }
 });
 // Hide suggestions when clicking outside
