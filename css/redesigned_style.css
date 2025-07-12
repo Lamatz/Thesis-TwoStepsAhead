@@ -1,7 +1,7 @@
 /* General Body & Layout */
 
-:root{
-    --background-1:#FCFAF7;
+:root {
+    --background-1: #FCFAF7;
     /* --background-1:#F5F5F5; */
 }
 
@@ -25,7 +25,7 @@ body {
 .control-panel {
     height: 92vh;
     /* background-color: #f5f5dc; */
-    background-color:var(--background-1);
+    background-color: var(--background-1);
     /* background-color: #; */
 
     padding: 20px;
@@ -50,10 +50,10 @@ body {
 /* Card Styling */
 .card {
     border: 1px solid #dee2e6;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.card-body{
+.card-body {
     background-color: rgba(255, 255, 255, 0.9);
 }
 
@@ -228,17 +228,20 @@ body {
 
 
 #scrollTopBtn {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stays in the same place on the screen */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stays in the same place on the screen */
     bottom: 30px;
     right: 200px;
-    z-index: 99; /* Stays on top of other content */
+    z-index: 99;
+    /* Stays on top of other content */
     border: none;
     outline: none;
     background-color: #A0522D;
     color: white;
     cursor: pointer;
-    padding:0px;
+    padding: 0px;
     border-radius: 50%;
     font-size: 18px;
     width: 50px;
@@ -248,4 +251,14 @@ body {
 
 #scrollTopBtn:hover {
     background-color: #5C4033;
+}
+
+
+#date-picker {
+    /* width: 100%; */
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
 }
