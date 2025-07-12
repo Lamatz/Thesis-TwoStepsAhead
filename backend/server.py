@@ -149,7 +149,7 @@ def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
             "hourly": "precipitation,soil_moisture_27_to_81cm",
             "start_date": api_start_date.strftime("%Y-%m-%d"),
             "end_date": api_end_date.strftime("%Y-%m-%d"),
-            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "in"
+            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "inch"
         }
         
         response = requests.get(url, params=params, timeout=10)
