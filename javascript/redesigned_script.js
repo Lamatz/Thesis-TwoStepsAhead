@@ -164,6 +164,9 @@ async function fetchWeatherData(lat, lon, date, time) {
 
 
 function populateReportSummary() {
+    // For this demo, we set up the mock data right before generating.
+
+
     // --- 1. Validation ---
     if (!lastPredictionResult || !lastFetchedWeatherData) {
         alert("Cannot generate report: Critical data is missing. Please try the prediction again.");
@@ -174,6 +177,8 @@ function populateReportSummary() {
     const reportSection = document.getElementById("report-summary-section");
     reportSection.style.display = "block";
 
+    console.log("populating1");
+
     // --- 3. Populate all text fields ---
     document.getElementById("report-location-name").innerText = selectedLocation.name || "N/A";
     document.getElementById("report-coords").innerText = selectedLocation.lat ? `${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)}` : "N/A";
@@ -183,13 +188,15 @@ function populateReportSummary() {
     document.getElementById("report-slope").innerText = fetchedLocationData.slope ?? "N/A";
     document.getElementById("report-soil-type").innerText = fetchedLocationData.soil_type_label || "N/A";
     document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData.soil_moisture?.toFixed(1) ?? "N/A";
-    
-    const forecastSelect = document.getElementById("forecast-period");
-    const periodValue = forecastSelect.value;
-    const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
-    
+
+    // const forecastSelect = document.getElementById("forecast-period");
+    // const periodValue = forecastSelect.value;
+    // const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
+
+    console.log("populating1");
 
     // --- 4. Destroy old charts ---
+    // Your code for this is perfect. It prevents memory leaks and canvas conflicts.
     if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
     if (hourlyIntensityChart) hourlyIntensityChart.destroy();
     if (dailyCumulativeChart) dailyCumulativeChart.destroy();
@@ -212,7 +219,12 @@ function populateReportSummary() {
                 fill: true
             }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        // IMPROVEMENT: Add titles and more options for better readability
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Rainfall (mm)' } } },
+            plugins: { title: { display: false } } // Title is in HTML H3
+        }
     });
 
     // Chart 2: Hourly Intensity
@@ -227,7 +239,11 @@ function populateReportSummary() {
                 borderColor: 'rgba(255, 99, 132, 1)'
             }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Intensity (mm/hr)' } } },
+            plugins: { title: { display: false } }
+        }
     });
 
     // Chart 3: Daily Cumulative
@@ -242,7 +258,11 @@ function populateReportSummary() {
                 borderColor: 'rgba(75, 192, 192, 1)'
             }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Rainfall (mm)' } } },
+            plugins: { title: { display: false } }
+        }
     });
 
     // Chart 4: Daily Intensity
@@ -258,12 +278,18 @@ function populateReportSummary() {
                 fill: true
             }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Intensity (mm/hr)' } } },
+            plugins: { title: { display: false } }
+        }
     });
-    
+
     // --- 6. Scroll the report into view ---
     reportSection.scrollIntoView({ behavior: 'smooth' });
 }
+
+
 // MODIFIED: hideAndClearReportSummary to destroy all four charts
 function hideAndClearReportSummary() {
     const reportSection = document.getElementById("report-summary-section");
