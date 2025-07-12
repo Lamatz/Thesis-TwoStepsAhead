@@ -3,225 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Segmented Control Example</title>
+    <title>Time Selector Modal</title>
     <style>
-        /* --- Basic Setup --- */
+        /* General page styling */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            background-color: #f4f4f9;
         }
 
-        /* --- The Main Component Wrapper --- */
-        .forecast-panel {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 450px;
-            overflow: hidden; /* Ensures child elements conform to border-radius */
-        }
-
-        .forecast-header {
-            background-color: #1e824c; /* Green from your original image */
-            color: white;
-            padding: 16px 20px;
-            font-size: 1.25rem;
-            font-weight: 600;
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
             display: flex;
+            justify-content: center;
             align-items: center;
+            /* Hidden by default */
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 0.3s, opacity 0.3s;
         }
 
-        .forecast-body {
+        .modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        /* --- Time Selector Styles (The main component) --- */
+        .time-selector-container {
+            background-color: white;
             padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
         }
 
-        .form-group {
+        .time-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .form-label {
-            display: block;
-            font-weight: bold;
+        .time-selector-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
             color: #333;
-            margin-bottom: 10px;
         }
 
-        /* --- The Segmented Control Styling --- */
-        .segmented-control {
-            display: flex; /* Aligns buttons horizontally */
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 8px; /* Rounded corners for the container */
-            overflow: hidden; /* Clips the corners of the inner buttons */
+        #selected-time-display {
+            background-color: #e6f4ea;
+            color: #28a745;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 1.1rem;
         }
 
-        .segment {
-            flex: 1; /* Each button takes up equal space */
-            padding: 12px 8px;
-            text-align: center;
-            cursor: pointer;
-            background-color: #fff;
-            border: none; /* Remove default button borders */
-            border-right: 1px solid #ddd; /* Separator line */
-            transition: background-color 0.2s ease-in-out;
-            
-            /* For stacking the text lines */
+        .slider-wrapper {
+            position: relative;
+            padding-bottom: 20px; /* Space for the labels */
+        }
+
+        /* The time labels (12am, 6am, etc.) */
+        .time-labels {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+            padding: 0 5px; /* Slight padding to align with slider ends */
         }
 
-        .segment:last-child {
-            border-right: none; /* No separator on the last button */
+        /* --- Custom Range Slider Styles --- */
+        .time-slider {
+            -webkit-appearance: none; /* Hides the default slider */
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 5px;
+            outline: none;
+            margin: 15px 0;
         }
 
-        /* Hover state for non-active buttons */
-        .segment:not(.active):hover {
-            background-color: #f5f5f5;
+        /* The draggable handle (thumb) for Chrome/Safari/Edge */
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #28a745; /* Green color from image */
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+            margin-top: -8px; /* Vertically center the thumb on the track */
         }
 
-        /* Active/Selected button state */
-        .segment.active {
-            background-color: #1e824c; /* Your primary green */
-            color: white;
-        }
-
-        /* --- Text styling inside the buttons --- */
-        .segment-day {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #555;
-            margin-bottom: 4px;
-        }
-
-        .segment-date {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #222;
+        /* The draggable handle (thumb) for Firefox */
+        .time-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
         }
         
-        /* Text color for the active button */
-        .segment.active .segment-day,
-        .segment.active .segment-date {
-            color: #ffffff;
+        /* The main button on the page */
+        #open-modal-btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
         }
-
     </style>
 </head>
 <body>
 
-    <div class="forecast-panel">
-        <div class="forecast-header">
-            <!-- You can add an icon here if you like -->
-            Forecast Settings
-        </div>
-        <div class="forecast-body">
-            <div class="form-group">
-                <label class="form-label" for="date-selection">Forecast Date:</label>
-                
-                <!-- This is our component's HTML structure -->
-                <div id="date-selection" class="segmented-control">
-                    <!-- Buttons will be dynamically generated, but here's the structure for one -->
-                    <!-- 
-                    <button class="segment active" data-date="2025-07-08">
-                        <span class="segment-day">Today</span>
-                        <span class="segment-date">Jul 8</span>
-                    </button>
-                    ... more buttons
-                    -->
+    <!-- This button opens the modal -->
+    <button id="open-modal-btn">Select a Start Time</button>
+
+    <!-- The Modal that contains the time selector -->
+    <div id="time-selector-modal" class="modal-overlay">
+        <div class="time-selector-container">
+            <div class="time-selector-header">
+                <h2>2. Select a Start Time</h2>
+                <div id="selected-time-display">5:00 PM</div>
+            </div>
+            <div class="slider-wrapper">
+                <!-- The actual slider input -->
+                <input type="range" 
+                       min="0" 
+                       max="1439" 
+                       value="1020" 
+                       step="15" 
+                       class="time-slider" 
+                       id="time-slider">
+
+                <!-- The labels underneath the slider -->
+                <div class="time-labels">
+                    <span>12am</span>
+                    <span>6am</span>
+                    <span>12pm</span>
+                    <span>6pm</span>
+                    <span>12am</span>
                 </div>
             </div>
-             <!-- The rest of your form can go here -->
         </div>
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const controlContainer = document.getElementById('date-selection');
-    
-    // --- Part 1: Dynamically generate the date buttons ---
-    function setupDateButtons() {
-        const today = new Date();
-        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    <script>
+        // --- Get references to our HTML elements ---
+        const timeSlider = document.getElementById('time-slider');
+        const selectedTimeDisplay = document.getElementById('selected-time-display');
+        const modal = document.getElementById('time-selector-modal');
+        const openBtn = document.getElementById('open-modal-btn');
 
-        // Clear any existing buttons
-        controlContainer.innerHTML = ''; 
+        // --- Core Functions ---
 
-        for (let i = 0; i < 6; i++) {
-            const date = new Date();
-            date.setDate(today.getDate() + i);
-
-            let dayLabel = '';
-            if (i === 0) {
-                dayLabel = 'Today';
-            } else if (i === 1) {
-                dayLabel = 'Tomorrow';
-            } else {
-                dayLabel = days[date.getDay()];
-            }
-
-            const monthLabel = months[date.getMonth()];
-            const dateLabel = date.getDate();
+        /**
+         * Converts minutes from midnight (0-1439) into a formatted time string (e.g., "5:00 PM").
+         * @param {number} totalMinutes - The number of minutes from midnight.
+         * @returns {string} - The formatted time.
+         */
+        function formatTime(totalMinutes) {
+            const hours24 = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const ampm = hours24 >= 12 ? 'PM' : 'AM';
             
-            // Format the date value for backend use (e.g., YYYY-MM-DD)
-            const dateValue = date.toISOString().split('T')[0];
-
-            // Create the button element
-            const button = document.createElement('button');
-            button.className = 'segment';
-            button.setAttribute('data-date', dateValue);
-            
-            // Make the first button active by default
-            if (i === 0) {
-                button.classList.add('active');
+            let hours12 = hours24 % 12;
+            if (hours12 === 0) {
+                hours12 = 12; // Midnight (0) and Noon (12) should be 12
             }
-
-            // Create and append the text spans
-            button.innerHTML = `
-                <span class="segment-day">${dayLabel}</span>
-                <span class="segment-date">${monthLabel} ${dateLabel}</span>
-            `;
-
-            controlContainer.appendChild(button);
-        }
-    }
-
-
-    // --- Part 2: Handle click events to change the active state ---
-    controlContainer.addEventListener('click', function (event) {
-        // Use .closest() to ensure we get the button element even if the user clicks a span inside it
-        const clickedButton = event.target.closest('.segment');
-
-        // If the click was outside a button, do nothing
-        if (!clickedButton) {
-            return;
+            
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            
+            return `${hours12}:${formattedMinutes} ${ampm}`;
         }
 
-        // Find the currently active button and remove its 'active' class
-        const currentActiveButton = controlContainer.querySelector('.segment.active');
-        if (currentActiveButton) {
-            currentActiveButton.classList.remove('active');
+        /**
+         * Updates the time display based on the slider's current value.
+         */
+        function updateDisplay() {
+            const currentValue = parseInt(timeSlider.value, 10);
+            selectedTimeDisplay.textContent = formatTime(currentValue);
         }
 
-        // Add the 'active' class to the button that was just clicked
-        clickedButton.classList.add('active');
+        // --- Event Listeners ---
+
+        // Listen for the 'input' event on the slider for real-time updates
+        timeSlider.addEventListener('input', updateDisplay);
         
-        // You can now get the selected date easily
-        console.log('Selected Date:', clickedButton.dataset.date);
-    });
+        // Open the modal when the button is clicked
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('visible');
+        });
 
-    // --- Initialize the component ---
-    setupDateButtons();
-});
-</script>
+        // Close the modal if the user clicks on the dark overlay
+        modal.addEventListener('click', (event) => {
+            // We only close it if the click is on the overlay itself, not the container
+            if (event.target === modal) {
+                 modal.classList.remove('visible');
+            }
+        });
 
+        // --- Initial Setup ---
+        // Set the initial display text when the page first loads
+        updateDisplay();
+
+    </script>
 </body>
 </html>
