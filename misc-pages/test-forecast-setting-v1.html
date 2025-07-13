@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecast Settings - Flatpickr Time Picker</title>
+
+    <!-- 1. Include only Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e9ebee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .forecast-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            width: 400px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #278458;
+            color: white;
+            padding: 16px 24px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #278458;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .flatpickr-time .flatpickr-minute,
+        .flatpickr-time .flatpickr-time-separator {
+            display: none;
+        }
+
+
+
+        /* Target the minute container within the time picker */
+        .flatpickr-time .flatpickr-minute {
+            /* This is the key: it disables all mouse interactions like
+       clicks, hover effects, and cursor changes on this element. */
+            pointer-events: none;
+
+            /* OPTIONAL BUT RECOMMENDED:
+       Change the color to give a strong visual "disabled" cue,
+       just like in your original screenshot. */
+            color: #b0b0b0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="forecast-card">
+        <div class="card-header">Forecast Settings</div>
+        <div class="card-body">
+            <form id="forecast-form">
+                <div class="form-group">
+                    <label for="forecast-date">Forecast Date</label>
+                    <input type="text" id="forecast-date" class="form-control" placeholder="Select a date...">
+                </div>
+
+                <div class="form-group">
+                    <label for="forecast-time">Forecast Time</label>
+                    <input type="text" id="forecast-time" class="form-control" placeholder="Select a time...">
+                </div>
+
+                <div class="form-group">
+                    <label for="time-period">Time Period</label>
+                    <select id="time-period" class="form-control">
+                        <option>24 Hours</option>
+                        <option>48 Hours</option>
+                        <option>72 Hours</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">Predict Landslide Risk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Include only Flatpickr JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- DATE PICKER INITIALIZATION ---
+            flatpickr("#forecast-date", {
+                dateFormat: "Y-m-d", // The value sent to the server
+                altInput: true,      // Show a human-friendly date
+                altFormat: "F j, Y", // Format for the friendly date
+                minDate: "today",
+                maxDate: new Date().fp_incr(5),
+            });
+
+            // --- TIME PICKER INITIALIZATION (using Flatpickr) ---
+            flatpickr("#forecast-time", {
+                enableTime: true,    // Enable time selection
+                noCalendar: true,    // Hide the calendar
+
+                // --- THIS IS THE KEY CHANGE ---
+                dateFormat: "h K",   // Display format: "03 PM". No minute input will be shown.
+                // h = hour (1-12), K = AM/PM
+
+                // --- STILL GOOD TO KEEP FOR LOGIC ---
+                minuteIncrement: 60,
+                // Ensures the underlying value snaps to the hour.
+
+
+
+                onOpen: function (selectedDates, dateStr, instance) {
+
+                    // Get all the number input wrappers
+                    const numInputWrappers = instance.timeContainer.querySelectorAll('.numInputWrapper');
+
+                    // Hide the second wrapper (which contains the minute input)
+                    if (numInputWrappers.length > 1) {
+                        numInputWrappers[1].style.display = 'none';
+                    }
+
+                    // Hide the colon separator for a clean UI
+                    const separator = instance.timeContainer.querySelector('.flatpickr-time-separator');
+                    if (separator) {
+                        separator.style.display = 'none';
+                    }
+                }
+
+
+            });
+
+
+
+
+
+            // --- FORM SUBMISSION ---
+            document.getElementById('forecast-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const dateValue = document.getElementById('forecast-date').value;
+                const timeValue = document.getElementById('forecast-time').value;
+
+                if (!dateValue || !timeValue) {
+                    alert("Please select both a date and a time.");
+                    return;
+                }
+
+                alert(`Submitting: Date=${dateValue}, Time=${timeValue}`);
+            });
+
+
+
+        });
+    </script>
+
+</body>
+
+</html>
