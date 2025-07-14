@@ -26,6 +26,12 @@ let hourlyIntensityChart = null;
 let dailyCumulativeChart = null;
 let dailyIntensityChart = null;
 
+
+// To get ID OF predict-btn for loading time
+const predictBtn = document.getElementById("predict-btn");
+
+
+
 // --- Soil Type Mapping (same as your original)
 const soilTypeMapping = {
     "4413": { category: 3, label: "Clay Loam" }, "4424": { category: 2, label: "Loam" },
@@ -68,6 +74,7 @@ function resetUI() {
     hideAndClearReportSummary();
 }
 
+
 // Update the "Selected Location" card and other UI elements after a location is chosen
 async function updateLocationInfo(lat, lng) {
     // --- 1. Store location, clear old data ---
@@ -80,6 +87,12 @@ async function updateLocationInfo(lat, lng) {
     document.getElementById("loc-lat").innerText = lat.toFixed(4);
     document.getElementById("loc-lng").innerText = lng.toFixed(4);
     document.getElementById("loc-name").innerText = "Fetching name...";
+
+    // For The Loading Prediction Button------
+    const originalButtonText = predictBtn.innerHTML; // Store original text/HTML
+    predictBtn.disabled = true;
+    predictBtn.innerHTML = 'Fetching Weather... <span class="spinner"></span>';
+    // For The Loading Prediction Button------
 
     // --- 3. Place marker on map ---
     if (currentMarker) map.removeLayer(currentMarker);
@@ -111,6 +124,14 @@ async function updateLocationInfo(lat, lng) {
         // --- 6. Update UI with final data ---
         document.getElementById("loc-name").innerText = selectedLocation.name;;
         currentMarker.bindPopup(`Location: <b>${selectedLocation.name}</b><br>Slope: <b>${fetchedLocationData.slope}</b><br>Soil: <b>${fetchedLocationData.soil_type_label}</b>`).openPopup();
+        
+        // For The Loading Prediction Button------
+        predictBtn.disabled = false;
+        predictBtn.innerHTML = originalButtonText;
+        // For The Loading Prediction Button------
+
+
+
 
         // --- 7. Fetch weather if date is already selected ---
         const date = document.getElementById("date-picker").value;
@@ -127,9 +148,21 @@ async function updateLocationInfo(lat, lng) {
 }
 
 
+
+
 // MODIFIED: fetchWeatherData to accept and send time
 async function fetchWeatherData(lat, lon, date, time) {
     if (!lat || !lon || !date || !time) return;
+
+
+    // --- ADD THIS ---
+    // 1. Disable the button and show a loading state
+    const originalButtonText = predictBtn.innerHTML; // Store original text/HTML
+    predictBtn.disabled = true;
+    predictBtn.innerHTML = 'Fetching Weather... <span class="spinner"></span>';
+    // --- END ADD ---
+
+
     console.log(`Fetching weather for: ${lat}, ${lon}, on ${date} at ${time}`);
     try {
         const response = await fetch(`http://127.0.0.1:5000/get_weather?latitude=${lat}&longitude=${lon}&date=${date}&time=${time}`);
@@ -155,6 +188,15 @@ async function fetchWeatherData(lat, lon, date, time) {
         console.error("Failed to fetch weather data:", error);
         alert("Error fetching weather data: " + error.message);
         lastFetchedWeatherData = null;
+    } finally {
+        // --- ADD THIS ---
+        // 2. ALWAYS re-enable the button and restore its text when done
+        predictBtn.disabled = false;
+        // Restore the original text (e.g., "Predict"). If you just use text, you can set it directly.
+        // Using `originalButtonText` is safer if you have icons or other HTML inside.
+        predictBtn.innerHTML = originalButtonText;
+        // Or simply: predictBtn.textContent = "Predict";
+        // --- END ADD ---
     }
 }
 
@@ -460,8 +502,9 @@ function handleDateTimeChange() {
 document.getElementById("date-picker").addEventListener("change", handleDateTimeChange);
 document.getElementById("time-picker").addEventListener("change", handleDateTimeChange);
 
+
 // Predict button click
-document.getElementById("predict-btn").addEventListener("click", async () => {
+predictBtn.addEventListener("click", async () => {
     // --- 1. Validation ---
     const forecastSelect = document.getElementById("forecast-period");
     selectedForecastPeriod.value = forecastSelect.value;
