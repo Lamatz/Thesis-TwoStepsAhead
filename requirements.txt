@@ -11,3 +11,4 @@ requests-cache
 retry-requests
 shapely
 scikit-learn
+google-genai
