@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Curve for Recall</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .chart-container {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chart-container">
+        <canvas id="learningCurveChart"></canvas>
+    </div>
+
+    <script>
+        // --- Data Extraction from Image ---
+        // X-axis values (number of training examples)
+        const x_values = [180, 360, 540, 720, 900, 1080, 1260, 1440, 1620, 1800];
+
+        // Y-axis values for the 'Training Recall' line
+        const y_train_recall = [0.99, 0.998, 0.995, 0.995, 0.998, 0.998, 0.995, 0.998, 0.998, 0.995];
+
+        // Y-axis values for the 'Test Recall' line (the mean)
+        const y_test_recall_mean = [0.50, 0.53, 0.825, 0.825, 0.89, 0.91, 0.915, 0.915, 0.915, 0.91];
+        
+        // Estimated standard deviation for the test recall shaded area
+        const y_test_recall_std = [0.08, 0.08, 0.135, 0.125, 0.09, 0.07, 0.065, 0.065, 0.065, 0.06];
+
+        // --- Prepare Data for Chart.js ---
+        // Map the raw data into {x, y} points for a linear scale chart
+        const trainingData = x_values.map((val, i) => ({ x: val, y: y_train_recall[i] }));
+        const testMeanData = x_values.map((val, i) => ({ x: val, y: y_test_recall_mean[i] }));
+        
+        // Calculate the upper and lower bounds for the shaded area
+        const testLowerBoundData = x_values.map((val, i) => ({ x: val, y: y_test_recall_mean[i] - y_test_recall_std[i] }));
+        const testUpperBoundData = x_values.map((val, i) => ({ x: val, y: y_test_recall_mean[i] + y_test_recall_std[i] }));
+
+        // --- Chart Configuration ---
+        const config = {
+            type: 'line',
+            data: {
+                datasets: [
+                    // Dataset 0: Training Recall (Red Line)
+                    {
+                        label: 'Training Recall',
+                        data: trainingData,
+                        borderColor: '#e41a1c', // A strong red color
+                        backgroundColor: '#e41a1c',
+                        fill: false,
+                        tension: 0, // Straight lines between points
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    // Dataset 1: Test Recall (Blue Line)
+                    {
+                        label: 'Test Recall',
+                        data: testMeanData,
+                        borderColor: '#377eb8', // A clear blue color
+                        backgroundColor: '#377eb8',
+                        fill: false,
+                        tension: 0, // Straight lines between points
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    // Dataset 2: Lower bound of the shaded area (hidden)
+                    {
+                        data: testLowerBoundData,
+                        borderColor: 'transparent',
+                        pointRadius: 0,
+                    },
+                    // Dataset 3: Upper bound of the shaded area (fills down to the lower bound)
+                    {
+                        data: testUpperBoundData,
+                        borderColor: 'transparent',
+                        backgroundColor: 'rgba(55, 126, 184, 0.2)', // Light, transparent blue
+                        pointRadius: 0,
+                        fill: 2, // Fill to dataset at index 2 (the lower bound)
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Learning Curve for Recall (Training vs Test)',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            bottom: 20
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        align: 'end',
+                        labels: {
+                            // This filter function hides the datasets used for the shaded area from the legend
+                            filter: (legendItem) => {
+                                return legendItem.datasetIndex < 2;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Training Examples',
+                            font: { size: 14 }
+                        },
+                        min: 0,
+                        max: 1900,
+                        grid: {
+                            color: '#e0e0e0' // Lighter grid lines
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Recall Score',
+                            font: { size: 14 }
+                        },
+                        min: 0.4,
+                        max: 1.05,
+                         grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- Render Chart ---
+        const ctx = document.getElementById('learningCurveChart').getContext('2d');
+        new Chart(ctx, config);
+    </script>
+
+</body>
+</html>
