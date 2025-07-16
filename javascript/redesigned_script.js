@@ -124,7 +124,7 @@ async function updateLocationInfo(lat, lng) {
         // --- 6. Update UI with final data ---
         document.getElementById("loc-name").innerText = selectedLocation.name;;
         currentMarker.bindPopup(`Location: <b>${selectedLocation.name}</b><br>Slope: <b>${fetchedLocationData.slope}</b><br>Soil: <b>${fetchedLocationData.soil_type_label}</b>`).openPopup();
-        
+
         // For The Loading Prediction Button------
         predictBtn.disabled = false;
         predictBtn.innerHTML = originalButtonText;
@@ -177,11 +177,11 @@ async function fetchWeatherData(lat, lon, date, time) {
         document.getElementById("soil-moisture").value = data.soil_moisture?.toFixed(3) || "N/A";
         for (const key in data.cumulative_rainfall) {
             const id = `rainfall-${key.replace('_', '-')}`;
-            if(document.getElementById(id)) document.getElementById(id).value = data.cumulative_rainfall[key].toFixed(4);
+            if (document.getElementById(id)) document.getElementById(id).value = data.cumulative_rainfall[key].toFixed(4);
         }
         for (const key in data.rain_intensity) {
             const id = `rain-intensity-${key.replace('_', '-')}`;
-            if(document.getElementById(id)) document.getElementById(id).value = data.rain_intensity[key].toFixed(4);
+            if (document.getElementById(id)) document.getElementById(id).value = data.rain_intensity[key].toFixed(4);
         }
         console.log("Weather data fetched and stored.", lastFetchedWeatherData);
     } catch (error) {
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Restrict date picker using the local timezone ---
     const datePicker = document.getElementById("date-picker");
     const today = new Date();
-    
+
     // Set the minimum date to today (local time)
     datePicker.min = toLocalISOString(today);
 
@@ -432,7 +432,7 @@ async function getSearchSuggestions(query) {
                 searchInput.value = loc.name; // Set search box value
                 suggestionsContainer.style.display = "none"; // Hide dropdown
                 map.setView([loc.lat, loc.lon], 14); // Zoom to location
-                
+
                 // Call the main function to handle all data fetching and UI updates
                 updateLocationInfo(parseFloat(loc.lat), parseFloat(loc.lon));
             };
@@ -485,12 +485,30 @@ document.addEventListener("click", (e) => {
     }
 });
 document.getElementById('search-btn-icon').addEventListener('click', () => searchInput.dispatchEvent(new Event('input')));
+// ===================================
+// == END OF SEARCH FUNCTIONALITY (Corrected & Enhanced)
+// ===================================
 
+
+// ===================================
+// == "Forecast Setting" Input Variables
+// ===================================
+const forecastSelect = document.getElementById("forecast-period");
+const datePicker = document.getElementById("date-picker");
+const timePicker = document.getElementById("time-picker");
+const summaryText = document.getElementById('forecast-summary-text');
 
 // MODIFIED: Combined listener for Date and Time pickers
 function handleDateTimeChange() {
-    const date = document.getElementById("date-picker").value;
-    const time = document.getElementById("time-picker").value;
+    // const forecastSelect = document.getElementById("forecast-period");
+    const date = datePicker.value;
+    const time = timePicker.value;
+    const forecastSelectText = forecastSelect.options[forecastSelect.selectedIndex].text;
+    const forecastPeriodHours = parseInt(forecastSelectText, 10);
+
+
+    updateSummaryText(date, time, forecastPeriodHours);
+
     if (selectedLocation.lat && date && time) {
         fetchWeatherData(selectedLocation.lat, selectedLocation.lng, date, time);
     } else if (date && time) {
@@ -499,8 +517,73 @@ function handleDateTimeChange() {
         document.getElementById("time-picker").value = "";
     }
 }
-document.getElementById("date-picker").addEventListener("change", handleDateTimeChange);
-document.getElementById("time-picker").addEventListener("change", handleDateTimeChange);
+
+datePicker.addEventListener("change", handleDateTimeChange);
+timePicker.addEventListener("change", handleDateTimeChange);
+forecastSelect.addEventListener("change", handleDateTimeChange);
+
+
+function updateSummaryText(date, time, forecastHours) {
+
+    // Create a Date object from the selected date and time
+    const endDate = new Date(`${date}T${time}`);
+
+    // Check if the date is valid. If not, don't update the text.
+    if (isNaN(endDate.getTime())) {
+        summaryText.textContent = 'Please select a valid date and time.';
+        return;
+    }
+
+    const dateOptions = {
+        month: 'long', // e.g., "July"
+        day: 'numeric'  // e.g., "17"
+        // By omitting 'year', it will not be included in the output.
+    };
+
+
+    // The 'undefined' argument tells the browser to use the user's default language.
+    const formattedEndDate = endDate.toLocaleDateString(undefined, dateOptions);
+
+    // Clone the date to calculate the start time
+    const startDate = new Date(endDate.getTime());
+    // Subtract the forecast period in hours
+    startDate.setHours(startDate.getHours() - forecastHours);
+
+    // Format for display (e.g., "09:00")
+    const startTimeFormatted = `${formatHour(startDate.getHours())}:00`;
+    const endTimeFormatted = `${formatHour(endDate.getHours())}:00`;
+
+
+    let summary;
+
+    // THIS code is for when the date is not formatted as words
+    // // Check if the start date is on a different day
+    // const startDateFormatted = (startDate.getDate() !== endDate.getDate())
+    //     ? startDate.toLocaleDateString() // Show full date if it's different
+    //     : '';
+
+
+    // Check if the start date falls on a different day after subtraction
+    if (startDate.getDate() !== endDate.getDate()) {
+        // If the day is different, format the start date as well
+        const formattedStartDate = startDate.toLocaleDateString(undefined, dateOptions);
+        summary = `Forecasting from ${startTimeFormatted} on ${formattedStartDate} to ${endTimeFormatted} on ${formattedEndDate}`;
+    } else {
+        // If it's the same day, keep the sentence simpler
+        summary = `Forecasting from ${startTimeFormatted} to ${endTimeFormatted} on ${formattedEndDate}`;
+    }
+
+    summaryText.textContent = summary;
+
+    // Example: "Forecasting from 21:00 to 02:00 on 7/18/2025"
+    // summaryText.textContent = `Forecasting from ${startTimeFormatted} ${startDateFormatted} to ${endTimeFormatted} on ${date}`;
+
+}
+
+function formatHour(hour) {
+    return hour.toString().padStart(2, '0');
+}
+
 
 
 // Predict button click
@@ -510,17 +593,17 @@ predictBtn.addEventListener("click", async () => {
     selectedForecastPeriod.value = forecastSelect.value;
     selectedForecastPeriod.text = forecastSelect.options[forecastSelect.selectedIndex].text;
 
-     if (!selectedLocation.lat || !selectedPredictionDate || !selectedPredictionTime || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
+    if (!selectedLocation.lat || !selectedPredictionDate || !selectedPredictionTime || !selectedForecastPeriod.value || !lastFetchedWeatherData) {
         alert("Validation Error: Please ensure a Location, a valid Date, Time, and Forecast Period are selected.");
         return;
     }
-    
+
     // Your original model needs all 6 rainfall features. We still send them.
     const requestData = {
         soil_type: fetchedLocationData.soil_type_snum,
         slope: parseFloat(document.getElementById("slope").value),
         soil_moisture: parseFloat(document.getElementById("soil-moisture").value),
-        
+
         "rainfall-3_hr": parseFloat(document.getElementById("rainfall-3-hr").value),
         "rainfall-6_hr": parseFloat(document.getElementById("rainfall-6-hr").value),
         "rainfall-12_hr": parseFloat(document.getElementById("rainfall-12-hr").value),
@@ -535,10 +618,10 @@ predictBtn.addEventListener("click", async () => {
         "rain-intensity-3-day": parseFloat(document.getElementById("rain-intensity-3-day").value),
         "rain-intensity-5-day": parseFloat(document.getElementById("rain-intensity-5-day").value),
     };
-    
+
     // Check for NaN values before sending
-    for(const key in requestData) {
-        if(isNaN(requestData[key])) {
+    for (const key in requestData) {
+        if (isNaN(requestData[key])) {
             alert(`Validation Error: Invalid data for "${key}". Cannot predict.`);
             return;
         }
@@ -556,7 +639,7 @@ predictBtn.addEventListener("click", async () => {
         if (result.error) throw new Error(result.error);
 
         lastPredictionResult = { prediction: result.prediction, confidence: result.confidence };
-        
+
         // --- 3. Show Modal ---
         document.getElementById("modal-body").innerHTML = `<p><strong>Prediction:</strong> ${result.prediction}</p><p><strong>Confidence:</strong> ${result.confidence}</p>`;
         document.getElementById("prediction-modal").style.display = "flex";
@@ -591,136 +674,138 @@ document.getElementById("reset-btn").addEventListener("click", resetUI);
 let scrollTopButton = document.getElementById("scrollTopBtn");
 
 // When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {
-  scrollFunction();
+window.onscroll = function () {
+    scrollFunction();
 };
 
 function scrollFunction() {
-  // The threshold for showing the button (e.g., 100 pixels)
-  const showButtonThreshold = 500;
+    // The threshold for showing the button (e.g., 100 pixels)
+    const showButtonThreshold = 500;
 
-  if (document.body.scrollTop > showButtonThreshold || document.documentElement.scrollTop > showButtonThreshold) {
-    scrollTopButton.style.display = "block";
-  } else {
-    scrollTopButton.style.display = "none";
-  }
+    if (document.body.scrollTop > showButtonThreshold || document.documentElement.scrollTop > showButtonThreshold) {
+        scrollTopButton.style.display = "block";
+    } else {
+        scrollTopButton.style.display = "none";
+    }
 }
 
 // When the user clicks on the button, scroll to the top of the document smoothly
-scrollTopButton.addEventListener("click", function() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+scrollTopButton.addEventListener("click", function () {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 });
 
 
+
+// FOR PDF
 
 document.getElementById("download-pdf-btn").addEventListener("click", function () {
-  const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;
 
-  const reportSection = document.getElementById("report-content");
-  const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
+    const reportSection = document.getElementById("report-content");
+    const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
 
-  const pdf = new jsPDF();
-  let y = 10;
+    const pdf = new jsPDF();
+    let y = 10;
 
-  // Title
-  pdf.setFontSize(16);
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
-  y += 10;
+    // Title
+    pdf.setFontSize(16);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
+    y += 10;
 
-  // Get report values
-  const locationName = document.getElementById("report-location-name").innerText;
-  const coords = document.getElementById("report-coords").innerText;
-  const date = document.getElementById("report-prediction-date").innerText;
-  const prediction = document.getElementById("report-prediction").innerText;
-  const confidence = document.getElementById("report-confidence").innerText;
-  const slope = document.getElementById("report-slope").innerText;
-  const soilType = document.getElementById("report-soil-type").innerText;
-  const soilMoisture = document.getElementById("report-soil-moisture").innerText;
+    // Get report values
+    const locationName = document.getElementById("report-location-name").innerText;
+    const coords = document.getElementById("report-coords").innerText;
+    const date = document.getElementById("report-prediction-date").innerText;
+    const prediction = document.getElementById("report-prediction").innerText;
+    const confidence = document.getElementById("report-confidence").innerText;
+    const slope = document.getElementById("report-slope").innerText;
+    const soilType = document.getElementById("report-soil-type").innerText;
+    const soilMoisture = document.getElementById("report-soil-moisture").innerText;
 
-  // General Info
-  pdf.setFontSize(12);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`Location: ${locationName}`, 10, y); y += 7;
-  pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
-  pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
+    // General Info
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Location: ${locationName}`, 10, y); y += 7;
+    pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
+    pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
 
-  // Prediction
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Prediction:", 10, y); y += 7;
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
-  pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
+    // Prediction
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Prediction:", 10, y); y += 7;
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
+    pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
 
-  // Environmental Variables
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Environmental Variables:", 10, y); y += 7;
-  pdf.setFont("helvetica", "normal");
-  pdf.text(`Slope: ${slope}`, 10, y); y += 7;
-  pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
-  pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
+    // Environmental Variables
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Environmental Variables:", 10, y); y += 7;
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Slope: ${slope}`, 10, y); y += 7;
+    pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
+    pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
 
- 
 
-  const chartIds = [
-    { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
-    { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
-    { id: "daily-cumulative-chart", label: "Past 5 Days Cumulative Rainfall" },
-    { id: "daily-intensity-chart", label: "Past 5 Days Average Intensity" }
-];
 
-const chartsPerRow = 2;
-const chartWidth = 90;  // half of 180
-const chartHeight = 60;
-const marginX = 10;
-const spacingX = 10;
-const spacingY = 10;
-let chartX = marginX;
-let rowHeight = chartHeight + 10;
+    const chartIds = [
+        { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
+        { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
+        { id: "daily-cumulative-chart", label: "Past 5 Days Cumulative Rainfall" },
+        { id: "daily-intensity-chart", label: "Past 5 Days Average Intensity" }
+    ];
 
-pdf.setFont("helvetica", "bold");
-pdf.text("Rainfall Analysis Charts:", 10, y);
-y += 6;
+    const chartsPerRow = 2;
+    const chartWidth = 90;  // half of 180
+    const chartHeight = 60;
+    const marginX = 10;
+    const spacingX = 10;
+    const spacingY = 10;
+    let chartX = marginX;
+    let rowHeight = chartHeight + 10;
 
-chartIds.forEach((chartInfo, index) => {
-    const canvas = document.getElementById(chartInfo.id);
-    if (canvas) {
-        const imgData = canvas.toDataURL("image/png", 1.0);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Rainfall Analysis Charts:", 10, y);
+    y += 6;
 
-        // Add label above each chart
-        pdf.setFontSize(10);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(chartInfo.label, chartX, y);
+    chartIds.forEach((chartInfo, index) => {
+        const canvas = document.getElementById(chartInfo.id);
+        if (canvas) {
+            const imgData = canvas.toDataURL("image/png", 1.0);
 
-        // Move down to draw the chart
-        pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
+            // Add label above each chart
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.text(chartInfo.label, chartX, y);
 
-        // Next column or new row
-        if ((index + 1) % chartsPerRow === 0) {
-            y += rowHeight + spacingY;
-            chartX = marginX;
-            if (y + chartHeight > 280) {
-                pdf.addPage();
-                y = 20;
+            // Move down to draw the chart
+            pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
+
+            // Next column or new row
+            if ((index + 1) % chartsPerRow === 0) {
+                y += rowHeight + spacingY;
+                chartX = marginX;
+                if (y + chartHeight > 280) {
+                    pdf.addPage();
+                    y = 20;
+                }
+            } else {
+                chartX += chartWidth + spacingX;
             }
-        } else {
-            chartX += chartWidth + spacingX;
         }
-    }
-});
+    });
 
 
- // Description
-  pdf.setFont("helvetica", "bold");
-  pdf.text("Detailed Description:", 10, y); y += 7;
-  pdf.setFont("helvetica", "normal");
+    // Description
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Detailed Description:", 10, y); y += 7;
+    pdf.setFont("helvetica", "normal");
 
-  const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
-  pdf.text(lines, 10, y);
-  y += lines.length * 7;
-  // Save the PDF
-  pdf.save("Landslide_Prediction_Report.pdf");
+    const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
+    pdf.text(lines, 10, y);
+    y += lines.length * 7;
+    // Save the PDF
+    pdf.save("Landslide_Prediction_Report.pdf");
 });
