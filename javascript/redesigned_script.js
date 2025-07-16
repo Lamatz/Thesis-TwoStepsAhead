@@ -204,10 +204,9 @@ async function fetchWeatherData(lat, lon, date, time) {
 // == CORRECTED JAVASCRIPT FUNCTION
 // ===================================
 
+const chartForecastText = document.getElementsByClassName("chart-summary-text");
 
 function populateReportSummary() {
-    // For this demo, we set up the mock data right before generating.
-
 
     // --- 1. Validation ---
     if (!lastPredictionResult || !lastFetchedWeatherData) {
@@ -219,7 +218,6 @@ function populateReportSummary() {
     const reportSection = document.getElementById("report-summary-section");
     reportSection.style.display = "block";
 
-    console.log("populating1");
 
     // --- 3. Populate all text fields ---
     document.getElementById("report-location-name").innerText = selectedLocation.name || "N/A";
@@ -231,11 +229,25 @@ function populateReportSummary() {
     document.getElementById("report-soil-type").innerText = fetchedLocationData.soil_type_label || "N/A";
     document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData.soil_moisture?.toFixed(1) ?? "N/A";
 
-    // const forecastSelect = document.getElementById("forecast-period");
-    // const periodValue = forecastSelect.value;
-    // const periodText = periodValue !== 'none' ? forecastSelect.options[forecastSelect.selectedIndex].text : "N/A";
+    console.log("testing1");
 
-    console.log("populating1");
+    const selectedDate = datePicker.value;
+    const selectedTime = timePicker.value;
+    console.log("testing2");
+    // --- 3.5 Add the Chart Forecast Summary Text ---
+    const chartSummary = generateForecastSummaryString(
+        selectedDate,
+        selectedTime,
+        12,                      // Report always shows past 12 hours
+        'parenthetical'          // We want the format "(... - ...)"
+    );
+
+   for (const element of chartForecastText) {
+        // Set the textContent for each individual span element in the collection
+        element.textContent = chartSummary;
+    }
+
+    console.log("testing3");
 
     // --- 4. Destroy old charts ---
     // Your code for this is perfect. It prevents memory leaks and canvas conflicts.
@@ -513,8 +525,8 @@ function handleDateTimeChange() {
         fetchWeatherData(selectedLocation.lat, selectedLocation.lng, date, time);
     } else if (date && time) {
         alert("Please select a location first.");
-        document.getElementById("date-picker").value = "";
-        document.getElementById("time-picker").value = "";
+        datePicker.value = "";
+        timePicker.value = "";
     }
 }
 
@@ -523,65 +535,53 @@ timePicker.addEventListener("change", handleDateTimeChange);
 forecastSelect.addEventListener("change", handleDateTimeChange);
 
 
-function updateSummaryText(date, time, forecastHours) {
+function generateForecastSummaryString(date, time, forecastHours, formatType = 'sentence') {
+    // Helper function to ensure two digits (e.g., 7 -> "07")
+    const formatHour = (hour) => hour.toString().padStart(2, '0');
 
-    // Create a Date object from the selected date and time
     const endDate = new Date(`${date}T${time}`);
 
-    // Check if the date is valid. If not, don't update the text.
     if (isNaN(endDate.getTime())) {
-        summaryText.textContent = 'Please select a valid date and time.';
-        return;
+        return 'Please select a valid date and time.';
     }
 
-    const dateOptions = {
-        month: 'long', // e.g., "July"
-        day: 'numeric'  // e.g., "17"
-        // By omitting 'year', it will not be included in the output.
-    };
-
-
-    // The 'undefined' argument tells the browser to use the user's default language.
-    const formattedEndDate = endDate.toLocaleDateString(undefined, dateOptions);
-
-    // Clone the date to calculate the start time
     const startDate = new Date(endDate.getTime());
-    // Subtract the forecast period in hours
     startDate.setHours(startDate.getHours() - forecastHours);
 
-    // Format for display (e.g., "09:00")
+    const dateOptions = { month: 'long', day: 'numeric' };
+
+    const formattedEndDate = endDate.toLocaleDateString(undefined, dateOptions);
     const startTimeFormatted = `${formatHour(startDate.getHours())}:00`;
     const endTimeFormatted = `${formatHour(endDate.getHours())}:00`;
 
+    // Check if the forecast crosses midnight
+    const ifDifferentDay = startDate.getDate() !== endDate.getDate();
 
-    let summary;
-
-    // THIS code is for when the date is not formatted as words
-    // // Check if the start date is on a different day
-    // const startDateFormatted = (startDate.getDate() !== endDate.getDate())
-    //     ? startDate.toLocaleDateString() // Show full date if it's different
-    //     : '';
-
-
-    // Check if the start date falls on a different day after subtraction
-    if (startDate.getDate() !== endDate.getDate()) {
-        // If the day is different, format the start date as well
-        const formattedStartDate = startDate.toLocaleDateString(undefined, dateOptions);
-        summary = `Forecasting from ${startTimeFormatted} on ${formattedStartDate} to ${endTimeFormatted} on ${formattedEndDate}`;
-    } else {
-        // If it's the same day, keep the sentence simpler
-        summary = `Forecasting from ${startTimeFormatted} to ${endTimeFormatted} on ${formattedEndDate}`;
+    if (formatType === 'parenthetical') {
+        if (ifDifferentDay) {
+            const formattedStartDate = startDate.toLocaleDateString(undefined, dateOptions);
+            return `(${startTimeFormatted}, ${formattedStartDate} - ${endTimeFormatted}, ${formattedEndDate})`;
+        } else {
+            return `(${startTimeFormatted} - ${endTimeFormatted}, ${formattedEndDate})`;
+        }
+    } else { // Default to 'sentence' format
+        if (ifDifferentDay) {
+            const formattedStartDate = startDate.toLocaleDateString(undefined, dateOptions);
+            return `Forecasting from ${startTimeFormatted} on ${formattedStartDate} to ${endTimeFormatted} on ${formattedEndDate}`;
+        } else {
+            return `Forecasting from ${startTimeFormatted} to ${endTimeFormatted} on ${formattedEndDate}`;
+        }
     }
-
-    summaryText.textContent = summary;
-
-    // Example: "Forecasting from 21:00 to 02:00 on 7/18/2025"
-    // summaryText.textContent = `Forecasting from ${startTimeFormatted} ${startDateFormatted} to ${endTimeFormatted} on ${date}`;
-
 }
 
-function formatHour(hour) {
-    return hour.toString().padStart(2, '0');
+
+// This function's only job is to update the main UI summary text
+function updateSummaryText(date, time, forecastHours) {
+    // Call the generator to get the string in 'sentence' format
+    const summary = generateForecastSummaryString(date, time, forecastHours);
+
+    // Display it
+    summaryText.textContent = summary;
 }
 
 
