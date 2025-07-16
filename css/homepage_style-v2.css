@@ -32,9 +32,10 @@ body {
 /*===========================
             Images
 ===========================*/
-.placeholder-img img{
+.placeholder-img img {
     width: 300px;
 }
+
 /*===========================
   Page Layout
 ===========================*/
@@ -44,12 +45,13 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center; */
-    flex:1;
+    flex: 1;
     display: flex;
 }
 
 #homePage {
-    flex-grow: 1; /* This makes the beige section grow to fill .main-content */
+    flex-grow: 1;
+    /* This makes the beige section grow to fill .main-content */
 }
 
 
@@ -128,19 +130,19 @@ body {
     transform: none;
 }
 
-a.learnhow-btn{
+a.learnhow-btn {
     /* outline: #00f2fe; */
     color: #8B4513;
     border: #8B4513 solid 1px;
 }
 
-a.learnhow-btn:hover{
+a.learnhow-btn:hover {
     /* outline: #00f2fe; */
     color: #8B4513;
     border: #8B4513 solid 1px;
     transform: translateY(-2px);
     transition: all 0.3s ease;
-    
+
 }
 
 /*===========================
@@ -148,9 +150,9 @@ a.learnhow-btn:hover{
 ===========================*/
 
 
-.card-body{
- background-color: rgba(255, 255, 255, 0.9);
- border-radius: 20px;
+.card-body {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
 }
 
 
@@ -522,4 +524,25 @@ a.learnhow-btn:hover{
     .hero-section .min-vh-100 {
         min-height: auto !important;
     }
+}
+
+
+
+
+/* Visual Summary Timeline */
+.visual-summary {
+    background-color: #fafafa;
+    border-radius: 6px;
+    padding: 16px;
+    border: 1px solid #eee;
+}
+
+.visual-summary p {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.visual-summary strong {
+    color: #2E7D32;
 }
