@@ -291,12 +291,13 @@
 
             <!-- Card: Detailed Description -->
             <div class="card report-card mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <strong><i class="fas fa-pen me-2"></i>Detailed Description</strong>
+                    <button id="generate-report-btn" class="btn btn-secondary">Generate AI Report</button>
                 </div>
                 <div class="card-body">
-                    <textarea id="report-detailed-description" class="form-control" rows="4"
-                        placeholder="Summarize findings, observations, and recommendations here..."></textarea>
+                    <div id="report-detailed-description" class="form-control" contenteditable="true"
+                        aria-placeholder="Summarize findings, observations, and recommendations here..."></div>
                 </div>
             </div>
         </div>
@@ -323,13 +324,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Your custom script -->
-    <script src="../javascript/redesigned_script.js"></script>
+
 
     <!-- Javascript for the forecast settings -->
     <script src="../javascript/forecast-setting.js"></script>
 
-
+    <!-- Markdown-to-HTML Library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- NAVBAR JS -->
     <script src="../javascript/navbar.js"></script>
@@ -337,6 +338,9 @@
 
     <!-- Mapbox GL JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+
+    <!-- Your custom script -->
+    <script src="../javascript/redesigned_script.js"></script>
 
 </body>
 

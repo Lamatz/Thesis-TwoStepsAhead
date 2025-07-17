@@ -242,7 +242,7 @@ function populateReportSummary() {
         'parenthetical'          // We want the format "(... - ...)"
     );
 
-   for (const element of chartForecastText) {
+    for (const element of chartForecastText) {
         // Set the textContent for each individual span element in the collection
         element.textContent = chartSummary;
     }
@@ -362,6 +362,8 @@ function hideAndClearReportSummary() {
 // == EVENT LISTENERS
 // ===================================
 
+
+// I THINK THIS SNIPPET OF CODE IS USELESS MAYBE REMOVE IN THE FUTURE
 document.addEventListener('DOMContentLoaded', () => {
     // --- Helper function to get a date in YYYY-MM-DD format for the local timezone ---
     function toLocalISOString(date) {
@@ -664,7 +666,233 @@ document.getElementById("report-btn").addEventListener("click", () => {
 document.getElementById("reset-btn").addEventListener("click", resetUI);
 
 
+console.log("main file testing");
 
+// ===================================
+// == Automatic Report AI Generator
+// ===================================
+
+
+// /**
+//  * Removes common Markdown formatting characters from a string for a clean display.
+//  * @param {string} text The text containing Markdown.
+//  * @returns {string} The text with formatting characters removed.
+//  */
+// function stripMarkdown(text) {
+//     // This regular expression removes:
+//     // ##, ###, ####, etc. (headings)
+//     // **, * (bold, italics)
+//     // --- (horizontal rules)
+//     return text.replace(/(#+\s*|\*\*|\*|---)/g, '');
+// }
+
+
+
+// // Helper function to strip markdown for live view
+// function stripMarkdown(text) {
+//     return text.replace(/(#+\s*|\*\*|\*|---)/g, '');
+// }
+
+// // Helper function for the typewriter effect
+// function typewriterEffect(element, text, speed) {
+//     return new Promise(resolve => {
+//         let i = 0;
+//         function type() {
+//             if (i < text.length) {
+//                 element.textContent += text.charAt(i);
+//                 i++;
+//                 setTimeout(type, speed);
+//             } else {
+//                 resolve();
+//             }
+//         }
+//         type();
+//     });
+// }
+
+
+
+// --- NEW ---
+// Add a new event listener for the report generator button
+const reportBtn = document.getElementById("generate-report-btn");
+const reportDiv = document.getElementById("report-detailed-description");
+
+
+reportBtn.addEventListener("click", async () => {
+    // You can copy the validation and data gathering logic from the other button
+    // --- 1. Validation & Data Gathering ---
+    const requestData = {
+        // === Data from User Selection & Location Fetch ===
+        soil_type: fetchedLocationData?.soil_type_label,
+        slope: fetchedLocationData?.slope,
+        prediction_date: (selectedPredictionDate && selectedPredictionTime)
+            ? `${selectedPredictionDate} at ${selectedPredictionTime}`
+            : "N/A",
+
+        // === Data from Initial Prediction Model ===
+        // We use optional chaining (?.) in case the first prediction hasn't been run yet.
+        original_model_prediction: lastPredictionResult?.prediction ?? "Not run",
+        original_model_confidence: lastPredictionResult?.confidence ?? "Not run",
+
+        // === Data from Weather API Fetch ===
+        soil_moisture: lastFetchedWeatherData?.soil_moisture,
+        "rainfall-3_hr": lastFetchedWeatherData?.cumulative_rainfall?.['3_hr'],
+        "rainfall-6_hr": lastFetchedWeatherData?.cumulative_rainfall?.['6_hr'],
+        "rainfall-12_hr": lastFetchedWeatherData?.cumulative_rainfall?.['12_hr'],
+        "rainfall-1-day": lastFetchedWeatherData?.cumulative_rainfall?.['1_day'],
+        "rainfall-3-day": lastFetchedWeatherData?.cumulative_rainfall?.['3_day'],
+        "rainfall-5-day": lastFetchedWeatherData?.cumulative_rainfall?.['5_day'],
+        "rain-intensity-3_hr": lastFetchedWeatherData?.rain_intensity?.['3_hr'],
+        "rain-intensity-6_hr": lastFetchedWeatherData?.rain_intensity?.['6_hr'],
+        "rain-intensity-12_hr": lastFetchedWeatherData?.rain_intensity?.['12_hr'],
+        "rain-intensity-1-day": lastFetchedWeatherData?.rain_intensity?.['1_day'],
+        "rain-intensity-3-day": lastFetchedWeatherData?.rain_intensity?.['3_day'],
+        "rain-intensity-5-day": lastFetchedWeatherData?.rain_intensity?.['5_day'],
+    };
+
+    console.log("Checking if it gathered the result: ", requestData);
+
+    // Check for NaN values before sending
+    // for (const key in requestData) {
+    //     if (value === null || typeof value === 'undefined') {
+    //         alert(`Validation Error: Data is missing for "${key}". Cannot generate report.`);
+    //         return;
+    //     }
+    // }
+
+    // // --- 2. API Call to the NEW Endpoint ---
+    // console.log("Sending for AI report generation:", requestData);
+    // try {
+    //     // CALL THE NEW URL: /generate_report
+    //     const response = await fetch("http://127.0.0.1:5001/generate_report", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify(requestData)
+    //     });
+
+    //     const result = await response.json();
+    //     if (!response.ok) {
+    //         throw new Error(result.error || 'Unknown server error');
+    //     }
+
+    //     const generatedReport = result.report; // <-- Handle the 'report' key
+
+
+    //     // Set its value to the text received from the AI
+    //     reportTextarea.value = generatedReport;
+
+    // } catch (error) {
+    //     console.error("Report generation failed:", error);
+    //     alert("Report Generation Error: " + error.message);
+    // }
+
+
+    // --- 2. API Call with Streaming Logic ---
+    const originalButtonText = reportBtn.innerHTML;
+    let fullReportText = ""; // Variable to accumulate the full plain text
+
+
+    try {
+        // --- Setup UI for streaming ---
+        reportBtn.disabled = true;
+        reportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+        reportDiv.value = ""; // Clear previous content
+        // reportTextarea.placeholder = "AI is generating the report...";
+        // reportTextarea.classList.add("streaming"); // For the blinking cursor effect
+        reportDiv.setAttribute("aria-placeholder", "AI is generating the report...");
+        reportDiv.style.whiteSpace = 'pre-wrap';
+
+
+
+        const response = await fetch("http://127.0.0.1:5001/generate_report", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        });
+
+        if (!response.ok) {
+            // Handle HTTP errors (like 500)
+            const errorData = await response.json(); // Error responses are not streamed
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+
+        // --- Read the stream from the response body ---
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder(); // To convert bytes to text
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                // The stream is finished.
+                break;
+            }
+            // Decode the chunk of data and append it to the textarea
+            const textChunk = decoder.decode(value, { stream: true });
+            // reportTextarea.value += textChunk;
+
+            // --- ADD THIS LINE ---
+            // After each chunk is added, tell the textarea to resize.
+            // autoGrow(reportTextarea);
+            // ---------------------
+
+            fullReportText += textChunk;
+
+            reportDiv.textContent = fullReportText;
+        }
+
+
+        // while (true) {
+        //     const { value, done } = await reader.read();
+        //     if (done) break;
+
+        //     // 1. Get the raw chunk with all the ugly markdown
+        //     const rawChunk = decoder.decode(value, { stream: true });
+
+        //     // 2. Add the RAW chunk to our master variable for the end
+        //     fullReportText += rawChunk;
+            
+        //     // 3. Create a CLEAN version of the chunk for live display
+        //     const cleanChunk = stripMarkdown(rawChunk);
+
+        //     // 4. "Type" only the CLEAN version to the screen
+        //     await typewriterEffect(reportDiv, cleanChunk, 0.1);
+        // }
+
+
+        reportDiv.style.whiteSpace = 'normal';
+
+        const reportHTML = marked.parse(fullReportText, { breaks: true });
+        reportDiv.innerHTML = reportHTML; // Now, display the final rendered HTML
+
+    } catch (error) {
+        console.error("Report generation failed:", error);
+        reportTextarea.value = `Error: ${error.message}`;
+        alert("Report Generation Error: " + error.message);
+    } finally {
+        // --- Cleanup UI after streaming is done or an error occurs ---
+        reportBtn.disabled = false;
+        reportBtn.innerHTML = originalButtonText;
+        // reportTextarea.classList.remove("streaming"); // Remove blinking cursor
+        // reportTextarea.placeholder = "Summarize findings, observations, and recommendations here...";
+        reportDiv.setAttribute("aria-placeholder", "Summarize findings, observations, and recommendations here...");
+        reportDiv.style.whiteSpace = 'normal';
+    }
+});
+
+
+
+// A reusable function to make a textarea grow automatically
+// function autoGrow(element) {
+//     // Temporarily reset the height. This is crucial for when text is deleted.
+//     element.style.height = 'auto';
+//     // Set the height to the scroll height, which is the full height of the content
+//     element.style.height = (element.scrollHeight) + 'px';
+// }
+
+// // Place this outside your "Generate Report" button's listener
+// reportTextarea.addEventListener('input', () => {
+//     autoGrow(reportTextarea);
+// });
 
 // ===================================
 // == SCROLL BUTTON
@@ -689,6 +917,9 @@ function scrollFunction() {
     }
 }
 
+console.log("main file testing - 2");
+
+
 // When the user clicks on the button, scroll to the top of the document smoothly
 scrollTopButton.addEventListener("click", function () {
     window.scrollTo({
@@ -704,9 +935,14 @@ scrollTopButton.addEventListener("click", function () {
 document.getElementById("download-pdf-btn").addEventListener("click", function () {
     const { jsPDF } = window.jspdf;
 
-    const reportSection = document.getElementById("report-content");
-    const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
+    console.log("testing - 1");
 
+    const reportSection = document.getElementById("report-content");
+    // const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
+    const descriptionText = document.getElementById("report-detailed-description").innerText || "N/A";
+
+
+    console.log("testing - 2");
     const pdf = new jsPDF();
     let y = 10;
 
@@ -749,6 +985,7 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
 
 
+    console.log("testing - 3");
 
     const chartIds = [
         { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
@@ -798,10 +1035,16 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     });
 
 
+
+    console.log("Prediction Result For Sending", lastPredictionResult);
+
     // Description
     pdf.setFont("helvetica", "bold");
     pdf.text("Detailed Description:", 10, y); y += 7;
     pdf.setFont("helvetica", "normal");
+
+
+    console.log("testing 5");
 
     const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
     pdf.text(lines, 10, y);
