@@ -2,9 +2,6 @@ Slope Map/
 Slope Map/slope.tif
 backend/Slope Map/
 venv/
-data.csv
-datas.csv
 .ipynb_checkpoints/
-javascript/data.csv
 .env
 
