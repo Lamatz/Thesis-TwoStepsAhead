@@ -1,18 +1,20 @@
-import os
-from dotenv import load_dotenv
 
-# Load the .env file
-load_dotenv()
+from google.genai import types
 
-# Get the key from the environment
-api_key = os.getenv("GEMINI_API_KEY")
 
-# Print what was found
-print("--- Testing .env file ---")
-if api_key:
-    print("SUCCESS: API Key was found!")
-    # Optional: uncomment the line below to see the first 5 characters of your key
-    # print(f"Key starts with: {api_key[:5]}")
-else:
-    print("FAILURE: API Key was NOT found (returned None).")
-print("-------------------------")
+
+# You need to generate an API Key and embedd it into your environment as "GEMINI_API_KEY"
+# Use the command: export GOOGLE_API_KEY='your-api-key' 
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+
+
+
+response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="How does AI work?",
+    config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(thinking_budget=0) # Disables thinking
+    ),
+)
+print(response.text)
