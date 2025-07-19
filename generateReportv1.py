@@ -16,7 +16,7 @@ app = Flask(__name__)
 # Enable CORS for all routes, allowing your frontend to communicate with this backend
 CORS(app)
 
-# load_dotenv()
+load_dotenv()
 
 # Configure the Gemini API client
 # try:
