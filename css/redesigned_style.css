@@ -22,6 +22,12 @@ body {
     width: 100%;
 }
 
+main.col-lg-9 {
+    height: calc(100vh - 56px);
+    /* Full viewport height minus navbar height */
+    overflow: hidden;
+}
+
 .control-panel {
     height: 92vh;
     /* background-color: #f5f5dc; */
@@ -272,16 +278,21 @@ body {
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(255,255,255,0.3); /* Light part of the circle */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    /* Light part of the circle */
     border-radius: 50%;
-    border-top-color: #fff; /* Opaque part of the circle */
+    border-top-color: #fff;
+    /* Opaque part of the circle */
     animation: spin 1s ease-in-out infinite;
-    margin-left: 10px; /* Space between text and spinner */
+    margin-left: 10px;
+    /* Space between text and spinner */
     vertical-align: middle;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Style for the button when it's disabled */
@@ -294,7 +305,8 @@ body {
 .tempus-dominus-widget {
     transition: none !important;
 }
-#hour-picker-input{
+
+#hour-picker-input {
     caret-color: transparent;
 }
 
@@ -324,10 +336,13 @@ body {
 
 /* Add a blinking cursor effect to the end of the textarea while streaming */
 .streaming {
-    caret-color: transparent; /* Hide the default caret */
+    caret-color: transparent;
+    /* Hide the default caret */
 }
+
 .streaming::after {
-    content: '▋'; /* A solid block character */
+    content: '▋';
+    /* A solid block character */
     animation: blink 1s step-end infinite;
     margin-left: 2px;
 }
@@ -342,13 +357,15 @@ body {
 /* Style the placeholder for the contenteditable div */
 [contenteditable][aria-placeholder]:empty:before {
     content: attr(aria-placeholder);
-    color: #6c757d; /* Standard bootstrap placeholder color */
+    color: #6c757d;
+    /* Standard bootstrap placeholder color */
     opacity: 1;
-    pointer-events: none; /* Allows clicks to go "through" the placeholder */
+    pointer-events: none;
+    /* Allows clicks to go "through" the placeholder */
 }
 
 #report-detailed-description {
-    min-height: 150px; 
+    min-height: 150px;
     overflow-y: auto;
     resize: none;
     /* white-space: pre-wrap;  */
@@ -356,7 +373,7 @@ body {
 
 #report-detailed-description:empty:before {
     content: attr(aria-placeholder);
-    color: #6c757d; 
+    color: #6c757d;
     cursor: text;
-    pointer-events: none; 
+    pointer-events: none;
 }

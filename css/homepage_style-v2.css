@@ -28,10 +28,6 @@ body {
     transition: all 0.2s ease;
 }
 
-.tempus-dominus-widget {
-    transition: none !important;
-}
-
 
 /*===========================
             Images
@@ -530,63 +526,3 @@ a.learnhow-btn:hover {
     }
 }
 
-
-/* Visual Summary Timeline */
-.visual-summary {
-    background-color: #fafafa;
-    border-radius: 6px;
-    padding: 16px;
-    border: 1px solid #eee;
-}
-
-.visual-summary p {
-    margin: 0 0 12px 0;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.visual-summary strong {
-    color: #2E7D32;
-}
-
-
-
-
-/* Add a blinking cursor effect to the end of the textarea while streaming */
-.streaming {
-    caret-color: transparent; /* Hide the default caret */
-}
-.streaming::after {
-    content: '▋'; /* A solid block character */
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-}
-
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
-}
-
-
-/* Style the placeholder for the contenteditable div */
-[contenteditable][aria-placeholder]:empty:before {
-    content: attr(aria-placeholder);
-    color: #6c757d; /* Standard bootstrap placeholder color */
-    opacity: 1;
-    pointer-events: none; /* Allows clicks to go "through" the placeholder */
-}
-
-#report-detailed-description {
-    min-height: 150px; 
-    overflow-y: auto;
-    resize: none;
-    /* white-space: pre-wrap;  */
-}
-
-#report-detailed-description:empty:before {
-    content: attr(aria-placeholder);
-    color: #6c757d; 
-    cursor: text;
-    pointer-events: none; 
-}
