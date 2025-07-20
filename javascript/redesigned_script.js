@@ -364,39 +364,39 @@ function hideAndClearReportSummary() {
 
 
 // I THINK THIS SNIPPET OF CODE IS USELESS MAYBE REMOVE IN THE FUTURE
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Helper function to get a date in YYYY-MM-DD format for the local timezone ---
-    function toLocalISOString(date) {
-        const year = date.getFullYear();
-        // getMonth() is zero-based, so we add 1
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
+// document.addEventListener('DOMContentLoaded', () => {
+//     // --- Helper function to get a date in YYYY-MM-DD format for the local timezone ---
+//     function toLocalISOString(date) {
+//         const year = date.getFullYear();
+//         // getMonth() is zero-based, so we add 1
+//         let month = date.getMonth() + 1;
+//         let day = date.getDate();
 
-        // Pad with a leading zero if needed
-        if (month < 10) {
-            month = '0' + month;
-        }
-        if (day < 10) {
-            day = '0' + day;
-        }
+//         // Pad with a leading zero if needed
+//         if (month < 10) {
+//             month = '0' + month;
+//         }
+//         if (day < 10) {
+//             day = '0' + day;
+//         }
 
-        return `${year}-${month}-${day}`;
-    }
+//         return `${year}-${month}-${day}`;
+//     }
 
-    resetUI(); // Initialize the UI on load
+//     resetUI(); // Initialize the UI on load
 
-    // --- Restrict date picker using the local timezone ---
-    const datePicker = document.getElementById("date-picker");
-    const today = new Date();
+//     // --- Restrict date picker using the local timezone ---
+//     const datePicker = document.getElementById("date-picker");
+//     const today = new Date();
 
-    // Set the minimum date to today (local time)
-    datePicker.min = toLocalISOString(today);
+//     // Set the minimum date to today (local time)
+//     datePicker.min = toLocalISOString(today);
 
-    // Set the maximum date to 5 days from now
-    const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 5);
-    datePicker.max = toLocalISOString(maxDate);
-});
+//     // Set the maximum date to 5 days from now
+//     const maxDate = new Date();
+//     maxDate.setDate(today.getDate() + 5);
+//     datePicker.max = toLocalISOString(maxDate);
+// });
 
 // Map click event
 map.on("click", (e) => {
