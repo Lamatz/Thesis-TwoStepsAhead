@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
 
- 
+
 
     // --- DOM Elements ---
     const dateSelect = document.getElementById('date-picker');
@@ -35,6 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initial Setup Functions ---
     function generateDateOptions() {
+
+        // 1. Create and add the placeholder option first
+        const placeholderOption = document.createElement('option');
+        placeholderOption.textContent = 'yy/mm/dd';
+        placeholderOption.value = ""; // Use an empty value for easy validation
+        placeholderOption.selected = true;
+        placeholderOption.disabled = true;
+        dateSelect.appendChild(placeholderOption);
+
         const today = new Date();
         const options = { weekday: 'short', month: 'short', day: 'numeric' };
         for (let i = 0; i < 6; i++) {
@@ -89,18 +98,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
     dateSelect.addEventListener('change', updateForecast);
 
-    // timeSlider.addEventListener('input', () => {
-    //     // Update the visual text label in real-time
-    //     timeSliderValue.textContent = formatHour(parseInt(timeSlider.value, 10));
-    //     // Recalculate everything
-    //     updateForecast();
-    // });
-
-    // durationSelector.addEventListener('change', updateForecast);
 
 
+    const timeInput = document.getElementById('time-picker');
 
-     console.log("debug");
+    timeInput.addEventListener('input', (e) => {
+        let hour = e.target.value.split(':')[0]
+        e.target.value = `${hour}:00`
+    })
+
+
+
     // --- Initialization ---
     generateDateOptions();
     updateForecast(); // Initial call to set the default state
