@@ -229,11 +229,11 @@ function populateReportSummary() {
     document.getElementById("report-soil-type").innerText = fetchedLocationData.soil_type_label || "N/A";
     document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData.soil_moisture?.toFixed(1) ?? "N/A";
 
-    console.log("testing1");
+
 
     const selectedDate = datePicker.value;
     const selectedTime = timePicker.value;
-    console.log("testing2");
+
     // --- 3.5 Add the Chart Forecast Summary Text ---
     const chartSummary = generateForecastSummaryString(
         selectedDate,
@@ -247,7 +247,7 @@ function populateReportSummary() {
         element.textContent = chartSummary;
     }
 
-    console.log("testing3");
+
 
     // --- 4. Destroy old charts ---
     // Your code for this is perfect. It prevents memory leaks and canvas conflicts.
@@ -562,9 +562,9 @@ function generateForecastSummaryString(date, time, forecastHours, formatType = '
     if (formatType === 'parenthetical') {
         if (ifDifferentDay) {
             const formattedStartDate = startDate.toLocaleDateString(undefined, dateOptions);
-            return `(${startTimeFormatted}, ${formattedStartDate} - ${endTimeFormatted}, ${formattedEndDate})`;
+            return `${startTimeFormatted}, ${formattedStartDate} - ${endTimeFormatted}, ${formattedEndDate}`;
         } else {
-            return `(${startTimeFormatted} - ${endTimeFormatted}, ${formattedEndDate})`;
+            return `${startTimeFormatted} - ${endTimeFormatted}, ${formattedEndDate}`;
         }
     } else { // Default to 'sentence' format
         if (ifDifferentDay) {
