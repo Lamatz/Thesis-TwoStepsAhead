@@ -519,6 +519,13 @@ function handleDateTimeChange() {
     const time = timePicker.value;
     const forecastSelectText = forecastSelect.options[forecastSelect.selectedIndex].text;
     const forecastPeriodHours = parseInt(forecastSelectText, 10);
+    
+    console.log("DATE FORMAT: ", date);
+    console.log("The data type of 'date' is:", typeof date);
+
+    console.log("TIME FORMAT: ", time);
+    console.log("The data type of 'time' is:", typeof time);
+
 
 
     updateSummaryText(date, time, forecastPeriodHours);
@@ -666,51 +673,10 @@ document.getElementById("report-btn").addEventListener("click", () => {
 document.getElementById("reset-btn").addEventListener("click", resetUI);
 
 
-console.log("main file testing");
 
 // ===================================
 // == Automatic Report AI Generator
 // ===================================
-
-
-// /**
-//  * Removes common Markdown formatting characters from a string for a clean display.
-//  * @param {string} text The text containing Markdown.
-//  * @returns {string} The text with formatting characters removed.
-//  */
-// function stripMarkdown(text) {
-//     // This regular expression removes:
-//     // ##, ###, ####, etc. (headings)
-//     // **, * (bold, italics)
-//     // --- (horizontal rules)
-//     return text.replace(/(#+\s*|\*\*|\*|---)/g, '');
-// }
-
-
-
-// // Helper function to strip markdown for live view
-// function stripMarkdown(text) {
-//     return text.replace(/(#+\s*|\*\*|\*|---)/g, '');
-// }
-
-// // Helper function for the typewriter effect
-// function typewriterEffect(element, text, speed) {
-//     return new Promise(resolve => {
-//         let i = 0;
-//         function type() {
-//             if (i < text.length) {
-//                 element.textContent += text.charAt(i);
-//                 i++;
-//                 setTimeout(type, speed);
-//             } else {
-//                 resolve();
-//             }
-//         }
-//         type();
-//     });
-// }
-
-
 
 // --- NEW ---
 // Add a new event listener for the report generator button
@@ -752,39 +718,6 @@ reportBtn.addEventListener("click", async () => {
 
     console.log("Checking if it gathered the result: ", requestData);
 
-    // Check for NaN values before sending
-    // for (const key in requestData) {
-    //     if (value === null || typeof value === 'undefined') {
-    //         alert(`Validation Error: Data is missing for "${key}". Cannot generate report.`);
-    //         return;
-    //     }
-    // }
-
-    // // --- 2. API Call to the NEW Endpoint ---
-    // console.log("Sending for AI report generation:", requestData);
-    // try {
-    //     // CALL THE NEW URL: /generate_report
-    //     const response = await fetch("http://127.0.0.1:5001/generate_report", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify(requestData)
-    //     });
-
-    //     const result = await response.json();
-    //     if (!response.ok) {
-    //         throw new Error(result.error || 'Unknown server error');
-    //     }
-
-    //     const generatedReport = result.report; // <-- Handle the 'report' key
-
-
-    //     // Set its value to the text received from the AI
-    //     reportTextarea.value = generatedReport;
-
-    // } catch (error) {
-    //     console.error("Report generation failed:", error);
-    //     alert("Report Generation Error: " + error.message);
-    // }
 
 
     // --- 2. API Call with Streaming Logic ---
@@ -830,10 +763,6 @@ reportBtn.addEventListener("click", async () => {
             const textChunk = decoder.decode(value, { stream: true });
             // reportTextarea.value += textChunk;
 
-            // --- ADD THIS LINE ---
-            // After each chunk is added, tell the textarea to resize.
-            // autoGrow(reportTextarea);
-            // ---------------------
 
             fullReportText += textChunk;
 
@@ -841,22 +770,6 @@ reportBtn.addEventListener("click", async () => {
         }
 
 
-        // while (true) {
-        //     const { value, done } = await reader.read();
-        //     if (done) break;
-
-        //     // 1. Get the raw chunk with all the ugly markdown
-        //     const rawChunk = decoder.decode(value, { stream: true });
-
-        //     // 2. Add the RAW chunk to our master variable for the end
-        //     fullReportText += rawChunk;
-            
-        //     // 3. Create a CLEAN version of the chunk for live display
-        //     const cleanChunk = stripMarkdown(rawChunk);
-
-        //     // 4. "Type" only the CLEAN version to the screen
-        //     await typewriterEffect(reportDiv, cleanChunk, 0.1);
-        // }
 
 
         reportDiv.style.whiteSpace = 'normal';
@@ -881,23 +794,10 @@ reportBtn.addEventListener("click", async () => {
 
 
 
-// A reusable function to make a textarea grow automatically
-// function autoGrow(element) {
-//     // Temporarily reset the height. This is crucial for when text is deleted.
-//     element.style.height = 'auto';
-//     // Set the height to the scroll height, which is the full height of the content
-//     element.style.height = (element.scrollHeight) + 'px';
-// }
-
-// // Place this outside your "Generate Report" button's listener
-// reportTextarea.addEventListener('input', () => {
-//     autoGrow(reportTextarea);
-// });
 
 // ===================================
 // == SCROLL BUTTON
 // ===================================
-
 
 let scrollTopButton = document.getElementById("scrollTopBtn");
 
@@ -916,10 +816,6 @@ function scrollFunction() {
         scrollTopButton.style.display = "none";
     }
 }
-
-console.log("main file testing - 2");
-
-
 // When the user clicks on the button, scroll to the top of the document smoothly
 scrollTopButton.addEventListener("click", function () {
     window.scrollTo({
@@ -985,7 +881,6 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
 
 
-    console.log("testing - 3");
 
     const chartIds = [
         { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
