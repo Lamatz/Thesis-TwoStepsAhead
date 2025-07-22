@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
             viewMode: 'clock',
             components: { hours: true, minutes: false, seconds: false, calendar: false }
         },
-        localization: { format: 'h:00 T' },
+        localization: { format: 'h T' },
         useCurrent: false
     });
 
@@ -21,50 +21,14 @@ document.addEventListener('DOMContentLoaded', function () {
     maxDate.setDate(today.getDate() + 5);
 
     const datePicker = new tempusDominus.TempusDominus(datePickerElement, {
-        useCurrent: true,
+
         restrictions: { minDate: today, maxDate: maxDate },
         display: {
             components: { calendar: true, date: true, month: false, year: false, decades: false, clock: false }
         },
-        localization: { format: 'ddd, MMM d' }
+        localization: { format: 'ddd, MMM d' },
+        useCurrent: false
     });
-
-    //   // --- STEP 3: The Robust Update Function ---
-    // function updateCombinedDateTime() {
-    //     console.log("--- Update Function Called ---");
-
-    //     // Get the current values directly from the picker instances.
-    //     const datePart = datePicker.dates.get(0);
-    //     const timePart = timePicker.dates.get(0);
-
-    //     console.log("Current Date Part:", datePart);
-    //     console.log("Current Time Part:", timePart);
-
-    //     if (datePart && timePart) {
-    //         const combinedDateTime = new Date(
-    //             datePart.getFullYear(), datePart.getMonth(), datePart.getDate(),
-    //             timePart.getHours(), timePart.getMinutes()
-    //         );
-    //         const isoString = combinedDateTime.toISOString();
-    //         console.log("SUCCESS! Combined value is:", isoString);
-    //     } else {
-    //         console.log("Could not combine. One or both values are missing.");
-    //     }
-    // }
-
-    // // --- STEP 4: Attach Event Listeners ---
-    // // These listeners just trigger the update. The update function itself
-    // // is responsible for getting the current state.
-    // datePickerElement.addEventListener('change.td', updateCombinedDateTime);
-    // timePickerElement.addEventListener('change.td', updateCombinedDateTime);
-
-    // // --- STEP 5: Set Initial State ---
-    // // Set a default time. This will trigger the 'change.td' event on the time picker,
-    // // which in turn calls our update function for the first time.
-    // timePicker.dates.setFromInput(new Date(2000, 0, 1, 9));
-
-    // // We also call it once manually to capture the initial state of the date picker.
-    // updateCombinedDateTime();;
 
 
     datePickerElement.addEventListener('change.td', function (e) {
@@ -89,6 +53,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formattedDate = `${month} ${day} ${year}`;
 
+        const formattedDate2 = `${year}-${month}-${day}`;
+
+        console.log("useful date: ", formattedDate2);
+
+
         // 3. Log the final, formatted result
         console.log(formattedDate);
 
@@ -110,6 +79,13 @@ document.addEventListener('DOMContentLoaded', function () {
     timePickerElement.addEventListener('change.td', function (e) {
         // Correctly access the detail object
         const detail = e.detail;
+
+        console.log("HI");
+        console.log(e);
+        console.log(e.date);
+        console.log(e.detail.isClear);
+        console.log(e.isValid);
+
 
         // Check if the input was cleared
         if (detail.isClear) {
