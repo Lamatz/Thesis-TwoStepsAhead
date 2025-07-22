@@ -306,7 +306,8 @@ main.col-lg-9 {
     transition: none !important;
 }
 
-#hour-picker-input {
+#hour-picker-input,
+#forecast-date {
     caret-color: transparent;
 }
 
