@@ -385,3 +385,53 @@ main.col-lg-9 {
 .input-group-text{
     border-radius: 0;
 }
+
+
+/* The wrapper needs to be relative for the absolute positioning of the overlay */
+#pickers-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+
+}
+
+
+
+/* Overlay styles */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 0.375rem;
+    transition: opacity 0.3s ease;
+}
+
+.overlay-content {
+    text-align: center;
+    padding: 1rem;
+    color: #6c757d;
+}
+
+.overlay-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #0d6efd;
+}
+
+/* Input styling */
+.form-control:disabled {
+    background-color: #f8f9fa;
+}
+
+
+/* A helper class to hide the overlay with JavaScript */
+#picker-overlay.hidden {
+    display: none;
+}

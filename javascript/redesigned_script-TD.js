@@ -83,6 +83,13 @@ async function updateLocationInfo(lat, lng) {
     lastFetchedWeatherData = null;
     //hideAndClearReportSummary();
 
+
+
+    // *** ENSURE PICKERS ARE DISABLED DURING FETCH ***
+    // disablePickers();
+
+
+
     // --- 2. Update UI immediately with "Fetching..." status ---
     document.getElementById("loc-lat").innerText = lat.toFixed(4);
     document.getElementById("loc-lng").innerText = lng.toFixed(4);
@@ -127,13 +134,13 @@ async function updateLocationInfo(lat, lng) {
         predictBtnUnload();
 
 
+        enablePickers();
+
+
         // --- 7. Fetch weather if date is already selected ---
         const date = selectedDate;
         const time = selectedTime;
         if (date && time) {
-
-
-
             fetchWeatherData(lat, lng, date, time);
         }
 
@@ -141,8 +148,40 @@ async function updateLocationInfo(lat, lng) {
         console.error("Error updating location info:", error);
         alert("Could not fetch all data for this location. " + error.message);
         document.getElementById("loc-name").innerText = "Error fetching data.";
+
+        // *** ERROR! KEEP THE PICKERS DISABLED ***
+        disablePickers();
     }
 }
+
+/**
+ * Enables the date and time pickers and hides the overlay.
+ */
+const pickerOverlay = document.getElementById("picker-overlay");
+
+function enablePickers() {
+    datePicker.disabled = false;
+    timePicker.disabled = false;
+    forecastSelect.disabled = false;
+
+    pickerOverlay.classList.add('hidden');
+}
+function disablePickers() {
+
+
+    datePicker.disabled = true;
+    timePicker.disabled = true;
+    forecastSelect.disabled = true;
+    // Also clear any values they might have had
+    // console.log("disable picker test, 1");
+    datePicker.value = '';
+    timePicker.value = '';
+
+    // forecastSelect.value = '';
+    pickerOverlay.classList.remove('hidden');
+}
+// Ensure pickers are disabled when the page first loads
+document.addEventListener('DOMContentLoaded', disablePickers);
 
 
 
