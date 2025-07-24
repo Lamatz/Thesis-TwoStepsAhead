@@ -316,10 +316,10 @@ main.col-lg-9 {
 
 /* Visual Summary Timeline */
 .visual-summary {
-    background-color: #fafafa;
+    /* background-color: #fafafa; */
     border-radius: 6px;
     padding: 16px;
-    border: 1px solid #eee;
+    /* border: 1px solid #eee; */
 }
 
 .visual-summary p {
