@@ -183,8 +183,7 @@ function disablePickers() {
     // console.log("disable picker test, 1");
     datePicker.value = '';
     timePicker.value = '';
-
-    // forecastSelect.value = '';
+    forecastSelect.value = 'none';
     pickerOverlay.classList.remove('hidden');
 }
 // Ensure pickers are disabled when the page first loads
