@@ -104,6 +104,8 @@ async function updateLocationInfo(lat, lng) {
 
     predictBtnLoad();
 
+    reportDiv.textContent = ``;
+
     // --- 3. Place marker on map ---
     if (currentMarker) map.removeLayer(currentMarker);
     currentMarker = L.marker([lat, lng]).addTo(map);
