@@ -57,8 +57,8 @@ function resetUI() {
     document.getElementById("loc-lat").innerText = "N/A";
     document.getElementById("loc-lng").innerText = "N/A";
     document.getElementById("loc-name").innerText = "No location selected.";
-    document.getElementById("date-picker").value = "";
-    document.getElementById("time-picker").value = ""; // NEW
+    document.getElementById("forecast-date").value = "";
+    document.getElementById("hour-picker-input").value = ""; 
     document.getElementById("forecast-period").selectedIndex = 0;
     // Clear hidden inputs...
     const hiddenInputs = document.querySelectorAll('.visually-hidden input');
@@ -71,6 +71,13 @@ function resetUI() {
     selectedPredictionDate = null;
     selectedPredictionTime = null; // NEW
     selectedForecastPeriod = { value: null, text: null };
+    summaryText.textContent = "";
+    selectedDate = "";
+    selectedTime = "";
+    document.getElementById("report-detailed-description").value = " It works - 1";
+    reportDiv.textContent = "";
+    disablePickers();
+
     hideAndClearReportSummary();
 }
 
