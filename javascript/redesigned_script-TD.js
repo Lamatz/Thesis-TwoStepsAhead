@@ -795,7 +795,7 @@ reportBtn.addEventListener("click", async () => {
         // --- Setup UI for streaming ---
         reportBtn.disabled = true;
         reportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
-        reportDiv.value = ""; // Clear previous content
+        reportDiv.textContent = ""; // Clear previous content
         // reportTextarea.placeholder = "AI is generating the report...";
         // reportTextarea.classList.add("streaming"); // For the blinking cursor effect
         reportDiv.setAttribute("aria-placeholder", "AI is generating the report...");
