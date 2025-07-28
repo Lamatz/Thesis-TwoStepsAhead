@@ -58,7 +58,7 @@ function resetUI() {
     document.getElementById("loc-lng").innerText = "N/A";
     document.getElementById("loc-name").innerText = "No location selected.";
     document.getElementById("forecast-date").value = "";
-    document.getElementById("hour-picker-input").value = ""; 
+    document.getElementById("hour-picker-input").value = "";
     document.getElementById("forecast-period").selectedIndex = 0;
     // Clear hidden inputs...
     const hiddenInputs = document.querySelectorAll('.visually-hidden input');
@@ -540,6 +540,7 @@ function handleDateTimeChange() {
 }
 
 datePicker.addEventListener("change", function (e) {
+    console.log("DATE PICKER: ", datePicker);
     selectedDate = dateFormatter(e.detail.date, true);
     handleDateTimeChange();
 });
@@ -836,9 +837,6 @@ reportBtn.addEventListener("click", async () => {
             reportDiv.textContent = fullReportText;
         }
 
-
-
-
         reportDiv.style.whiteSpace = 'normal';
 
         const reportHTML = marked.parse(fullReportText, { breaks: true });
@@ -895,27 +893,348 @@ scrollTopButton.addEventListener("click", function () {
 // ===================================
 // == FOR PDF
 // ===================================
+// document.getElementById("download-pdf-btn").addEventListener("click", function () {
+//     const { jsPDF } = window.jspdf;
+
+//     const reportSection = document.getElementById("report-content");
+//     const descriptionText = document.getElementById("report-detailed-description").innerText || "N/A";
+
+//     const pdf = new jsPDF();
+//     let y = 10;
+
+//     // Title
+//     pdf.setFontSize(16);
+//     pdf.setFont("helvetica", "bold");
+//     pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
+//     y += 10;
+
+//     // Get report values
+//     const locationName = document.getElementById("report-location-name").innerText;
+//     const coords = document.getElementById("report-coords").innerText;
+//     const date = document.getElementById("report-prediction-date").innerText;
+//     const prediction = document.getElementById("report-prediction").innerText;
+//     const confidence = document.getElementById("report-confidence").innerText;
+//     const slope = document.getElementById("report-slope").innerText;
+//     const soilType = document.getElementById("report-soil-type").innerText;
+//     const soilMoisture = document.getElementById("report-soil-moisture").innerText;
+
+//     // General Info
+//     pdf.setFontSize(12);
+//     pdf.setFont("helvetica", "normal");
+//     pdf.text(`Location: ${locationName}`, 10, y); y += 7;
+//     pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
+//     pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
+
+//     // Prediction
+//     pdf.setFont("helvetica", "bold");
+//     pdf.text("Prediction:", 10, y); y += 7;
+//     pdf.setFont("helvetica", "normal");
+//     pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
+//     pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
+
+//     // Environmental Variables
+//     pdf.setFont("helvetica", "bold");
+//     pdf.text("Environmental Variables:", 10, y); y += 7;
+//     pdf.setFont("helvetica", "normal");
+//     pdf.text(`Slope: ${slope}`, 10, y); y += 7;
+//     pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
+//     pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
+
+
+
+//     const chartIds = [
+//         { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
+//         { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
+//         { id: "daily-cumulative-chart", label: "Past 5 Days Cumulative Rainfall" },
+//         { id: "daily-intensity-chart", label: "Past 5 Days Average Intensity" }
+//     ];
+
+//     const chartsPerRow = 2;
+//     const chartWidth = 90;  // half of 180
+//     const chartHeight = 60;
+//     const marginX = 10;
+//     const spacingX = 10;
+//     const spacingY = 10;
+//     let chartX = marginX;
+//     let rowHeight = chartHeight + 10;
+
+//     pdf.setFont("helvetica", "bold");
+//     pdf.text("Rainfall Analysis Charts:", 10, y);
+//     y += 6;
+
+//     chartIds.forEach((chartInfo, index) => {
+//         const canvas = document.getElementById(chartInfo.id);
+//         if (canvas) {
+//             const imgData = canvas.toDataURL("image/png", 1.0);
+
+//             // Add label above each chart
+//             pdf.setFontSize(10);
+//             pdf.setFont("helvetica", "normal");
+//             pdf.text(chartInfo.label, chartX, y);
+
+//             // Move down to draw the chart
+//             pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
+
+//             // Next column or new row
+//             if ((index + 1) % chartsPerRow === 0) {
+//                 y += rowHeight + spacingY;
+//                 chartX = marginX;
+//                 if (y + chartHeight > 280) {
+//                     pdf.addPage();
+//                     y = 20;
+//                 }
+//             } else {
+//                 chartX += chartWidth + spacingX;
+//             }
+//         }
+//     });
+
+
+
+//     console.log("Prediction Result For Sending", lastPredictionResult);
+
+//     // Description
+//     pdf.setFont("helvetica", "bold");
+//     pdf.text("Detailed Description:", 10, y); y += 7;
+//     pdf.setFont("helvetica", "normal");
+
+
+//     console.log("testing 1 2 3");
+
+//     const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
+//     const lineHeight = 7;
+//     // pdf.text(lines, 10, y);
+//     // y += lines.length * 7;
+
+//     console.log("testing 1 ");
+//     lines.forEach(line => {
+//         console.log("testing 2 ");
+//         if (y > 280) { // Check if we're near the bottom of the page
+//             console.log("testing 5 ");
+//             pdf.addPage();
+//                console.log("testing 3 ");
+//             y = 20; // Reset Y for new page
+//                console.log("testing 4 ");
+//         }
+//         console.log("testing 6");
+//         pdf.text(line, 10, y);
+//         console.log("testing 7");
+//         y += lineHeight;
+//         console.log("testing 8");
+//     });
+
+//     console.log("testing 9");
+//     // Save the PDF
+//     pdf.save("Landslide_Prediction_Report.pdf");
+// });
+
+
+
+/**
+ * Renders HTML content from a DOM element onto a jsPDF document.
+ * This version correctly handles inline elements (<b>, <i>), block elements (<p>, <ul>),
+ * semantic headings (<h2>, <h3>, <h4>), horizontal rules (<hr>), and automatic page breaks.
+ *
+ * @param {jsPDF} pdf The jsPDF instance.
+ * @param {HTMLElement} element The source HTML element.
+ * @param {object} options Configuration options.
+ * @returns {number} The final Y position after rendering.
+ */
+function drawHtmlContent(pdf, element, options) {
+    const settings = Object.assign({
+        x: 10,
+        y: 10,
+        lineHeight: 7,
+        maxWidth: 180,
+        pageMargin: 15,
+        listIndent: 5,
+        bulletRadius: 1,
+        bulletSpacing: 5
+    }, options);
+
+    let currentY = settings.y;
+    const pageHeight = pdf.internal.pageSize.height;
+    const pageMarginX = settings.x; // The absolute left margin of the page.
+    const baseFontSize = 12;
+
+    pdf.setFontSize(baseFontSize);
+
+    // --- HELPER FUNCTIONS ---
+    function checkPageBreak(neededHeight = settings.lineHeight) {
+        if (currentY + neededHeight >= pageHeight - settings.pageMargin) {
+            pdf.addPage();
+            currentY = settings.pageMargin;
+        }
+    }
+
+    // --- THE RECURSIVE RENDERER ---
+    // The `lineStartX` parameter is key to handling indented wrapping correctly.
+    function processNode(node, lineStartX, currentX, listCounter = 0) {
+        const fontSize = pdf.getFontSize();
+
+        switch (node.nodeName) {
+            case '#text':
+                const text = node.textContent.replace(/\s+/g, ' ').trim();
+                if (!text) break;
+
+                const words = text.split(' ');
+                for (const word of words) {
+                    const wordWidth = pdf.getTextWidth(word);
+                    // Check if word fits on the current line. Use lineStartX for the boundary.
+                    if (currentX > lineStartX && (currentX + wordWidth > lineStartX + settings.maxWidth)) {
+                        currentY += settings.lineHeight;
+                        checkPageBreak();
+                        currentX = lineStartX; // Wrap to the start of the CURRENT line (which could be indented)
+                    }
+                    pdf.text(word, currentX, currentY);
+                    currentX += wordWidth + pdf.getTextWidth(' ');
+                }
+                break;
+
+            case 'P':
+            case 'DIV':
+                currentY += settings.lineHeight; // Add space before a new paragraph
+                checkPageBreak();
+                // A paragraph always starts at the page margin.
+                currentX = pageMarginX;
+                Array.from(node.childNodes).forEach(child => {
+                    currentX = processNode(child, pageMarginX, currentX, listCounter);
+                });
+                currentY += settings.lineHeight / 2; // Add a smaller space after
+                break;
+
+            case 'H2':
+            case 'H3':
+            case 'H4':
+                const headingSizes = { H2: 16, H3: 14, H4: 12 };
+                const headingSize = headingSizes[node.nodeName];
+
+                currentY += settings.lineHeight * 1.5;
+                checkPageBreak();
+
+                pdf.setFont(undefined, 'bold');
+                pdf.setFontSize(headingSize);
+
+                currentX = pageMarginX;
+                Array.from(node.childNodes).forEach(child => {
+                    currentX = processNode(child, pageMarginX, currentX, listCounter);
+                });
+
+                pdf.setFont(undefined, 'normal');
+                pdf.setFontSize(baseFontSize);
+                currentY += settings.lineHeight;
+                break;
+
+            case 'HR':
+                currentY += settings.lineHeight;
+                checkPageBreak();
+                pdf.setDrawColor(180, 180, 180);
+                pdf.line(pageMarginX, currentY, pageMarginX + settings.maxWidth, currentY);
+                currentY += settings.lineHeight * 1.5;
+                break;
+
+            case 'STRONG':
+            case 'B':
+                pdf.setFont(undefined, 'bold');
+                Array.from(node.childNodes).forEach(child => {
+                    currentX = processNode(child, lineStartX, currentX, listCounter);
+                });
+                pdf.setFont(undefined, 'normal');
+                break;
+
+            case 'EM':
+            case 'I':
+                pdf.setFont(undefined, 'italic');
+                Array.from(node.childNodes).forEach(child => {
+                    currentX = processNode(child, lineStartX, currentX, listCounter);
+                });
+                pdf.setFont(undefined, 'normal');
+                break;
+
+            case 'UL':
+            case 'OL':
+                currentY += settings.lineHeight / 2;
+                checkPageBreak();
+                currentX = pageMarginX;
+                
+                const isOrdered = node.nodeName === 'OL';
+                let counter = 1;
+                Array.from(node.childNodes).forEach(child => {
+                    if (child.nodeName === 'LI') {
+                        // The processNode call for LI will handle its own line break and positioning
+                        processNode(child, pageMarginX, currentX, isOrdered ? counter++ : 0);
+                    }
+                });
+                currentY += settings.lineHeight / 2;
+                break;
+
+            // ===== FIX WAS HERE =====
+            case 'LI':
+                currentY += settings.lineHeight; // Start the LI on a new line
+                checkPageBreak();
+
+                let bulletX = lineStartX + settings.listIndent; // Indent from the line's start
+
+                // Draw bullet or number
+                if (listCounter > 0) { // Ordered list
+                    const numberText = `${listCounter}.`;
+                    pdf.text(numberText, bulletX, currentY);
+                    bulletX += pdf.getTextWidth(numberText);
+                } else { // Unordered list
+                    pdf.circle(bulletX + settings.bulletRadius, currentY - (fontSize / 4), settings.bulletRadius, 'F');
+                    bulletX += settings.bulletRadius * 2;
+                }
+                
+                // Define the starting X for the content of this list item. This will be our new line start.
+                let liContentStartX = bulletX + settings.bulletSpacing;
+                let liCurrentX = liContentStartX;
+                
+                // Process the children of the LI, telling them their line starts at the indented position
+                Array.from(node.childNodes).forEach(child => {
+                    liCurrentX = processNode(child, liContentStartX, liCurrentX, listCounter);
+                });
+                
+                // No need to restore anything, as we didn't modify shared variables.
+                // The currentX is managed internally and returned.
+                currentX = liCurrentX; // Update the outer currentX if needed, though often not necessary here.
+                break;
+
+            case 'BR':
+                currentY += settings.lineHeight;
+                checkPageBreak();
+                currentX = lineStartX; // Go to the start of the current line (which could be indented)
+                break;
+
+            default:
+                Array.from(node.childNodes).forEach(child => {
+                    currentX = processNode(child, lineStartX, currentX, listCounter);
+                });
+                break;
+        }
+        return currentX;
+    }
+
+    // Initial call to start the process
+    processNode(element, settings.x, settings.x);
+
+    return currentY; // This will now be reached!
+}
+
+// =======================================================================
+// == PART 2: Your Modified PDF Download Event Listener
+// =======================================================================
 document.getElementById("download-pdf-btn").addEventListener("click", function () {
     const { jsPDF } = window.jspdf;
-
-    console.log("testing - 1");
-
-    const reportSection = document.getElementById("report-content");
-    // const descriptionText = document.getElementById("report-detailed-description").value || "N/A";
-    const descriptionText = document.getElementById("report-detailed-description").innerText || "N/A";
-
-
-    console.log("testing - 2");
     const pdf = new jsPDF();
     let y = 10;
 
-    // Title
+    // --- Section 1: Title (No Changes) ---
     pdf.setFontSize(16);
     pdf.setFont("helvetica", "bold");
     pdf.text("Landslide Prediction Report", 105, y, { align: "center" });
     y += 10;
 
-    // Get report values
+    // --- Section 2: General Info & Prediction (No Changes) ---
     const locationName = document.getElementById("report-location-name").innerText;
     const coords = document.getElementById("report-coords").innerText;
     const date = document.getElementById("report-prediction-date").innerText;
@@ -925,21 +1244,18 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     const soilType = document.getElementById("report-soil-type").innerText;
     const soilMoisture = document.getElementById("report-soil-moisture").innerText;
 
-    // General Info
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "normal");
     pdf.text(`Location: ${locationName}`, 10, y); y += 7;
     pdf.text(`Coordinates: ${coords}`, 10, y); y += 7;
     pdf.text(`Prediction Date: ${date}`, 10, y); y += 10;
 
-    // Prediction
     pdf.setFont("helvetica", "bold");
     pdf.text("Prediction:", 10, y); y += 7;
     pdf.setFont("helvetica", "normal");
     pdf.text(`Risk: ${prediction}`, 10, y); y += 7;
     pdf.text(`Confidence: ${confidence}`, 10, y); y += 10;
 
-    // Environmental Variables
     pdf.setFont("helvetica", "bold");
     pdf.text("Environmental Variables:", 10, y); y += 7;
     pdf.setFont("helvetica", "normal");
@@ -947,8 +1263,7 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     pdf.text(`Soil Type: ${soilType}`, 10, y); y += 7;
     pdf.text(`Soil Moisture: ${soilMoisture}`, 10, y); y += 10;
 
-
-
+    // --- Section 3: Charts (No Changes) ---
     const chartIds = [
         { id: "hourly-cumulative-chart", label: "Past 12 Hours Cumulative Rainfall" },
         { id: "hourly-intensity-chart", label: "Past 12 Hours Rainfall Intensity" },
@@ -957,7 +1272,7 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
     ];
 
     const chartsPerRow = 2;
-    const chartWidth = 90;  // half of 180
+    const chartWidth = 90;
     const chartHeight = 60;
     const marginX = 10;
     const spacingX = 10;
@@ -973,44 +1288,60 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
         const canvas = document.getElementById(chartInfo.id);
         if (canvas) {
             const imgData = canvas.toDataURL("image/png", 1.0);
+            if (y + rowHeight > 280) { // Check for page break before drawing a new row
+                pdf.addPage();
+                y = 20;
+            }
 
-            // Add label above each chart
             pdf.setFontSize(10);
             pdf.setFont("helvetica", "normal");
             pdf.text(chartInfo.label, chartX, y);
-
-            // Move down to draw the chart
             pdf.addImage(imgData, "PNG", chartX, y + 2, chartWidth, chartHeight);
 
-            // Next column or new row
             if ((index + 1) % chartsPerRow === 0) {
                 y += rowHeight + spacingY;
                 chartX = marginX;
-                if (y + chartHeight > 280) {
-                    pdf.addPage();
-                    y = 20;
-                }
             } else {
                 chartX += chartWidth + spacingX;
             }
         }
     });
+    // Ensure 'y' is set correctly after the last row of charts if it wasn't a full row
+    if (chartIds.length % chartsPerRow !== 0) {
+        y += rowHeight + spacingY;
+    }
 
 
+    // --- Section 4: Detailed Description (THIS IS THE NEW, IMPROVED PART) ---
 
-    console.log("Prediction Result For Sending", lastPredictionResult);
+    // Check if we need to start this section on a new page
+    if (y + 20 > pdf.internal.pageSize.height - 15) {
+        pdf.addPage();
+        y = 15; // Start at top margin
+    }
 
-    // Description
+    pdf.setFontSize(12);
     pdf.setFont("helvetica", "bold");
-    pdf.text("Detailed Description:", 10, y); y += 7;
-    pdf.setFont("helvetica", "normal");
+    pdf.text("Detailed Description:", 10, y);
+    y += 10;
+
+    // Get the element containing the rich HTML content
+    const descriptionElement = document.getElementById("report-detailed-description");
+
+    // Call our powerful renderer function to draw the rich text
+    // It will handle all formatting and page breaks automatically.
+    drawHtmlContent(pdf, descriptionElement, {
+        x: 10,
+        y: y, // Start where the previous content left off
+        maxWidth: 180,
+        lineHeight: 7
+    });
 
 
-    console.log("testing 5");
-
-    const lines = pdf.splitTextToSize(descriptionText, 180); // wrap text
-    pdf.text(lines, 10, y);
-    y += lines.length * 7;
-    // Save the PDF
+    // --- Section 5: Save the PDF (No Changes) ---
     pdf.save("Landslide_Prediction_Report.pdf");
 });
+
+
+
+
