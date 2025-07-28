@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function () {
     datePickerElement.addEventListener('change.td', function (e) {
         // We use the information from the 'e' object.
 
+        console.log("TODAY IS: ", today);
+        console.log("THE MAX DATE IS: ", maxDate);
+
         console.log("HI");
         console.log(e.date);
         console.log(e.isClear);
