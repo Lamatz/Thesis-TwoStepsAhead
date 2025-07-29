@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- --- --- ACTION REQUIRED --- --- ---
     // REPLACE with your Mapbox access token and style URL
-    mapboxgl.accessToken = 'pk.eyJ1IjoibGFtYXR6IiwiYSI6ImNtY2l0M3g4ZTBhcnIyanF2dTY2Y284ZHMifQ.2BdFI8Lqjg8TXi2LGH7xUA'; // <-- PASTE YOUR TOKEN HERE
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGFtYXR6IiwiYSI6ImNtZDczb3pyNDA1am8ya3M4czB3bjVocXIifQ.tNJchBN53I2HcuIGXJMmTQ'; // <-- PASTE YOUR TOKEN HERE
     const philippinesBounds = [[116.0, 4.0], [127.0, 21.0]];
 
     map = new mapboxgl.Map({
