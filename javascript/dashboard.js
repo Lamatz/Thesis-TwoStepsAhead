@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- DATA LOADING & PROCESSING (DEBUGGING VERSION) ---
     console.log("Starting Papa.parse for datas.csv...");
 
-    Papa.parse("../datas.csv", {
+    Papa.parse("../datas_final_standardized.csv", {
         download: true,
         header: true,
         complete: function (results) {
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isValid = row && row.lat && row.long && row.region;
                 if (!isValid) {
                     // This log is very helpful. It tells you exactly which rows are being skipped.
-                    // console.log("Filtering out invalid row:", row);
+                    console.log("Filtering out invalid row:", row);
                 }
                 return isValid;
             });

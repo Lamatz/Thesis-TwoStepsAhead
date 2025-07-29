@@ -1,3 +1,4 @@
+lat,long,region
 14.1295,120.9332,Region IV-A - CALABARZON
 14.3656,121.387,Region IV-A - CALABARZON
 14.4084,121.4052,Region IV-A - CALABARZON
@@ -1329,7 +1330,7 @@
 6.9042,122.0761,Region IX - Zamboanga Peninsula
 7.07,125.6,Region XI - Davao Region
 14.65,120.97,NCR - National Capital Region
-18.0,121.8,Region II - Cagayan Valley
+18,121.8,Region II - Cagayan Valley
 10.32,123.75,Region VII - Central Visayas
 12.27,123.58,Region V - Bicol Region
 14.5842,121.1763,Region IV-A - CALABARZON
@@ -1371,7 +1372,7 @@
 8.23,124.25,Region X - Northern Mindanao
 14.275,121.125,Region IV-A - CALABARZON
 15.03,120.68,Region III - Central Luzon
-13.83,121.0,Region IV-A - CALABARZON
+13.83,121,Region IV-A - CALABARZON
 13.6244,123.1864,Region V - Bicol Region
 15.4908,120.9678,Region III - Central Luzon
 14.3583,121.0583,Region IV-A - CALABARZON
@@ -1390,7 +1391,7 @@
 14.8436,120.8114,Region III - Central Luzon
 14.83,120.28,Region III - Central Luzon
 14.7581,120.9481,Region III - Central Luzon
-11.24,125.0,Region VIII - Eastern Visayas
+11.24,125,Region VIII - Eastern Visayas
 14.6667,120.9417,NCR - National Capital Region
 11.0106,124.6075,Region VIII - Eastern Visayas
 14.73,120.95,Region III - Central Luzon
@@ -1417,7 +1418,7 @@
 14.93,120.6,Region III - Central Luzon
 15.0645,120.7203,Region III - Central Luzon
 6.22,125.07,Region XII - SOCCSKSARGEN
-14.3,121.0,Region IV-A - CALABARZON
+14.3,121,Region IV-A - CALABARZON
 15.1458,120.9783,Region III - Central Luzon
 9.7897,125.4958,Region XIII - Caraga
 15.3249,120.6554,Region III - Central Luzon
@@ -1455,7 +1456,7 @@
 8.5872,123.3408,Region IX - Zamboanga Peninsula
 13.9311,121.4233,Region IV-A - CALABARZON
 16.46,120.59,CAR - Cordillera Administrative Region
-6.0,121.0,BARMM
+6,121,BARMM
 8.82,125.1,Region X - Northern Mindanao
 14.07,120.63,Region IV-A - CALABARZON
 10.12,123.63,Region VII - Central Visayas
@@ -1558,9 +1559,9 @@
 13.884,122.2604,Region IV-A - CALABARZON
 15.6069,120.5986,Region III - Central Luzon
 7.8239,126.0536,Region XI - Davao Region
-11.25,124.0,Region VII - Central Visayas
+11.25,124,Region VII - Central Visayas
 13.881,120.9127,Region IV-A - CALABARZON
-6.0,120.97,BARMM
+6,120.97,BARMM
 6.22,124.2,Region XII - SOCCSKSARGEN
 12.8428,120.775,Region IV-B - MIMAROPA
 16.0031,120.4008,Region I - Ilocos Region
@@ -1580,7 +1581,7 @@
 13.7089,123.2161,Region V - Bicol Region
 11.1,122.63,Region VI - Western Visayas
 10.6,123.03,Region VI - Western Visayas
-11.02,124.0,Region VII - Central Visayas
+11.02,124,Region VII - Central Visayas
 17.6522,121.6914,Region II - Cagayan Valley
 16.7056,121.6761,Region II - Cagayan Valley
 12.5125,123.3989,Region V - Bicol Region
@@ -1734,11 +1735,11 @@
 8.52,124.57,Region X - Northern Mindanao
 13.2589,123.4953,Region V - Bicol Region
 16.322,120.3647,Region I - Ilocos Region
-8.0,125.0233,Region X - Northern Mindanao
-12.0,120.2,Region IV-B - MIMAROPA
+8,125.0233,Region X - Northern Mindanao
+12,120.2,Region IV-B - MIMAROPA
 17.12,121.62,Region II - Cagayan Valley
 5.9912,124.6257,Region XII - SOCCSKSARGEN
-11.0,123.95,Region VII - Central Visayas
+11,123.95,Region VII - Central Visayas
 6.6,124.85,Region XII - SOCCSKSARGEN
 14.9281,121.0293,Region III - Central Luzon
 16.5183,121.1811,Region II - Cagayan Valley
@@ -1747,7 +1748,7 @@
 14.5448,121.0671,NCR - National Capital Region
 10.7433,121.9411,Region VI - Western Visayas
 15.9,120.58,Region I - Ilocos Region
-5.87,125.0,Region XII - SOCCSKSARGEN
+5.87,125,Region XII - SOCCSKSARGEN
 14.1364,121.4165,Region IV-A - CALABARZON
 10.2,122.98,Region VI - Western Visayas
 10.37,124.75,Region VIII - Eastern Visayas
@@ -1922,12 +1923,12 @@
 5.98,121.25,BARMM
 11.48,122.83,Region VI - Western Visayas
 14.7456,120.9961,NCR - National Capital Region
-8.38,126.0,Region XIII - Caraga
+8.38,126,Region XIII - Caraga
 11.2631,122.6878,Region VI - Western Visayas
 14.43,120.88,Region IV-A - CALABARZON
 6.62,125.22,Region XI - Davao Region
 14.4744,121.0569,NCR - National Capital Region
-12.4,122.0,Region IV-B - MIMAROPA
+12.4,122,Region IV-B - MIMAROPA
 9.82,124.2,Region VII - Central Visayas
 7.5933,124.0722,BARMM
 13.03,123.45,Region V - Bicol Region
@@ -2022,7 +2023,7 @@
 6.8548,124.1443,BARMM
 14.7222,120.5354,Region III - Central Luzon
 11.22,124.4,Region VIII - Eastern Visayas
-15.0,120.75,Region III - Central Luzon
+15,120.75,Region III - Central Luzon
 10.5259,122.5398,Region VI - Western Visayas
 12.8594,121.4567,Region IV-B - MIMAROPA
 11.4639,122.7694,Region VI - Western Visayas
@@ -2108,7 +2109,7 @@
 14.13,121.436,Region IV-A - CALABARZON
 14.42,121.45,Region IV-A - CALABARZON
 7.506,122.9412,Region IX - Zamboanga Peninsula
-10.75,124.0,Region VII - Central Visayas
+10.75,124,Region VII - Central Visayas
 8.2,123.85,Region X - Northern Mindanao
 13.5925,123.0833,Region V - Bicol Region
 7.4853,124.9411,Region X - Northern Mindanao
@@ -2134,7 +2135,7 @@
 10.9142,121.9947,Region VI - Western Visayas
 14.7678,120.5431,Region III - Central Luzon
 15.5797,121.1864,Region III - Central Luzon
-10.83,124.0,Region VII - Central Visayas
+10.83,124,Region VII - Central Visayas
 9.92,123.15,Region VII - Central Visayas
 16.026,120.454,Region I - Ilocos Region
 16.9,120.42,Region I - Ilocos Region
@@ -2323,7 +2324,7 @@
 8.05,124.15,Region X - Northern Mindanao
 8.74,125.6,Region XIII - Caraga
 12.5756,120.9428,Region IV-B - MIMAROPA
-8.0,124.2,BARMM
+8,124.2,BARMM
 9.818,124.496,Region VII - Central Visayas
 7.67,124.15,BARMM
 10.52,122.8,Region VI - Western Visayas
@@ -2378,7 +2379,7 @@
 9.865,124.523,Region VII - Central Visayas
 9.83,124.33,Region VII - Central Visayas
 9.27,125.56,Region XIII - Caraga
-15.0,121.08,Region III - Central Luzon
+15,121.08,Region III - Central Luzon
 8.2472,123.8424,Region X - Northern Mindanao
 17.8861,121.5691,Region II - Cagayan Valley
 9.42,122.63,Region VII - Central Visayas
@@ -2476,7 +2477,7 @@
 13.8413,121.9752,Region IV-A - CALABARZON
 7.12,124.38,BARMM
 16.22,121.6,Region II - Cagayan Valley
-10.0,124.32,Region VII - Central Visayas
+10,124.32,Region VII - Central Visayas
 15.7789,120.8111,Region III - Central Luzon
 18.2756,121.6756,Region II - Cagayan Valley
 12.5013,124.282,Region VIII - Eastern Visayas
@@ -2550,10 +2551,10 @@
 11.63,125.02,Region VIII - Eastern Visayas
 14.6629,120.969,NCR - National Capital Region
 12.37,122.68,Region IV-B - MIMAROPA
-10.15,125.0,Region VIII - Eastern Visayas
+10.15,125,Region VIII - Eastern Visayas
 8.5583,123.6417,Region X - Northern Mindanao
 11.8944,120.0186,Region IV-B - MIMAROPA
-9.0,125.26,Region XIII - Caraga
+9,125.26,Region XIII - Caraga
 16.4316,120.3446,Region I - Ilocos Region
 10.78,122.3,Region VI - Western Visayas
 15.6667,120.6417,Region III - Central Luzon
@@ -2586,7 +2587,7 @@
 13.6,124.3,Region V - Bicol Region
 8.9181,126.3017,Region XIII - Caraga
 7.735,123.3231,Region IX - Zamboanga Peninsula
-12.0,125.45,Region VIII - Eastern Visayas
+12,125.45,Region VIII - Eastern Visayas
 7.8205,123.2277,Region IX - Zamboanga Peninsula
 12.4858,123.7628,Region V - Bicol Region
 10.8356,124.9964,Region VIII - Eastern Visayas
