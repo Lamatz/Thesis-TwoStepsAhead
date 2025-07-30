@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Sets hours, minutes, seconds, and milliseconds to 0
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + 5);
 
