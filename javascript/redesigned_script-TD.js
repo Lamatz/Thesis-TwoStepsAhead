@@ -136,7 +136,7 @@ async function updateLocationInfo(lat, lng) {
 
 
         // --- 6. Update UI with final data ---
-        document.getElementById("loc-name").innerText = selectedLocation.name;;
+        document.getElementById("loc-name").innerText = selectedLocation.name;
         currentMarker.bindPopup(`Location: <b>${selectedLocation.name}</b><br>Slope: <b>${fetchedLocationData.slope}</b><br>Soil: <b>${fetchedLocationData.soil_type_label}</b>`).openPopup();
 
 
@@ -675,11 +675,18 @@ predictBtn.addEventListener("click", async () => {
         return;
     }
 
+
+
+    console.log("Location Name test 1; ", selectedLocation.name);
+    console.log("Latitude: ", selectedLocation.lat);
+    console.log("Longitude: ", selectedLocation.lng);
+
     // Your original model needs all 6 rainfall features. We still send them.
     const requestData = {
         soil_type: fetchedLocationData.soil_type_snum,
         slope: parseFloat(document.getElementById("slope").value),
         soil_moisture: parseFloat(document.getElementById("soil-moisture").value),
+        
 
         "rainfall-3_hr": parseFloat(document.getElementById("rainfall-3-hr").value),
         "rainfall-6_hr": parseFloat(document.getElementById("rainfall-6-hr").value),
@@ -762,6 +769,10 @@ reportBtn.addEventListener("click", async () => {
         prediction_date: (selectedPredictionDate && selectedPredictionTime)
             ? `${selectedPredictionDate} at ${selectedPredictionTime}`
             : "N/A",
+        location_name: selectedLocation.name,
+        location_lat: selectedLocation.lat,
+        location_lng: selectedLocation.lng,
+        
 
         // === Data from Initial Prediction Model ===
         // We use optional chaining (?.) in case the first prediction hasn't been run yet.

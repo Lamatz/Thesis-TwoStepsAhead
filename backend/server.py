@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import pandas as pd
+
 # Keep imports if used elsewhere, but openmeteo_requests, requests_cache, retry are not used in the current fetch_weather_data
 import openmeteo_requests
 import requests_cache
@@ -8,31 +9,33 @@ from datetime import datetime, timedelta
 from flask_cors import CORS
 import numpy as np
 import pickle
-import requests # Used here for fetching weather data
-import rasterio # Used for slope
-import geopandas as gpd # Used for soil
-from shapely.geometry import Point # Used for soil
-from pyproj import Transformer # Used for coordinate conversion
+import requests  # Used here for fetching weather data
+import rasterio  # Used for slope
+import geopandas as gpd  # Used for soil
+from shapely.geometry import Point  # Used for soil
+from pyproj import Transformer  # Used for coordinate conversion
 
 # Genrative Reports Pre-requisites
 import os
 from flask import Response
 from dotenv import load_dotenv
+
 # import google.generativeai as genai
 # pip install -U google-genai
 from google import genai
 from google.genai import types
 
 
-
 app = Flask(__name__)
-CORS(app, )  # Enable CORS for frontend requests
+CORS(
+    app,
+)  # Enable CORS for frontend requests
 
 # Load spatial files (assuming these paths are correct relative to where the script is run)
 try:
     soil_shapefile = "backend/soil map/hays.shp"
     soil_gdf = gpd.read_file(soil_shapefile)
-    soil_gdf.sindex # Build spatial index for performance
+    soil_gdf.sindex  # Build spatial index for performance
 except Exception as e:
     print(f"Error loading soil shapefile {soil_shapefile}: {e}")
     soil_gdf = None
@@ -53,6 +56,7 @@ def convert_coords(lon, lat, crs):
     transformer = Transformer.from_crs("EPSG:4326", crs, always_xy=True)
     return transformer.transform(lon, lat)
 
+
 # Function to extract soil type from shapefile
 def get_soil_type(lon, lat):
     if soil_gdf is None:
@@ -65,22 +69,30 @@ def get_soil_type(lon, lat):
         for _, row in soil_gdf.iterrows():
             # Use .within() or .intersects() with buffering for robustness near boundaries if needed
             if row.geometry and row.geometry.contains(point):
-                return row.get("SNUM", "Unknown") # Use .get for safer attribute access
-        return "Unknown" # Point not found in any polygon
+                return row.get("SNUM", "Unknown")  # Use .get for safer attribute access
+        return "Unknown"  # Point not found in any polygon
     except Exception as e:
         print(f"Error in get_soil_type: {e}")
         return "Error during processing"
+
 
 # Function to extract slope from GeoTIFF
 def get_slope(lon, lat):
     # Open the raster inside the function to manage resources
     try:
         with rasterio.open(slope_tif) as src:
-            x, y = convert_coords(lon, lat, src.crs)  # Convert coordinates to raster CRS
+            x, y = convert_coords(
+                lon, lat, src.crs
+            )  # Convert coordinates to raster CRS
             # Check if coordinates are within raster bounds before indexing
-            if not (src.bounds.left <= x <= src.bounds.right and src.bounds.bottom <= y <= src.bounds.top):
-                 print(f"Coords ({lon}, {lat}) converted to ({x}, {y}) are outside raster bounds.")
-                 return None # Return None if outside bounds
+            if not (
+                src.bounds.left <= x <= src.bounds.right
+                and src.bounds.bottom <= y <= src.bounds.top
+            ):
+                print(
+                    f"Coords ({lon}, {lat}) converted to ({x}, {y}) are outside raster bounds."
+                )
+                return None  # Return None if outside bounds
 
             row, col = src.index(x, y)  # Get row/col in raster
 
@@ -92,22 +104,21 @@ def get_slope(lon, lat):
                 slope_value_array = src.read(1, window=window, boundless=True)
 
                 if slope_value_array.shape == (1, 1):
-                     slope_value = slope_value_array[0, 0]
+                    slope_value = slope_value_array[0, 0]
                 else:
-                     print("Did not read a single pixel as expected.")
-                     return None
-
+                    print("Did not read a single pixel as expected.")
+                    return None
 
                 # Handle NoData values or NaNs
                 if src.nodata is not None and slope_value == src.nodata:
-                    return None # Return None for NoData
+                    return None  # Return None for NoData
                 if np.isnan(slope_value):
-                    return None # Return None for NaN values
+                    return None  # Return None for NaN values
 
                 return float(slope_value)
             else:
-                 print(f"Coords ({lon}, {lat}) map to invalid row/col ({row}, {col}).")
-                 return None # Point maps to invalid row/col index
+                print(f"Coords ({lon}, {lat}) map to invalid row/col ({row}, {col}).")
+                return None  # Point maps to invalid row/col index
 
     except rasterio.errors.RasterioIOError as e:
         print(f"Rasterio IO error reading slope data: {e}")
@@ -123,23 +134,34 @@ def get_location_data():
     latitude = request.args.get("lat", type=float)
     longitude = request.args.get("lon", type=float)
 
-    if latitude is None or longitude is None or abs(latitude) > 90 or abs(longitude) > 180:
+    if (
+        latitude is None
+        or longitude is None
+        or abs(latitude) > 90
+        or abs(longitude) > 180
+    ):
         return jsonify({"error": "Invalid or missing coordinates"}), 400
 
     # Add error handling for spatial file loading issues
-    if soil_gdf is None or slope_tif is None: # Check slope_tif path existence might be better
-         return jsonify({"error": "Spatial data files not loaded on server"}), 500
-
+    if (
+        soil_gdf is None or slope_tif is None
+    ):  # Check slope_tif path existence might be better
+        return jsonify({"error": "Spatial data files not loaded on server"}), 500
 
     slope = get_slope(longitude, latitude)
     soil_type = get_soil_type(longitude, latitude)
 
     # Return None slope if extraction failed or point was outside
-    return jsonify({
-        "slope": slope, # Return None if get_slope returned None or Error string
-        "soil_type": str(soil_type) if not isinstance(soil_type, str) or not soil_type.startswith("Error") else soil_type
-    })
-
+    return jsonify(
+        {
+            "slope": slope,  # Return None if get_slope returned None or Error string
+            "soil_type": (
+                str(soil_type)
+                if not isinstance(soil_type, str) or not soil_type.startswith("Error")
+                else soil_type
+            ),
+        }
+    )
 
 
 # =========================================================================
@@ -148,36 +170,44 @@ def get_location_data():
 def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
     try:
         # Combine date and time for a precise endpoint
-        end_datetime = datetime.strptime(f"{end_date_str} {end_time_str}", "%Y-%m-%d %H:%M")
-        
+        end_datetime = datetime.strptime(
+            f"{end_date_str} {end_time_str}", "%Y-%m-%d %H:%M"
+        )
+
         # Fetch data for the last 6 days to ensure all windows are covered
         api_start_date = end_datetime - timedelta(days=6)
         api_end_date = end_datetime
 
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
-            "latitude": latitude, "longitude": longitude,
+            "latitude": latitude,
+            "longitude": longitude,
             "hourly": "precipitation,soil_moisture_27_to_81cm",
             "start_date": api_start_date.strftime("%Y-%m-%d"),
             "end_date": api_end_date.strftime("%Y-%m-%d"),
-            "timezone": "auto", "forecast_days": 0, "precipitation_unit": "inch"
+            "timezone": "auto",
+            "forecast_days": 0,
+            "precipitation_unit": "inch",
         }
-        
+
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
 
         hourly_data = data.get("hourly", {})
-        df = pd.DataFrame({
-            "timestamp": pd.to_datetime(hourly_data["time"]),
-            "rain_mm": np.array(hourly_data["precipitation"]),
-            "soil_moisture": np.array(hourly_data["soil_moisture_27_to_81cm"])
-        }).fillna(0.0)
+        df = pd.DataFrame(
+            {
+                "timestamp": pd.to_datetime(hourly_data["time"]),
+                "rain_mm": np.array(hourly_data["precipitation"]),
+                "soil_moisture": np.array(hourly_data["soil_moisture_27_to_81cm"]),
+            }
+        ).fillna(0.0)
 
         # Filter to only include data up to the user's selected end_datetime
-        df = df[df['timestamp'] <= end_datetime].copy()
-        if df.empty: return {"error": "No historical data available for the selected time."}
-        
+        df = df[df["timestamp"] <= end_datetime].copy()
+        if df.empty:
+            return {"error": "No historical data available for the selected time."}
+
         # --- Calculations for the prediction model ---
         def compute_cumulative(hours):
             start_time = end_datetime - timedelta(hours=hours)
@@ -188,36 +218,62 @@ def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
             cumulative = compute_cumulative(hours)
             return float(cumulative / hours) if hours > 0 else 0.0
 
-        time_windows = {"3_hr": 3, "6_hr": 6, "12_hr": 12, "1_day": 24, "3_day": 72, "5_day": 120}
-        cumulative_rainfall = {label: compute_cumulative(h) for label, h in time_windows.items()}
-        rain_intensity = {label: compute_intensity(h) for label, h in time_windows.items()}
+        time_windows = {
+            "3_hr": 3,
+            "6_hr": 6,
+            "12_hr": 12,
+            "1_day": 24,
+            "3_day": 72,
+            "5_day": 120,
+        }
+        cumulative_rainfall = {
+            label: compute_cumulative(h) for label, h in time_windows.items()
+        }
+        rain_intensity = {
+            label: compute_intensity(h) for label, h in time_windows.items()
+        }
 
         # --- NEW & CORRECTED: Generate clean data specifically for the 4 charts ---
-        
+
         # 1. Hourly Chart Data (for the 12 hours leading up to end_datetime)
         hourly_chart_data = []
         # Get the last 12 data points from our filtered dataframe
         last_12_hours_df = df.tail(12)
-        
+
         running_cumulative = 0
         for index, row in last_12_hours_df.iterrows():
-            running_cumulative += row['rain_mm']
-            hourly_chart_data.append({
-                'hour': row['timestamp'].strftime('%H:00'),
-                'cumulative': running_cumulative,  # A true running total over the 12hr window
-                'intensity': row['rain_mm']        # The intensity is just the rainfall for that single hour
-            })
+            running_cumulative += row["rain_mm"]
+            hourly_chart_data.append(
+                {
+                    "hour": row["timestamp"].strftime("%H:00"),
+                    "cumulative": running_cumulative,  # A true running total over the 12hr window
+                    "intensity": row[
+                        "rain_mm"
+                    ],  # The intensity is just the rainfall for that single hour
+                }
+            )
 
         # 2. Daily Chart Data (for the 5 days leading up to end_date)
-        daily_df = df[df['timestamp'] >= end_datetime.replace(hour=0, minute=0, second=0) - timedelta(days=4)].copy()
-        daily_summary = daily_df.groupby(daily_df['timestamp'].dt.date).agg(
-            daily_cumulative=('rain_mm', 'sum'),
-            # The average intensity for a day is the total rain divided by 24 hours
-            daily_avg_intensity=('rain_mm', lambda x: x.sum() / 24)
-        ).reset_index()
+        daily_df = df[
+            df["timestamp"]
+            >= end_datetime.replace(hour=0, minute=0, second=0) - timedelta(days=4)
+        ].copy()
+        daily_summary = (
+            daily_df.groupby(daily_df["timestamp"].dt.date)
+            .agg(
+                daily_cumulative=("rain_mm", "sum"),
+                # The average intensity for a day is the total rain divided by 24 hours
+                daily_avg_intensity=("rain_mm", lambda x: x.sum() / 24),
+            )
+            .reset_index()
+        )
 
         daily_chart_data = [
-            {'date': row['timestamp'].strftime('%b %d'), 'cumulative': float(row['daily_cumulative']), 'intensity': float(row['daily_avg_intensity'])}
+            {
+                "date": row["timestamp"].strftime("%b %d"),
+                "cumulative": float(row["daily_cumulative"]),
+                "intensity": float(row["daily_avg_intensity"]),
+            }
             for _, row in daily_summary.iterrows()
         ]
 
@@ -226,24 +282,26 @@ def fetch_weather_data(latitude, longitude, end_date_str, end_time_str):
             "cumulative_rainfall": cumulative_rainfall,
             "rain_intensity": rain_intensity,
             "hourly_chart_data": hourly_chart_data,
-            "daily_chart_data": daily_chart_data
+            "daily_chart_data": daily_chart_data,
         }
 
     except Exception as e:
         print(f"Error processing weather data: {e}")
         return {"error": f"Error processing weather data: {e}"}
 
+
 # ... (rest of your backend routes: search_locations, get_weather endpoint handler, predict endpoint handler, model loading, main execution block) ...
 
-@app.route('/search_locations', methods=['GET'])
+
+@app.route("/search_locations", methods=["GET"])
 def search_locations():
-    query = request.args.get('query')
+    query = request.args.get("query")
     if not query:
         return jsonify({"error": "Missing query parameter"}), 400
 
     # Added a minimum query length for efficiency and relevance
     if len(query.strip()) < 3:
-        return jsonify({"suggestions": []}) # Return empty list for short queries
+        return jsonify({"suggestions": []})  # Return empty list for short queries
 
     # Add a User-Agent header as recommended by Nominatim
     query = request.args.get("query")  # This line likely exists already
@@ -252,33 +310,37 @@ def search_locations():
     headers = {"User-Agent": "Two-Step-Ahead (eriksonss1535@gmail.com)"}
     response = requests.get(url, headers=headers)
 
-
     if response.status_code != 200:
         print(f"Error fetching Nominatim data: Status {response.status_code}")
-        return jsonify({"error": "Failed to fetch location data from Nominatim"}), response.status_code
+        return (
+            jsonify({"error": "Failed to fetch location data from Nominatim"}),
+            response.status_code,
+        )
 
     data = response.json()
 
     # Debugging output
     print("Nominatim Query:", query)
-    print("Nominatim Response (first 5):", data[:1]) # Print only first few for brevity
+    print("Nominatim Response (first 5):", data[:1])  # Print only first few for brevity
 
     if not data:
         print("No results found for Nominatim query:", query)
-        return jsonify({"suggestions": []}) # Return empty list if no results
+        return jsonify({"suggestions": []})  # Return empty list if no results
 
     locations = []
     for item in data:
         # **Crucially: ONLY extract and return basic info from Nominatim**
         # **DO NOT call get_soil_type, get_slope, or fetch_weather_data here**
-        locations.append({
-            "name": item.get("display_name", "Unnamed Location"),
-            "lat": item.get("lat"),
-            "lon": item.get("lon"),
-             # Add other useful Nominatim fields if needed, but avoid fetching external data
-             "category": item.get("category"),
-             "type": item.get("type")
-        })
+        locations.append(
+            {
+                "name": item.get("display_name", "Unnamed Location"),
+                "lat": item.get("lat"),
+                "lon": item.get("lon"),
+                # Add other useful Nominatim fields if needed, but avoid fetching external data
+                "category": item.get("category"),
+                "type": item.get("type"),
+            }
+        )
 
     print(f"Returning {len(locations)} search suggestions.")
     return jsonify({"suggestions": locations})
@@ -293,11 +355,11 @@ def get_weather():
     longitude = request.args.get("longitude", type=float)
     date = request.args.get("date", type=str)
     # Get time, with a default of 23:59 if not provided
-    time = request.args.get("time", "23:59") 
+    time = request.args.get("time", "23:59")
 
     if not all([latitude, longitude, date, time]):
         return jsonify({"error": "Missing required parameters"}), 400
-    
+
     data = fetch_weather_data(latitude, longitude, date, time)
     return jsonify(data)
 
@@ -310,7 +372,6 @@ with open("backend/model_4.pkl", "rb") as model_file:
 
 with open("backend/scaler_4.pkl", "rb") as scaler_file:
     scaler = pickle.load(scaler_file)
-
 
 
 @app.route("/predict", methods=["POST"])
@@ -332,7 +393,7 @@ def predict():
             float(data.get("rainfall-5-day", 0)),
             float(data.get("rain-intensity-1-day", 0)),
             float(data.get("rain-intensity-3-day", 0)),
-            float(data.get("rain-intensity-5-day", 0))
+            float(data.get("rain-intensity-5-day", 0)),
         ]
 
         features_scaled = scaler.transform([features])
@@ -341,14 +402,15 @@ def predict():
         print(features)
         print(features_scaled)
         print(probabilities)
-        return jsonify({
-            "prediction": "Landslide" if prediction == 1 else "No Landslide",
-            "confidence": f"{max(probabilities) * 100:.2f}%"
-        })
+        return jsonify(
+            {
+                "prediction": "Landslide" if prediction == 1 else "No Landslide",
+                "confidence": f"{max(probabilities) * 100:.2f}%",
+            }
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
 
 
 # ==========================================================
@@ -358,7 +420,7 @@ def predict():
 
 # In order to use this properly you need to first:
 # 1. Have an api key for the gemini model (you can use mine but I recommend you have you own so that mine doesn't reach the rate limit. AIzaSyB-rg3sokaltFw2IHB8eiR1hbjNFaGxMpQ )
-# 2. create a ' .env ' file and the content should be ' GEMINI_API_KEY="your_api_key" ' 
+# 2. create a ' .env ' file and the content should be ' GEMINI_API_KEY="your_api_key" '
 # 3. the .env file and the server.py file should be in the same directory/within the same folder
 # 4. It should now work but if it doesn't make sure to save everything and reload you work
 load_dotenv()
@@ -378,65 +440,138 @@ def generate_report():
             return jsonify({"error": "No JSON data received"}), 400
         print("Received data for GEMINI report:", data)
 
-        # prompt = f"""
-        # Generate a concise risk assessment report for a potential landslide based on the following data.
-        # The report should be easy to understand for a non-expert.
-        # Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and brief recommendations.
-
-        # DATA:
-        # - Soil Type (s-num): {data.get('soil_type', 'N/A')}
-        # - Slope Angle (degrees): {data.get('slope', 'N/A')}
-        # - Soil Moisture (percentage): {data.get('soil_moisture', 'N/A')}%
-        # - Rainfall last 3 hours (mm): {data.get('rainfall-3_hr', 'N/A')}
-        # - Rainfall last 1 day (mm): {data.get('rainfall-1-day', 'N/A')}
-        # - Rainfall last 5 days (mm): {data.get('rainfall-5-day', 'N/A')}
-
-        # REPORT:
-        # """
-
-        # response = gemini_model.generate_content(prompt)
-
         response = client.models.generate_content_stream(
             model="gemini-2.5-flash",
+            # contents=f"""
+            # Generate a comprehensive risk assessment report for a potential landslide.
+            # The report should be structured, professional, and easy for a non-expert to understand.
+            # Your analysis should consider all the environmental data provided below.
+            # Crucially, you should also consider the output from our initial, simpler prediction model and comment on whether your detailed analysis agrees with it.
+            # Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations.
+            # ---
+            # **PREDICTION CONTEXT:**
+            # - Prediction for Date: {data.get('prediction_date', 'N/A')}
+            # - Initial Model Prediction: {data.get('original_model_prediction', 'N/A')}
+            # - Initial Model Confidence: {data.get('original_model_confidence', 'N/A')}
+            # ---
+            # **SITE DATA:**
+            # - Location Name: {data.get('location_name', 'N/A')}%
+            # - Soil Type: {data.get('soil_type', 'N/A')}
+            # - Slope Angle (degrees): {data.get('slope', 'N/A')}
+            # - Soil Moisture (percentage): {data.get('soil_moisture', 'N/A')}%
+            # ---
+            # **CUMULATIVE RAINFALL (mm):**
+            # - Last 3 hours: {data.get('rainfall-3_hr', 'N/A')}
+            # - Last 6 hours: {data.get('rainfall-6_hr', 'N/A')}
+            # - Last 12 hours: {data.get('rainfall-12_hr', 'N/A')}
+            # - Last 1 day: {data.get('rainfall-1-day', 'N/A')}
+            # - Last 3 days: {data.get('rainfall-3-day', 'N/A')}
+            # - Last 5 days: {data.get('rainfall-5-day', 'N/A')}
+            # ---
+            # **RAINFALL INTENSITY (mm/hr):**
+            # - Average over last 3 hours: {data.get('rain-intensity-3_hr', 'N/A')}
+            # - Average over last 6 hours: {data.get('rain-intensity-6_hr', 'N/A')}
+            # - Average over last 12 hours: {data.get('rain-intensity-12_hr', 'N/A')}
+            # - Average over last 1 day: {data.get('rain-intensity-1-day', 'N/A')}
+            # - Average over last 3 days: {data.get('rain-intensity-3-day', 'N/A')}
+            # - Average over last 5 days: {data.get('rain-intensity-5-day', 'N/A')}
+            # ---
+            # **BEGIN COMPREHENSIVE REPORT:**
+            # """,
             contents=f"""
             Generate a comprehensive risk assessment report for a potential landslide.
             The report should be structured, professional, and easy for a non-expert to understand.
             Your analysis should consider all the environmental data provided below.
             Crucially, you should also consider the output from our initial, simpler prediction model and comment on whether your detailed analysis agrees with it.
-            Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations.
+            Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations for Local Government Units (LGUs) and residents.
 
             ---
-            **PREDICTION CONTEXT:**
-            - Prediction for Date: {data.get('prediction_date', 'N/A')}
-            - Initial Model Prediction: {data.get('original_model_prediction', 'N/A')}
-            - Initial Model Confidence: {data.get('original_model_confidence', 'N/A')}
+            **INCIDENT AND ASSESSMENT OVERVIEW:**
+            - **Report Generation Date:** {data.get('report_date', 'N/A')}
+            - **Prediction for Date:** {data.get('prediction_date', 'N/A')}
+            - **Location:** {data.get('location_name', 'N/A')} 
+            - **Coordinates:** (for latitude: {data.get('location_lat', 'N/A')} ) (for longituded {data.get('location_lng', 'N/A')})
 
             ---
-            **SITE DATA:**
-            - Soil Type: {data.get('soil_type', 'N/A')}
-            - Slope Angle (degrees): {data.get('slope', 'N/A')}
-            - Soil Moisture (percentage): {data.get('soil_moisture', 'N/A')}%
+            **INITIAL PREDICTION CONTEXT:**
+            - **Initial Model Prediction:** {data.get('original_model_prediction', 'N/A')}
+            - **Initial Model Confidence:** {data.get('original_model_confidence', 'N/A')}
 
             ---
+            **GEOLOGICAL AND SITE CHARACTERISTICS:**
+            - **Geological Assessment:** [Provide a brief description of the area's geology, e.g., "The area is underlain by [rock formation], which is known for its susceptibility to weathering and erosion."]
+            - **Soil Type:** {data.get('soil_type', 'N/A')}
+            - **Slope Angle (degrees):** {data.get('slope', 'N/A')}
+            - **Land Cover/Use:** [e.g., Forested, Agricultural, Residential, etc.]
+            - **Proximity to Active Faults:** [If applicable, state the distance and name of the nearest active fault.]
+            - **Site Observations:** [Include any visual observations of tension cracks, bulging ground, or previous landslide activity.]
+
+            ---
+            **HYDRO-METEOROLOGICAL DATA:**
+
             **CUMULATIVE RAINFALL (mm):**
-            - Last 3 hours: {data.get('rainfall-3_hr', 'N/A')}
-            - Last 6 hours: {data.get('rainfall-6_hr', 'N/A')}
-            - Last 12 hours: {data.get('rainfall-12_hr', 'N/A')}
-            - Last 1 day: {data.get('rainfall-1-day', 'N/A')}
-            - Last 3 days: {data.get('rainfall-3-day', 'N/A')}
-            - Last 5 days: {data.get('rainfall-5-day', 'N/A')}
+            - **Last 3 hours:** {data.get('rainfall-3_hr', 'N/A')}
+            - **Last 6 hours:** {data.get('rainfall-6_hr', 'N/A')}
+            - **Last 12 hours:** {data.get('rainfall-12_hr', 'N/A')}
+            - **Last 1 day:** {data.get('rainfall-1-day', 'N/A')}
+            - **Last 3 days:** {data.get('rainfall-3-day', 'N/A')}
+            - **Last 5 days:** {data.get('rainfall-5-day', 'N/A')}
 
-            ---
             **RAINFALL INTENSITY (mm/hr):**
-            - Average over last 3 hours: {data.get('rain-intensity-3_hr', 'N/A')}
-            - Average over last 6 hours: {data.get('rain-intensity-6_hr', 'N/A')}
-            - Average over last 12 hours: {data.get('rain-intensity-12_hr', 'N/A')}
-            - Average over last 1 day: {data.get('rain-intensity-1-day', 'N/A')}
-            - Average over last 3 days: {data.get('rain-intensity-3-day', 'N/A')}
-            - Average over last 5 days: {data.get('rain-intensity-5-day', 'N/A')}
+            - **Average over last 3 hours:** {data.get('rain-intensity-3_hr', 'N/A')}
+            - **Average over last 6 hours:** {data.get('rain-intensity-6_hr', 'N/A')}
+            - **Average over last 12 hours:** {data.get('rain-intensity-12_hr', 'N/A')}
+            - **Average over last 1 day:** {data.get('rain-intensity-1-day', 'N/A')}
+            - **Average over last 3 days:** {data.get('rain-intensity-3-day', 'N/A')}
+            - **Average over last 5 days:** {data.get('rain-intensity-5-day', 'N/A')}
+
+            **SOIL MOISTURE:**
+            - **Current Soil Moisture (percentage):** {data.get('soil_moisture', 'N/A')}%
 
             ---
-            **BEGIN COMPREHENSIVE REPORT:**
+            **VULNERABILITY AND RISK ASSESSMENT:**
+
+            **Elements at Risk:**
+            - **Estimated Population in Hazard Zone:** [e.g., Number of households/individuals]
+            - **Critical Infrastructure:** [e.g., Schools, hospitals, major roads, bridges]
+            - **Livelihood:** [e.g., Predominant sources of income that could be affected]
+
+            **Analysis of Landslide Contributing Factors:**
+            [This section should synthesize the data above. For example: "The steep slope of {data.get('slope', 'N/A')} degrees, combined with the soil type ({data.get('soil_type', 'N/A')}), makes the area inherently susceptible to landslides. The recent heavy rainfall over the past 3 days ({data.get('rainfall-3-day', 'N/A')} mm) has likely increased soil saturation and pore water pressure, further elevating the risk."]
+
+            **Agreement with Initial Prediction:**
+            [Comment on the initial model's prediction. For example: "The initial model's prediction of a {data.get('original_model_prediction', 'N/A')} risk level is consistent with this detailed analysis. The high confidence of {data.get('original_model_confidence', 'N/A')}% is supported by the combination of geological and meteorological factors."]
+
+            ---
+            **LANDSLIDE SUSCEPTIBILITY RATING:**
+
+            **Overall Susceptibility Level:** [e.g., LOW, MODERATE, HIGH, CRITICAL]
+
+            **Justification:**
+            [Provide a clear, non-technical explanation for the rating. For example: "The area is rated as **HIGHLY SUSCEPTIBLE** due to the combination of steep slopes, saturated soils from prolonged rainfall, and historical landslide events in the vicinity."]
+
+            ---
+            **RECOMMENDATIONS:**
+
+            **For the Local Government Unit (LGU) / Disaster Risk Reduction and Management Office (DRRMO):**
+            1.  **Information Dissemination:** Immediately disseminate this warning to the affected barangays and communities.
+            2.  **Monitoring:** Continuously monitor rainfall and be alert for signs of impending landslides (e.g., tension cracks, bulging ground, unusual sounds). Observe for rapid increases or decreases in creek/river water levels, which may be accompanied by increased turbidity.
+            3.  **Pre-emptive Evacuation:** For areas rated as Highly or Critically susceptible, consider and, if necessary, implement pre-emptive evacuation, especially for residents in the most dangerous areas.
+            4.  **Evacuation Centers:** Ensure that designated evacuation centers are ready, accessible, and equipped with necessary supplies.
+            5.  **Road Safety:** Monitor road conditions and advise the public of any potential road closures.
+
+            **For Residents and the Community:**
+            1.  **Be Vigilant:** Be aware of your surroundings and watch for any signs of land movement.
+            2.  **Stay Informed:** Monitor official news and advisories from PAGASA and your local DRRMO.
+            3.  **Evacuate if Necessary:** If you are in a high-risk area, be prepared to evacuate immediately when instructed by local authorities.
+            4.  **Community-Based Monitoring:** Report any unusual observations to your barangay officials.
+
+            ---
+            **DISCLAIMER:**
+            This report is based on the available data and predictive models. Ground conditions can change rapidly. Furthermore, this report was made using the gemini model. This assessment should be used as a guide for disaster preparedness and mitigation and not as a substitute for on-site engineering and geological assessments.
+
+            **--- END OF REPORT ---**
+
             """,
         )
 
@@ -456,7 +591,6 @@ def generate_report():
             ),
             500,
         )
-
 
 
 if __name__ == "__main__":
