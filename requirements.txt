@@ -12,3 +12,4 @@ retry-requests
 shapely
 scikit-learn
 google-genai
+python-dotenv
