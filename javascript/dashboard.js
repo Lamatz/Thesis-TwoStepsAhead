@@ -210,6 +210,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             parseHistoryData();
 
+            updateDashboard("");
+
         },
         error: (err, file) => {
             console.error("!!! Papa.parse ERROR:", err, file);
@@ -307,11 +309,82 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     console.log("testing");
-    // --- EVENT LISTENERS ---
-    const regionSelect = document.getElementById('regionSelect');
-    regionSelect.addEventListener('change', function () {
-        const selectedRegion = this.value;
 
+
+
+
+
+    // // --- EVENT LISTENERS ---
+    // const regionSelect = document.getElementById('regionSelect');
+    // regionSelect.addEventListener('change', function () {
+    //     const selectedRegion = this.value;
+
+    //     console.log("the value of dropdown: ", selectedRegion);
+
+    //     // Update Mapbox Filter
+    //     if (selectedRegion === "") {
+    //         map.setFilter('landslide-layer', null); // Show all points
+    //     } else {
+    //         map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
+    //     }
+
+
+    //     // This part now works correctly because `monthlyCountsByRegion` is populated by the second parse
+    //     if (selectedRegion === "") {
+    //         const totalMonthlyCounts = Array(12).fill(0);
+    //         for (const region in monthlyCountsByRegion) {
+    //             for (let i = 0; i < 12; i++) {
+    //                 totalMonthlyCounts[i] += monthlyCountsByRegion[region][i];
+    //             }
+    //         }
+    //         historyChart.data.datasets[0].data = totalMonthlyCounts;
+    //     } else if (monthlyCountsByRegion[selectedRegion]) {
+    //         historyChart.data.datasets[0].data = monthlyCountsByRegion[selectedRegion];
+    //     } else {
+    //         historyChart.data.datasets[0].data = Array(12).fill(0);
+    //     }
+    //     historyChart.update();
+
+    //     // if (regionMonthlyData[selectedRegion]) {
+    //     //     historyChart.data.datasets[0].data = regionMonthlyData[selectedRegion];
+    //     // } else {
+    //     //     historyChart.data.datasets[0].data = [];
+    //     // }
+    //     // historyChart.update();
+
+
+
+    //     // --- NEW: Update YEARLY History Chart ---
+    //     if (selectedRegion === "") {
+    //         // Recalculate total for "All Regions"
+    //         const totalYearlyCounts = {};
+    //         for (const region in yearlyCountsByRegion) {
+    //             for (const year in yearlyCountsByRegion[region]) {
+    //                 totalYearlyCounts[year] = (totalYearlyCounts[year] || 0) + yearlyCountsByRegion[region][year];
+    //             }
+    //         }
+    //         const sortedYears = Object.keys(totalYearlyCounts).sort();
+    //         historyChartYearly.data.labels = sortedYears;
+    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
+    //     } else if (yearlyCountsByRegion[selectedRegion]) {
+    //         // Data for a specific region
+    //         const regionData = yearlyCountsByRegion[selectedRegion];
+    //         const sortedYears = Object.keys(regionData).sort();
+    //         historyChartYearly.data.labels = sortedYears;
+    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => regionData[year]);
+    //     } else {
+    //         // No data for the selected region
+    //         historyChartYearly.data.labels = [];
+    //         historyChartYearly.data.datasets[0].data = [];
+    //     }
+    //     historyChartYearly.update();
+    // });
+
+
+    // console.log("testing");
+
+
+    function updateDashboard(selectedRegion) {
         // Update Mapbox Filter
         if (selectedRegion === "") {
             map.setFilter('landslide-layer', null); // Show all points
@@ -319,22 +392,7 @@ document.addEventListener('DOMContentLoaded', function () {
             map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
         }
 
-        // Update linked charts
-        // const regionIndexInStatic = allDataa.labels.indexOf(selectedRegion);
-        // if (regionIndexInStatic !== -1) {
-        //     alertsChart.data.labels = [allDataa.labels[regionIndexInStatic]];
-        //     alertsChart.data.datasets[0].data = [allDataa.datasets[0].data[regionIndexInStatic]];
-        //     alertsChart.data.datasets[1].data = [allDataa.datasets[1].data[regionIndexInStatic]];
-        // } else {
-        //     alertsChart.data.labels = [];
-        //     alertsChart.data.datasets[0].data = [];
-        //     alertsChart.data.datasets[1].data = [];
-        // }
-        // alertsChart.update();
-
-
-
-        // This part now works correctly because `monthlyCountsByRegion` is populated by the second parse
+        // Update Monthly History Chart
         if (selectedRegion === "") {
             const totalMonthlyCounts = Array(12).fill(0);
             for (const region in monthlyCountsByRegion) {
@@ -346,20 +404,11 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (monthlyCountsByRegion[selectedRegion]) {
             historyChart.data.datasets[0].data = monthlyCountsByRegion[selectedRegion];
         } else {
-            historyChart.data.datasets[0].data = Array(12).fill(0);
+            historyChart.data.datasets[0].data = Array(12).fill(0); // Default to zeros if no data
         }
         historyChart.update();
 
-        // if (regionMonthlyData[selectedRegion]) {
-        //     historyChart.data.datasets[0].data = regionMonthlyData[selectedRegion];
-        // } else {
-        //     historyChart.data.datasets[0].data = [];
-        // }
-        // historyChart.update();
-
-
-
-        // --- NEW: Update YEARLY History Chart ---
+        // Update Yearly History Chart
         if (selectedRegion === "") {
             // Recalculate total for "All Regions"
             const totalYearlyCounts = {};
@@ -383,9 +432,33 @@ document.addEventListener('DOMContentLoaded', function () {
             historyChartYearly.data.datasets[0].data = [];
         }
         historyChartYearly.update();
+    }
+
+
+
+    // --- Step 2: Set up the event listener to call the named function ---
+    const regionSelect = document.getElementById('regionSelect');
+    regionSelect.addEventListener('change', function () {
+        // "this.value" refers to the selected option's value
+        updateDashboard(this.value);
     });
 
 
-    console.log("testing");
 
 }); // End DOMContentLoaded
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // We call the function with an empty string to show "All Regions" by default on load.
+    // This assumes your default <option> has value="".
+    updateDashboard("");
+});
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     // Make sure your dropdown is set to the default value you want in your HTML
+//     // e.g., <option value="" selected>All Regions</option>
+//     console.log("SHOULD BE RUNNING");
+//     regionSelect.dispatchEvent(new Event('change'));
+// });
