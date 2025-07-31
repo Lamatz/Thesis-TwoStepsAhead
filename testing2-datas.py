@@ -65,17 +65,17 @@ def standardize_region(name):
 
 # --- Main Script ---
 
-input_csv = 'datas_completed_api.csv' 
-output_csv = 'datas_final_standardized.csv'
+input_csv = 'data_with_regions_time.csv' 
+output_csv = 'datas_final_standardized_withTime.csv'
 
 print(f"Reading data from '{input_csv}'...")
-df = pd.read_csv(input_csv, header=None, names=['latitude', 'longitude', 'mixed_name'])
+df = pd.read_csv(input_csv, header=None, names=['lat', 'lng', 'date', 'time', 'mixed_name'])
 
 print("Standardizing region names...")
-df['final_region'] = df['mixed_name'].apply(standardize_region)
+df['region'] = df['mixed_name'].apply(standardize_region)
 
 # Create the final DataFrame with only the columns you need.
-final_df = df[['latitude', 'longitude', 'final_region']]
+final_df = df[['lat', 'lng', 'date', 'time', 'region']]
 
 # Save the clean data to a new CSV file.
 final_df.to_csv(output_csv, index=False, header=False)
@@ -86,5 +86,5 @@ print(f"Standardized data saved to: {output_csv}")
 print("\n--- Sample of Final Data ---")
 print(final_df.head())
 print("\n--- Summary of Standardized Regions ---")
-print(final_df['final_region'].value_counts())
+print(final_df['region'].value_counts())
 # --------------------------------------------------------
