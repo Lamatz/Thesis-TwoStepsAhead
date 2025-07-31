@@ -123,8 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- DATA LOADING & PROCESSING (DEBUGGING VERSION) ---
     console.log("Starting Papa.parse for datas.csv...");
-
-    Papa.parse("../datas_final_standardized.csv", {
+    Papa.parse("../datas_final_standardized_withTime.csv", {
         download: true,
         header: true,
         complete: function (results) {
@@ -136,122 +135,49 @@ document.addEventListener('DOMContentLoaded', function () {
                 return; // Stop execution if there's no data
             }
 
-            allData = results.data.filter(row => {
-                // Check the condition for each row to see why it might be filtered out
-                const isValid = row && row.lat && row.long && row.region;
-                if (!isValid) {
-                    // This log is very helpful. It tells you exactly which rows are being skipped.
-                    console.log("Filtering out invalid row:", row);
-                }
-                return isValid;
-            });
-            console.log("2. Data filtered. Total valid rows:", allData.length, "rows.", "Filtered data:", allData);
-
-            // Check if all data was filtered out
-            if (allData.length === 0) {
-                console.error("All rows were filtered out. Check your column names ('lat', 'long', 'region') and ensure they have values in the CSV.");
-                return; // Stop if no data is left
-            }
-
-            // Convert CSV data to GeoJSON format
-            geojsonData.features = allData.map(row => ({
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [parseFloat(row.long), parseFloat(row.lat)]
-                },
-                properties: {
-                    region: row.region.trim()
-                }
-            }));
-            console.log("3. Converted to GeoJSON:", geojsonData);
-
-            // Check the map source
-            console.log("4. Checking for map object and source 'landslide-points'...");
-            // Make sure the 'map' object is not undefined!
-            if (typeof map === 'undefined' || !map) {
-                console.error("The 'map' object is not available at this point!");
-            } else if (map.getSource('landslide-points')) {
-                console.log("   Source 'landslide-points' found. Updating data.");
-                map.getSource('landslide-points').setData(geojsonData);
-            } else {
-                console.warn("   Source 'landslide-points' NOT found. It must be added when the map 'load' event fires.");
-            }
-
-            // Update "Top Regions" chart
+            // --- Initialize all data structures we need to build ---
+            const geojsonFeatures = [];
             const regionCounts = {};
-            allData.forEach(row => {
-                const region = row.region.trim();
-                if (region) regionCounts[region] = (regionCounts[region] || 0) + 1;
-            });
-            const sortedRegions = Object.entries(regionCounts).sort((a, b) => b[1] - a[1]).slice(0, 5); // Top 5
-            console.log("5. Calculated Top 5 regions for chart:", sortedRegions);
+            let validMapDataRowCount = 0;
 
-            // Check if chart element exists before creating chart
-            const chartElement = document.getElementById('agriChart');
-            if (!chartElement) {
-                console.error("Could not find the chart canvas element with id='agriChart'!");
-            } else {
-                console.log("6. Creating/updating the chart.");
-                // To prevent errors, destroy the old chart if it exists
-                if (window.agriChart instanceof Chart) {
-                    window.agriChart.destroy();
-                }
-                window.agriChart = new Chart(chartElement.getContext('2d'), { type: 'bar', data: { labels: sortedRegions.map(e => e[0]), datasets: [{ label: 'Landslide Points', data: sortedRegions.map(e => e[1]), backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#e74c3c', '#f1c40f'] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-            }
-
-            // Manually trigger change to show initial state
-            console.log("7. Triggering 'change' event on regionSelect element.");
-            if (typeof regionSelect === 'undefined' || !regionSelect) {
-                console.error("The 'regionSelect' element is not defined!");
-            } else {
-                regionSelect.dispatchEvent(new Event('change'));
-            }
-
-            parseHistoryData();
-
-            updateDashboard("");
-
-        },
-        error: (err, file) => {
-            console.error("!!! Papa.parse ERROR:", err, file);
-            // Even if the first file fails, we might still want to try loading the second.
-            parseHistoryData();
-        }
-    });
-
-
-
-    // === NEW FUNCTION for the second parse, to keep code clean ===
-    function parseHistoryData() {
-        console.log("Starting Papa.parse for data_withdatetime.csv (for history chart)...");
-        Papa.parse("data_withdatetime.csv", {
-            download: true,
-            header: true,
-            complete: function (results) {
-                console.log("1. Papa.parse [HISTORY] complete. Raw results:", results);
-
-                if (!results.data || results.data.length === 0) {
-                    console.error("CSV (history) parsing resulted in no data.");
+            // --- Process all data in a SINGLE LOOP ---
+            console.log("2. Starting combined data processing loop...");
+            results.data.forEach(row => {
+                // Skip empty rows which Papa.parse sometimes adds at the end
+                if (!row || !row.region) {
+                    console.log("Skipping empty or region-less row:", row);
                     return;
                 }
 
-                // Filter history data
-                const allHistoryData = results.data.filter(row => {
-                    const isValid = row && row.region && row.date; // We only need region and date for this chart
-                    if (!isValid) { console.log("Filtering out invalid history row:", row); }
-                    return isValid;
-                });
+                const region = row.region.trim();
 
+                // --- Part 1: Process data for the Map and Top Regions Chart ---
+                // This replaces the first .filter() and .map()
+                if (row.lat && row.long) {
+                    validMapDataRowCount++;
+                    // a. Convert to GeoJSON Feature
+                    geojsonFeatures.push({
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [parseFloat(row.long), parseFloat(row.lat)]
+                        },
+                        properties: { region: region }
+                    });
 
-                // Process data for BOTH charts in one loop
-                allHistoryData.forEach(row => {
+                    // b. Count occurrences for the "Top Regions" chart
+                    regionCounts[region] = (regionCounts[region] || 0) + 1;
+                } else {
+                    console.log("Filtering out row for map (missing lat/long):", row);
+                }
 
-                    const region = row.region.trim();
-                    const dateParts = row.date.split('/'); // "23/10/2024" -> ["23", "10", "2024"]
+                // --- Part 2: Process data for the Monthly/Yearly History Charts ---
+                // This replaces the second Papa.parse call entirely
+                if (row.date) {
+                    const dateParts = row.date.split('/'); // e.g., "23/10/2024"
 
                     if (dateParts.length === 3) {
-                        // --- Monthly processing (no changes) ---
+                        // a. Process for Monthly Chart
                         const monthIndex = parseInt(dateParts[1], 10) - 1;
                         if (monthIndex >= 0 && monthIndex < 12) {
                             if (!monthlyCountsByRegion[region]) {
@@ -260,138 +186,82 @@ document.addEventListener('DOMContentLoaded', function () {
                             monthlyCountsByRegion[region][monthIndex]++;
                         }
 
-                        // --- NEW: Yearly processing ---
+                        // b. Process for Yearly Chart
                         const year = dateParts[2];
                         if (year) {
                             if (!yearlyCountsByRegion[region]) {
-                                yearlyCountsByRegion[region] = {}; // Use an object for yearly data
+                                yearlyCountsByRegion[region] = {};
                             }
-                            // Use the year as a key and increment the count
                             yearlyCountsByRegion[region][year] = (yearlyCountsByRegion[region][year] || 0) + 1;
                         }
                     }
-                });
-                console.log("NEW: Calculated monthly counts:", monthlyCountsByRegion);
-                console.log("NEW: Calculated yearly counts:", yearlyCountsByRegion);
-
-                // // Calculate total monthly counts for the initial view
-                // const totalMonthlyCounts = Array(12).fill(0);
-                // for (const region in monthlyCountsByRegion) {
-                //     for (let i = 0; i < 12; i++) {
-                //         totalMonthlyCounts[i] += monthlyCountsByRegion[region][i];
-                //     }
-                // }
-
-                // // --- NEW: Set initial state for YEARLY chart (All Regions) ---
-                // const totalYearlyCounts = {};
-                // for (const region in yearlyCountsByRegion) {
-                //     for (const year in yearlyCountsByRegion[region]) {
-                //         totalYearlyCounts[year] = (totalYearlyCounts[year] || 0) + yearlyCountsByRegion[region][year];
-                //     }
-                // }
-                // const sortedYears = Object.keys(totalYearlyCounts).sort();
-                // historyChartYearly.data.labels = sortedYears;
-                // historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
-                // historyChartYearly.update();
-
-                // Trigger the change event after ALL data is processed
-                if (typeof regionSelect !== 'undefined' && regionSelect) {
-                    console.log("Data parsing complete. Triggering initial chart update.");
-                    regionSelect.dispatchEvent(new Event('change'));
+                } else {
+                    console.log("Skipping row for history charts (missing date):", row);
                 }
-            },
-            error: (err, file) => {
-                console.error("!!! Papa.parse [HISTORY] ERROR:", err, file);
+            });
+
+            console.log("3. Data processing finished.");
+            console.log("   - Total valid rows for map:", validMapDataRowCount);
+            console.log("   - Monthly counts by region:", monthlyCountsByRegion);
+            console.log("   - Yearly counts by region:", yearlyCountsByRegion);
+
+            // --- Part 3: Update UI elements with the processed data ---
+
+            // Update GeoJSON object
+            geojsonData.features = geojsonFeatures;
+            console.log("4. Final GeoJSON object:", geojsonData);
+
+            // Update the map source
+            if (typeof map !== 'undefined' && map.getSource('landslide-points')) {
+                console.log("5. Updating map source 'landslide-points'.");
+                map.getSource('landslide-points').setData(geojsonData);
+            } else {
+                console.warn("Map or source 'landslide-points' not ready. It should be updated on map 'load'.");
             }
-        });
-    }
+
+            // Update "Top Regions" chart
+            const sortedRegions = Object.entries(regionCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const chartElement = document.getElementById('agriChart');
+            if (chartElement) {
+                console.log("6. Creating/updating the 'Top Regions' chart.", sortedRegions);
+                if (window.agriChart instanceof Chart) {
+                    window.agriChart.destroy();
+                }
+                window.agriChart = new Chart(chartElement.getContext('2d'), { type: 'bar', data: { labels: sortedRegions.map(e => e[0]), datasets: [{ label: 'Landslide Incidents', data: sortedRegions.map(e => e[1]), backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#e74c3c', '#f1c40f'] }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
+            } else {
+                console.error("Could not find the chart canvas element with id='agriChart'!");
+            }
 
 
 
-    console.log("testing");
+            // Finally, trigger the change event ONCE to initialize the history chart
+            console.log("7. All data loaded. Triggering 'change' event to show initial history chart.");
+
+            // Call other update functions
+            updateDashboard("");
+
+            if (typeof regionSelect !== 'undefined' && regionSelect) {
+                regionSelect.dispatchEvent(new Event('change'));
+            } else {
+                console.error("The 'regionSelect' element is not defined!");
+            }
+        },
+        error: (err, file) => {
+            console.error("!!! Papa.parse ERROR:", err, file);
+        }
+    });
 
 
-
-
-
-    // // --- EVENT LISTENERS ---
-    // const regionSelect = document.getElementById('regionSelect');
-    // regionSelect.addEventListener('change', function () {
-    //     const selectedRegion = this.value;
-
-    //     console.log("the value of dropdown: ", selectedRegion);
-
-    //     // Update Mapbox Filter
-    //     if (selectedRegion === "") {
-    //         map.setFilter('landslide-layer', null); // Show all points
-    //     } else {
-    //         map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
-    //     }
-
-
-    //     // This part now works correctly because `monthlyCountsByRegion` is populated by the second parse
-    //     if (selectedRegion === "") {
-    //         const totalMonthlyCounts = Array(12).fill(0);
-    //         for (const region in monthlyCountsByRegion) {
-    //             for (let i = 0; i < 12; i++) {
-    //                 totalMonthlyCounts[i] += monthlyCountsByRegion[region][i];
-    //             }
-    //         }
-    //         historyChart.data.datasets[0].data = totalMonthlyCounts;
-    //     } else if (monthlyCountsByRegion[selectedRegion]) {
-    //         historyChart.data.datasets[0].data = monthlyCountsByRegion[selectedRegion];
-    //     } else {
-    //         historyChart.data.datasets[0].data = Array(12).fill(0);
-    //     }
-    //     historyChart.update();
-
-    //     // if (regionMonthlyData[selectedRegion]) {
-    //     //     historyChart.data.datasets[0].data = regionMonthlyData[selectedRegion];
-    //     // } else {
-    //     //     historyChart.data.datasets[0].data = [];
-    //     // }
-    //     // historyChart.update();
-
-
-
-    //     // --- NEW: Update YEARLY History Chart ---
-    //     if (selectedRegion === "") {
-    //         // Recalculate total for "All Regions"
-    //         const totalYearlyCounts = {};
-    //         for (const region in yearlyCountsByRegion) {
-    //             for (const year in yearlyCountsByRegion[region]) {
-    //                 totalYearlyCounts[year] = (totalYearlyCounts[year] || 0) + yearlyCountsByRegion[region][year];
-    //             }
-    //         }
-    //         const sortedYears = Object.keys(totalYearlyCounts).sort();
-    //         historyChartYearly.data.labels = sortedYears;
-    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
-    //     } else if (yearlyCountsByRegion[selectedRegion]) {
-    //         // Data for a specific region
-    //         const regionData = yearlyCountsByRegion[selectedRegion];
-    //         const sortedYears = Object.keys(regionData).sort();
-    //         historyChartYearly.data.labels = sortedYears;
-    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => regionData[year]);
-    //     } else {
-    //         // No data for the selected region
-    //         historyChartYearly.data.labels = [];
-    //         historyChartYearly.data.datasets[0].data = [];
-    //     }
-    //     historyChartYearly.update();
-    // });
-
-
-    // console.log("testing");
 
 
     function updateDashboard(selectedRegion) {
-        // Update Mapbox Filter
-        if (selectedRegion === "") {
-            map.setFilter('landslide-layer', null); // Show all points
-        } else {
-            map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
-        }
 
+        console.log("trying 1");
+
+
+
+
+        console.log("trying 122");
         // Update Monthly History Chart
         if (selectedRegion === "") {
             const totalMonthlyCounts = Array(12).fill(0);
@@ -420,6 +290,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const sortedYears = Object.keys(totalYearlyCounts).sort();
             historyChartYearly.data.labels = sortedYears;
             historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
+
+            console.log("trying 5");
         } else if (yearlyCountsByRegion[selectedRegion]) {
             // Data for a specific region
             const regionData = yearlyCountsByRegion[selectedRegion];
@@ -432,6 +304,15 @@ document.addEventListener('DOMContentLoaded', function () {
             historyChartYearly.data.datasets[0].data = [];
         }
         historyChartYearly.update();
+
+
+                // Update Mapbox Filter
+        if (selectedRegion === "") {
+            map.setFilter('landslide-layer', null); // Show all points
+        } else {
+            map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
+        }
+        console.log("Testing mapbox filter");
     }
 
 
@@ -451,14 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    // We call the function with an empty string to show "All Regions" by default on load.
-    // This assumes your default <option> has value="".
+    console.log("trying 2");
     updateDashboard("");
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     // Make sure your dropdown is set to the default value you want in your HTML
-//     // e.g., <option value="" selected>All Regions</option>
-//     console.log("SHOULD BE RUNNING");
-//     regionSelect.dispatchEvent(new Event('change'));
-// });
