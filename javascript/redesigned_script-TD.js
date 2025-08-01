@@ -686,7 +686,7 @@ predictBtn.addEventListener("click", async () => {
         soil_type: fetchedLocationData.soil_type_snum,
         slope: parseFloat(document.getElementById("slope").value),
         soil_moisture: parseFloat(document.getElementById("soil-moisture").value),
-        
+
 
         "rainfall-3_hr": parseFloat(document.getElementById("rainfall-3-hr").value),
         "rainfall-6_hr": parseFloat(document.getElementById("rainfall-6-hr").value),
@@ -760,6 +760,26 @@ const reportDiv = document.getElementById("report-detailed-description");
 
 
 reportBtn.addEventListener("click", async () => {
+
+
+
+    // =========================================================================
+    // === NEW: Add the confirmation prompt at the very beginning ==============
+    // =========================================================================
+    const disclaimerMessage = `You are about to use an AI to generate a summary.
+
+Please be aware that AI-generated content may contain inaccuracies and should be reviewed carefully.
+
+Do you wish to proceed?`;
+
+    // If the user clicks "Cancel", window.confirm() returns false.
+    // The "!" inverts this to true, the `if` block runs, and we exit the function.
+    if (!window.confirm(disclaimerMessage)) {
+        console.log("User cancelled the report generation.");
+        return; // <-- This is the crucial part. It stops the function from continuing.
+    }
+
+
     // You can copy the validation and data gathering logic from the other button
     // --- 1. Validation & Data Gathering ---
     const requestData = {
@@ -772,7 +792,7 @@ reportBtn.addEventListener("click", async () => {
         location_name: selectedLocation.name,
         location_lat: selectedLocation.lat,
         location_lng: selectedLocation.lng,
-        
+
 
         // === Data from Initial Prediction Model ===
         // We use optional chaining (?.) in case the first prediction hasn't been run yet.
@@ -1167,7 +1187,7 @@ function drawHtmlContent(pdf, element, options) {
                 currentY += settings.lineHeight / 2;
                 checkPageBreak();
                 currentX = pageMarginX;
-                
+
                 const isOrdered = node.nodeName === 'OL';
                 let counter = 1;
                 Array.from(node.childNodes).forEach(child => {
@@ -1195,16 +1215,16 @@ function drawHtmlContent(pdf, element, options) {
                     pdf.circle(bulletX + settings.bulletRadius, currentY - (fontSize / 4), settings.bulletRadius, 'F');
                     bulletX += settings.bulletRadius * 2;
                 }
-                
+
                 // Define the starting X for the content of this list item. This will be our new line start.
                 let liContentStartX = bulletX + settings.bulletSpacing;
                 let liCurrentX = liContentStartX;
-                
+
                 // Process the children of the LI, telling them their line starts at the indented position
                 Array.from(node.childNodes).forEach(child => {
                     liCurrentX = processNode(child, liContentStartX, liCurrentX, listCounter);
                 });
-                
+
                 // No need to restore anything, as we didn't modify shared variables.
                 // The currentX is managed internally and returned.
                 currentX = liCurrentX; // Update the outer currentX if needed, though often not necessary here.
@@ -1356,3 +1376,24 @@ document.getElementById("download-pdf-btn").addEventListener("click", function (
 
 
 
+// document.getElementById('generate-report-btn').addEventListener('click', function () {
+//     const disclaimerMessage = `You are about to use an AI to generate a summary.
+
+// Please be aware that AI-generated content may contain inaccuracies and should be reviewed carefully.
+
+// Do you wish to proceed?`;
+
+//     // The confirm() function shows a dialog and returns true (if OK) or false (if Cancel).
+//     if (window.confirm(disclaimerMessage)) {
+//         // --- THIS IS WHERE YOUR AI LOGIC GOES ---
+//         console.log('User confirmed. Starting AI report generation...');
+
+//         // Put your AI generation code here.
+//         // For demonstration:
+//         // alert("Generating report...");
+
+//     } else {
+//         // User clicked "Cancel"
+//         console.log('User cancelled the AI report generation.');
+//     }
+// });
