@@ -485,6 +485,8 @@ def generate_report():
             Crucially, you should also consider the output from our initial, simpler prediction model and comment on whether your detailed analysis agrees with it.
             Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations for Local Government Units (LGUs) and residents.
 
+            You Should not mention about landslide risk level as that is not your job to do
+
             ---
             **INCIDENT AND ASSESSMENT OVERVIEW:**
             - **Report Generation Date:** {data.get('report_date', 'N/A')}
@@ -501,8 +503,8 @@ def generate_report():
             **GEOLOGICAL AND SITE CHARACTERISTICS:**
 
             - **Geological Assessment:** [Provide a brief description of the area's geology, e.g., "The area is underlain by [rock formation], which is known for its susceptibility to weathering and erosion."]
-            - **Soil Type:** {data.get('soil_type', 'N/A')}
-            - **Slope Angle (degrees):** {data.get('slope', 'N/A')}
+            - **Soil Type:** {data.get('soil_type', 'N/A')} 
+            - **Slope Angle (degrees):** {data.get('slope', 'N/A')} if the slope is 1 then the slope is less than 10 degress it is 2 the slope value is between 10 to 20 degress if it is 3 then the value is between 20 to 30 degrees if the value is 4 then the value is between 30 to 40 degress if it is 5 then the value is 40 to 50 degress if it is 6 then the value is more than 50 degrees
  
 
             ---
