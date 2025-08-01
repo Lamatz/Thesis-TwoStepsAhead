@@ -21,7 +21,7 @@
 
 .card-header,
 .card-body,
-.guide-section{
+.guide-section {
   background-color: var(--card-color);
 }
 
@@ -121,4 +121,15 @@ body {
 
 .my-custom-step-background .shepherd-text {
   color: var(--text-color) !important;
+}
+
+
+
+.chart-container {
+  width: 90%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

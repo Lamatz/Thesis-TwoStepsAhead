@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-    const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Clay', '2 - Clay Loam', '3 - Sandy Loam', '4 - Loam'], datasets: [{ data: [15, 40, 20, 30], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
+    const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Clay', '2 - Sandy Loam', '3 - Clay Loam', '4 - Loam'], datasets: [{ data: [129, 22, 761, 389], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
     const slopeChart = new Chart(document.getElementById('rainChart').getContext('2d'), { type: 'bar', data: { labels: ['1 - <10° Flat', '2 - 10°-20° Gentle', '3 - 20°-30° Moderate', '4 - 30°-40° Substantial', '5 - 40°-50° Steep', '6 - >50° Very Steep'], datasets: [{ label: 'Slope Vulnerability Level', data: [5, 10, 15, 20, 25, 30], backgroundColor: '#2980b9' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
     let agriChart; // Will be created after data loads
 
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
         historyChartYearly.update();
 
 
-                // Update Mapbox Filter
+        // Update Mapbox Filter
         if (selectedRegion === "") {
             map.setFilter('landslide-layer', null); // Show all points
         } else {
@@ -326,6 +326,93 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+//     // Data for the boxplots, estimated from the image.
+//     // The plugin can calculate these stats from raw data, but here we provide them directly.
+//     const boxplotData = [
+//         // clay
+//         { min: 0.02, q1: 0.14, median: 0.19, q3: 0.64, max: 0.98, outliers: [] },
+//         // clay_loam
+//         { min: 0.03, q1: 0.18, median: 0.42, q3: 0.86, max: 0.99, outliers: [] },
+//         // loam
+//         { min: 0.04, q1: 0.28, median: 0.80, q3: 0.94, max: 0.99, outliers: [] },
+//         // sandy_loam
+//         { min: 0.01, q1: 0.17, median: 0.19, q3: 0.22, max: 0.33, outliers: [0.58, 0.62, 0.77, 0.92, 0.96, 0.98] }
+//     ];
+
+//     // --- Chart Configuration ---
+//     const box_plot = {
+//         type: 'boxplot', // This type is enabled by the plugin
+//         data: {
+//             labels: ['clay', 'clay_loam', 'loam', 'sandy_loam'],
+//             datasets: [{
+//                 label: 'Predicted Probability',
+//                 data: boxplotData, // Use the pre-calculated stats
+//                 backgroundColor: [
+//                     'rgba(157, 187, 237, 0.7)', // clay
+//                     'rgba(209, 222, 245, 0.7)', // clay_loam
+//                     'rgba(235, 209, 196, 0.7)', // loam
+//                     'rgba(240, 169, 161, 0.7)'  // sandy_loam
+//                 ],
+//                 borderColor: [
+//                     'rgba(66, 110, 194, 1)',
+//                     'rgba(141, 168, 217, 1)',
+//                     'rgba(214, 151, 126, 1)',
+//                     'rgba(224, 102, 90, 1)'
+//                 ],
+//                 borderWidth: 1,
+//                 itemRadius: 3, // Radius of the outlier points
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             maintainAspectRatio: true,
+//             plugins: {
+//                 title: {
+//                     display: true,
+//                     text: 'Predicted Probability by Soil Type',
+//                     font: { size: 18 }
+//                 },
+//                 legend: {
+//                     display: false // Hide legend as it's redundant
+//                 }
+//             },
+//             scales: {
+//                 x: {
+//                     title: {
+//                         display: true,
+//                         text: 'Soil Type'
+//                     },
+//                     ticks: {
+//                         // Rotate labels to match the image
+//                         maxRotation: 45,
+//                         minRotation: 45
+//                     }
+//                 },
+//                 y: {
+//                     title: {
+//                         display: true,
+//                         text: 'Predicted Probability'
+//                     },
+//                     min: 0,
+//                     max: 1.0,
+//                     grid: {
+//                         // Replicate the grid style from the image
+//                         color: 'rgba(0, 0, 0, 0.1)'
+//                     }
+//                 }
+//             }
+//         }
+//     };
+
+//     console.log("testing boxplot 1");
+
+//     // --- Render Chart ---
+//     const soilBoxPlot = document.getElementById('soilPieChart').getContext('2d');
+//     new Chart(soilBoxPlot, box_plot);
+
+//   console.log("testing boxplot 2");
+
+
 }); // End DOMContentLoaded
 
 
@@ -335,4 +422,9 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("trying 2");
     updateDashboard("");
 });
+
+
+
+
+
 
