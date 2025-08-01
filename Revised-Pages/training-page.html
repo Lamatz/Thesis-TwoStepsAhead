@@ -21,7 +21,8 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.2.0/dist/chartjs-chart-matrix.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.1.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.1.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
     <!-- Custom CSS HERE -->
     <!-- <link rel="stylesheet" href="../css/homepage_style-v2.css"> -->
@@ -73,7 +74,7 @@
 
     <!-- TRAINING PAGE -->
     <div id="trainingPage" class="page-content" style="display: block;">
-        <div class="container-fluid py-4">
+        <div class="container py-4">
             <div class="row mb-4">
                 <div class="col-12">
                     <h1 class="display-4 fw-bold title-page">Machine Learning Model Training</h1>
@@ -111,24 +112,35 @@
             <div class="row g-4 mb-4">
                 <div class="col-md-4 ">
                     <div class="card text-white ">
-                        <div class="card-body text-center h-100">
-                            <canvas id="learningCurveChart"></canvas>
+                        <div class="card-body text-center h-100 placeholder-img">
+                            <!-- <canvas id="learningCurveChart"></canvas> -->
+
+                            <img src="../icons/accuracy.png" alt="placeholder image">
+
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="card text-white">
-                        <div class="card-body text-center ">
-                            <canvas id="rocCurveChart"></canvas>
+                        <div class="card-body text-center placeholder-img">
+                            <!-- <canvas id="rocCurveChart"></canvas> -->
+
+                            <img src="../icons/roc.png" alt="placeholder image">
+
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4 ">
                     <div class="card text-white  ">
-                        <div class="card-body text-center h-100 chart-container">
-                            <canvas id="confusionMatrixChart"></canvas>
+                        <div class="card-body text-center h-100 placeholder-img">
+                            <!-- <canvas id="confusionMatrixChart"></canvas> -->
+
+
+
+                            <img src="../icons/matrix.png" alt="placeholder image">
+
                         </div>
                     </div>
                 </div>
@@ -143,11 +155,22 @@
                     <div class="card shadow-md">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="bi bi-graph-up me-2"></i>Training Progress
+                                <i class="bi bi-graph-up me-2"></i>Classification Report
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <canvas id="trainingChart" height="100"></canvas>
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <pre>
+Classification Report:
+            precision    recall  f1-score   support
+
+        0       0.88      0.94      0.91       304
+        1       0.93      0.88      0.90       386
+
+accuracy                            0.91       618
+macro avg       0.91      0.91      0.91       618
+weighted avg    0.91      0.91      0.91       618
+
+Accuracy: 0.9065573770491804</pre>
                         </div>
                     </div>
                 </div>
@@ -249,8 +272,8 @@
                                 <i class="bi bi-bar-chart me-2"></i>Feature Importance
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <canvas id="featureChart" height="200"></canvas>
+                        <div class="card-body chart-container">
+                            <canvas id="featureImportanceChart"></canvas>
                         </div>
                     </div>
                 </div>
