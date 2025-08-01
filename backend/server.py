@@ -499,12 +499,11 @@ def generate_report():
 
             ---
             **GEOLOGICAL AND SITE CHARACTERISTICS:**
+
             - **Geological Assessment:** [Provide a brief description of the area's geology, e.g., "The area is underlain by [rock formation], which is known for its susceptibility to weathering and erosion."]
             - **Soil Type:** {data.get('soil_type', 'N/A')}
             - **Slope Angle (degrees):** {data.get('slope', 'N/A')}
-            - **Land Cover/Use:** [e.g., Forested, Agricultural, Residential, etc.]
-            - **Proximity to Active Faults:** [If applicable, state the distance and name of the nearest active fault.]
-            - **Site Observations:** [Include any visual observations of tension cracks, bulging ground, or previous landslide activity.]
+ 
 
             ---
             **HYDRO-METEOROLOGICAL DATA:**
@@ -531,11 +530,6 @@ def generate_report():
             ---
             **VULNERABILITY AND RISK ASSESSMENT:**
 
-            **Elements at Risk:**
-            - **Estimated Population in Hazard Zone:** [e.g., Number of households/individuals]
-            - **Critical Infrastructure:** [e.g., Schools, hospitals, major roads, bridges]
-            - **Livelihood:** [e.g., Predominant sources of income that could be affected]
-
             **Analysis of Landslide Contributing Factors:**
             [This section should synthesize the data above. For example: "The steep slope of {data.get('slope', 'N/A')} degrees, combined with the soil type ({data.get('soil_type', 'N/A')}), makes the area inherently susceptible to landslides. The recent heavy rainfall over the past 3 days ({data.get('rainfall-3-day', 'N/A')} mm) has likely increased soil saturation and pore water pressure, further elevating the risk."]
 
@@ -543,14 +537,12 @@ def generate_report():
             [Comment on the initial model's prediction. For example: "The initial model's prediction of a {data.get('original_model_prediction', 'N/A')} risk level is consistent with this detailed analysis. The high confidence of {data.get('original_model_confidence', 'N/A')}% is supported by the combination of geological and meteorological factors."]
 
             ---
-            **LANDSLIDE SUSCEPTIBILITY RATING:**
-
-            **Overall Susceptibility Level:** [e.g., LOW, MODERATE, HIGH, CRITICAL]
-
-            **Justification:**
-            [Provide a clear, non-technical explanation for the rating. For example: "The area is rated as **HIGHLY SUSCEPTIBLE** due to the combination of steep slopes, saturated soils from prolonged rainfall, and historical landslide events in the vicinity."]
-
+            **LANDSLIDE REPORT SUMMARY:**
+            **Summary/Conclusion:**
+            [Provide a clear and concise summary of the report so far]
+            
             ---
+
             **RECOMMENDATIONS:**
 
             **For the Local Government Unit (LGU) / Disaster Risk Reduction and Management Office (DRRMO):**
