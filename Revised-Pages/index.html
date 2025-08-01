@@ -304,12 +304,12 @@
                     <!-- =================
                     CHANGES - I am still not sure about the design (I'll change it later)
                     ================= -->
-                    <div class="row ">
+                    <!-- <div class="row ">
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <p class="fw-bold m-0 pe-3">Time Range: </p>
                             <p class="chart-summary-text m-0 text-center fw-bold"></p>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- =================
                     CHANGES
@@ -317,11 +317,11 @@
                     <div class="row">
                         <!-- THESE ARE THE 4 CANVAS IDs THE SCRIPT NEEDS -->
                         <div class="col-md-6 mb-4">
-                            <h6>Past 12 Hours Cumulative Rainfall</h6>
+                            <h6>Past 12 Hours Cumulative Rainfall <p class="text-muted d-inline">(<span class="chart-summary-text "></span>)</p></h6>
                             <canvas id="hourly-cumulative-chart"></canvas>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <h6>Past 12 Hours Rainfall Intensity</h6>
+                            <h6>Past 12 Hours Rainfall Intensity <p class="text-muted d-inline">(<span class="chart-summary-text "></span>)</p></h6>
                             <canvas id="hourly-intensity-chart"></canvas>
                         </div>
                     </div>
