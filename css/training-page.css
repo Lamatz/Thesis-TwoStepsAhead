@@ -35,8 +35,8 @@ body {
 }
 
 .chart-container {
-    width: 80%;
-    max-width: 800px;
+    /* width: 80%;
+    max-width: 800px; */
     height: 600px;
     /* Give the container a defined height */
     background-color: #ffffff;
