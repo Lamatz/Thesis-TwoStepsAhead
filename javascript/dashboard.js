@@ -204,9 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
     });
-    const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Clay', '2 - Sandy Loam', '3 - Clay Loam', '4 - Loam'], datasets: [{ data: [129, 22, 761, 389], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
-    const slopeChart = new Chart(document.getElementById('rainChart').getContext('2d'), { type: 'bar', data: { labels: ['1 - <10° Flat', '2 - 10°-20° Gentle', '3 - 20°-30° Moderate', '4 - 30°-40° Substantial', '5 - 40°-50° Steep', '6 - >50° Very Steep'], datasets: [{ label: 'Slope Vulnerability Level', data: [5, 10, 15, 20, 25, 30], backgroundColor: '#2980b9' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-    let agriChart; // Will be created after data loads
+     let agriChart; // Will be created after data loads
 
 
     let monthlyCountsByRegion = {};
