@@ -502,7 +502,7 @@ def generate_report():
             **VULNERABILITY AND RISK ASSESSMENT:**
 
             **Analysis of Landslide Contributing Factors:**
-            [This section should synthesize the data above. For example: "The steep slope of {data.get('slope', 'N/A')} degrees, combined with the soil type ({data.get('soil_type', 'N/A')}), makes the area inherently susceptible to landslides. The recent heavy rainfall over the past 3 days ({data.get('rainfall-3-day', 'N/A')} mm) has likely increased soil saturation and pore water pressure, further elevating the risk."]
+            [This section should synthesize the data above. For example: "The steep slope of {data.get('slope', 'N/A')}, combined with the soil type ({data.get('soil_type', 'N/A')}), makes the area inherently susceptible to landslides. The recent heavy rainfall over the past 3 days ({data.get('rainfall-3-day', 'N/A')} mm) has likely increased soil saturation and pore water pressure, further elevating the risk."]
 
             **Agreement with Initial Prediction:**
             [Comment on the initial model's prediction. For example: "The initial model's prediction of a {data.get('original_model_prediction', 'N/A')} risk level is consistent with this detailed analysis. The high confidence of {data.get('original_model_confidence', 'N/A')}% is supported by the combination of geological and meteorological factors."]
