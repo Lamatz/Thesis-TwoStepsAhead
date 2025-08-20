@@ -3,14 +3,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log("testing");
 
+    // const yearlyHeaderTitle = document.getElementById("yearly-chart-header-title");
+    // const monthlyHeaderTitle = document.getElementById("monthly-chart-header-title");
+    // if (!yearlyHeaderTitle || !monthlyHeaderTitle) {
+    //     console.log("trying to find it yearly: ", yearlyHeaderTitle, "  monthly: ", monthlyHeaderTitle);
+    //     console.error("CRITICAL ERROR: Could not find the header title elements! Check your HTML IDs.");
+    //     return; // Stop the script if they aren't found
+    // } else {
+    //     console.log("FOUND IT!!");
+    // }
+
     // --- CHART & MAP INITIALIZATION ---
     let map;
     let allData = []; // To store CSV data
     let geojsonData = { type: 'FeatureCollection', features: [] }; // For Mapbox
 
-    // --- --- --- ACTION REQUIRED --- --- ---
-    // REPLACE with your Mapbox access token and style URL
-    mapboxgl.accessToken = 'pk.eyJ1IjoibGFtYXR6IiwiYSI6ImNtZDczb3pyNDA1am8ya3M4czB3bjVocXIifQ.tNJchBN53I2HcuIGXJMmTQ'; // <-- PASTE YOUR TOKEN HERE
+    let rawCsvData = []; // <-- ADD THIS LINE to store the raw data
+
+    // --- NEW: State Management for Filters ---
+    let selectedYear = null;
+    let selectedMonth = null;
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGFtYXR6IiwiYSI6ImNtZDczb3pyNDA1am8ya3M4czB3bjVocXIifQ.tNJchBN53I2HcuIGXJMmTQ';
     const philippinesBounds = [[116.0, 4.0], [127.0, 21.0]];
 
     map = new mapboxgl.Map({
@@ -78,15 +92,58 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // --- Chart Data (static part for examples) ---
-    const allDataa = {
-        labels: ['Region I - Ilocos Region', 'Region II - Cagayan Valley', 'Region III - Central Luzon', 'Region IV-A - CALABARZON', 'Region IV-B - MIMAROPA', 'Region V - Bicol Region', 'Region VI - Western Visayas', 'Region VII - Central Visayas', 'Region VIII - Eastern Visayas', 'Region IX - Zamboanga Peninsula', 'Region X - Northern Mindanao', 'Region XI - Davao Region', 'Region XII - SOCCSKSARGEN', 'Region XIII - Caraga', 'NCR - National Capital Region', 'CAR - Cordillera Administrative Region', 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao'],
-        datasets: [{ label: 'Alerts Issued', data: [10, 15, 12, 8, 13, 7, 9, 14, 6, 11, 10, 13, 15, 12, 14, 9, 16], backgroundColor: '#007BFF' }, { label: 'Actual Landslides', data: [8, 16, 10, 12, 9, 10, 8, 13, 7, 15, 14, 11, 9, 10, 13, 8, 12], backgroundColor: '#FF4136' }]
-    };
+    // const allDataa = {
+    //     labels: ['Region I - Ilocos Region', 'Region II - Cagayan Valley', 'Region III - Central Luzon', 'Region IV-A - CALABARZON', 'Region IV-B - MIMAROPA', 'Region V - Bicol Region', 'Region VI - Western Visayas', 'Region VII - Central Visayas', 'Region VIII - Eastern Visayas', 'Region IX - Zamboanga Peninsula', 'Region X - Northern Mindanao', 'Region XI - Davao Region', 'Region XII - SOCCSKSARGEN', 'Region XIII - Caraga', 'NCR - National Capital Region', 'CAR - Cordillera Administrative Region', 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao'],
+    //     datasets: [{ label: 'Alerts Issued', data: [10, 15, 12, 8, 13, 7, 9, 14, 6, 11, 10, 13, 15, 12, 14, 9, 16], backgroundColor: '#007BFF' }, { label: 'Actual Landslides', data: [8, 16, 10, 12, 9, 10, 8, 13, 7, 15, 14, 11, 9, 10, 13, 8, 12], backgroundColor: '#FF4136' }]
+    // };
     // const regionMonthlyData = { 'Region I - Ilocos Region': [3, 5, 12, 20, 35, 42, 50, 45, 30, 15, 8, 4], 'Region II - Cagayan Valley': [2, 4, 8, 15, 25, 30, 38, 35, 25, 12, 6, 3], 'Region III - Central Luzon': [1, 3, 6, 10, 18, 25, 30, 28, 20, 10, 5, 2], 'Region IV-A - CALABARZON': [4, 6, 10, 18, 28, 35, 40, 38, 25, 14, 7, 3], 'Region IV-B - MIMAROPA': [2, 3, 7, 12, 22, 30, 34, 32, 20, 9, 4, 2], 'Region V - Bicol Region': [3, 5, 9, 16, 26, 33, 37, 35, 22, 11, 6, 3], 'Region VI - Western Visayas': [2, 4, 6, 14, 24, 28, 32, 31, 19, 10, 5, 2], 'Region VII - Central Visayas': [3, 5, 8, 13, 21, 27, 29, 28, 18, 9, 4, 2], 'Region VIII - Eastern Visayas': [2, 4, 7, 11, 20, 26, 30, 29, 17, 8, 4, 1], 'Region IX - Zamboanga Peninsula': [1, 3, 5, 10, 18, 24, 28, 27, 16, 7, 3, 1], 'Region X - Northern Mindanao': [2, 4, 6, 12, 20, 25, 27, 26, 15, 7, 3, 1], 'Region XI - Davao Region': [2, 5, 7, 13, 22, 28, 30, 29, 18, 8, 4, 2], 'Region XII - SOCCSKSARGEN': [1, 3, 5, 11, 19, 24, 26, 25, 14, 6, 2, 1], 'Region XIII - Caraga': [2, 4, 6, 12, 21, 27, 29, 28, 17, 8, 3, 1], 'NCR - National Capital Region': [1, 2, 4, 8, 15, 20, 22, 21, 12, 6, 3, 1], 'CAR - Cordillera Administrative Region': [3, 6, 9, 14, 23, 29, 33, 31, 19, 10, 5, 2], 'BARMM - Bangsamoro Autonomous Region in Muslim Mindanao': [2, 4, 6, 10, 18, 22, 25, 24, 14, 6, 3, 1] };
 
     // --- Chart Instantiation ---
     // const alertsChart = new Chart(document.getElementById('structureChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Alerts Issued', data: [0], backgroundColor: '#007BFF' }, { label: 'Actual Landslides', data: [0], backgroundColor: '#FF4136' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
-    const historyChart = new Chart(document.getElementById('roadsChart').getContext('2d'), { type: 'bar', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Landslides', data: [], backgroundColor: '#E67300' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+    const historyChart = new Chart(document.getElementById('roadsChart').getContext('2d'), {
+        type: 'bar', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Landslides', data: [], backgroundColor: '#E67300' }] }, options: {
+            interaction: {
+                mode: 'index', // Find items by their x-axis index (the 'column').
+                intersect: false // Don't require the mouse to physically touch the bar.
+            }, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: false, text: 'History of Landslides (Monthly)' } },
+            scales: { y: { beginAtZero: true } },
+
+
+            // When the mouse moves over the chart
+            onHover: (event, chartElement) => {
+                // 'native' gives us the original browser event
+                const canvas = event.native.target;
+                if (chartElement.length) {
+                    // If the mouse is over a bar's column, change to pointer
+                    canvas.style.cursor = 'pointer';
+                } else {
+                    // Otherwise, use the default cursor
+                    canvas.style.cursor = 'default';
+                }
+            },
+
+            // --- ADD THIS ONCLICK HANDLER ---
+            onClick: (e) => {
+                const points = historyChart.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                if (points.length) {
+                    const firstPoint = points[0];
+                    const label = historyChart.data.labels[firstPoint.index]; // This will be the month, e.g., "Jan"
+
+                    // This functionality is currently not fully supported by the data structure
+                    // But we set up the handler for future enhancement.
+                    // alert(`Month filtering is not fully implemented yet. You clicked ${label}.`);
+
+                    // Toggle selection
+                    selectedMonth = selectedMonth === label ? null : label;
+                    selectedYear = null; // Clear year filter when month is clicked
+
+                    updateAllVisuals(); // Re-render everything
+                }
+            }
+        }
+    });
+
+
     const historyChartYearly = new Chart(document.getElementById('structureChart').getContext('2d'), {
         type: 'bar',
         data: {
@@ -100,8 +157,12 @@ document.addEventListener('DOMContentLoaded', function () {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index', // Find items by their x-axis index (the 'column').
+                intersect: false // Don't require the mouse to physically touch the bar.
+            },
             plugins: {
-                legend: { position: 'top' }
+                legend: { display: false }
             },
             scales: {
                 y: {
@@ -110,7 +171,37 @@ document.addEventListener('DOMContentLoaded', function () {
                         precision: 0 // Ensure whole numbers for counts
                     }
                 }
+            },
+
+            // When the mouse moves over the chart
+            onHover: (event, chartElement) => {
+                // 'native' gives us the original browser event
+                const canvas = event.native.target;
+                if (chartElement.length) {
+                    // If the mouse is over a bar's column, change to pointer
+                    canvas.style.cursor = 'pointer';
+                } else {
+                    // Otherwise, use the default cursor
+                    canvas.style.cursor = 'default';
+                }
+            },
+
+            // --- ADD THIS ONCLICK HANDLER ---
+            onClick: (e) => {
+                const points = historyChartYearly.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                if (points.length) {
+                    const firstPoint = points[0];
+                    const label = historyChartYearly.data.labels[firstPoint.index]; // This will be the year, e.g., "2022"
+
+                    // Toggle selection
+                    selectedYear = selectedYear === label ? null : label;
+                    selectedMonth = null; // Clear month filter when year is clicked
+
+                    updateAllVisuals(); // Re-render everything
+                }
             }
+
+
         }
     });
     const soilChart = new Chart(document.getElementById('soilPieChart').getContext('2d'), { type: 'pie', data: { labels: ['1 - Clay', '2 - Sandy Loam', '3 - Clay Loam', '4 - Loam'], datasets: [{ data: [129, 22, 761, 389], backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#9b59b6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right' } } } });
@@ -128,6 +219,8 @@ document.addEventListener('DOMContentLoaded', function () {
         header: true,
         complete: function (results) {
             console.log("1. Papa.parse complete. Raw results:", results);
+
+            rawCsvData = results.data; // <-- ADD THIS LINE to save the data
 
             // Check if data is empty or has issues
             if (!results.data || results.data.length === 0) {
@@ -171,31 +264,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log("Filtering out row for map (missing lat/long):", row);
                 }
 
-                // --- Part 2: Process data for the Monthly/Yearly History Charts ---
-                // This replaces the second Papa.parse call entirely
                 if (row.date) {
                     const dateParts = row.date.split('/'); // e.g., "23/10/2024"
 
                     if (dateParts.length === 3) {
-                        // a. Process for Monthly Chart
                         const monthIndex = parseInt(dateParts[1], 10) - 1;
-                        if (monthIndex >= 0 && monthIndex < 12) {
+                        const year = dateParts[2];
+
+                        // --- NEW UNIFIED AND STRICT LOGIC ---
+                        // Only proceed if we have a valid year AND a valid month
+                        if (year && monthIndex >= 0 && monthIndex < 12) {
+
+                            // a. Process for Monthly Chart
                             if (!monthlyCountsByRegion[region]) {
                                 monthlyCountsByRegion[region] = Array(12).fill(0);
                             }
                             monthlyCountsByRegion[region][monthIndex]++;
-                        }
 
-                        // b. Process for Yearly Chart
-                        const year = dateParts[2];
-                        if (year) {
+                            // b. Process for Yearly Chart
                             if (!yearlyCountsByRegion[region]) {
                                 yearlyCountsByRegion[region] = {};
                             }
                             yearlyCountsByRegion[region][year] = (yearlyCountsByRegion[region][year] || 0) + 1;
                         }
                     }
-                } else {
+                }
+
+                else {
                     console.log("Skipping row for history charts (missing date):", row);
                 }
             });
@@ -237,14 +332,17 @@ document.addEventListener('DOMContentLoaded', function () {
             // Finally, trigger the change event ONCE to initialize the history chart
             console.log("7. All data loaded. Triggering 'change' event to show initial history chart.");
 
-            // Call other update functions
-            updateDashboard("");
 
-            if (typeof regionSelect !== 'undefined' && regionSelect) {
-                regionSelect.dispatchEvent(new Event('change'));
-            } else {
-                console.error("The 'regionSelect' element is not defined!");
-            }
+            updateAllVisuals(); // This will initialize the dashboard correctly
+
+            // Call other update functions
+            // updateDashboard("");
+
+            // if (typeof regionSelect !== 'undefined' && regionSelect) {
+            //     regionSelect.dispatchEvent(new Event('change'));
+            // } else {
+            //     console.error("The 'regionSelect' element is not defined!");
+            // }
         },
         error: (err, file) => {
             console.error("!!! Papa.parse ERROR:", err, file);
@@ -254,174 +352,277 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    function updateDashboard(selectedRegion) {
-
-        console.log("trying 1");
 
 
 
+    const yearlyHeaderTitle = document.getElementById("yearly-chart-header-title");
+    const monthlyHeaderTitle = document.getElementById("monthly-chart-header-title");
+    const monthMap = {
+        'Jan': 'January',
+        'Feb': 'February',
+        'Mar': 'March',
+        'Apr': 'April',
+        'May': 'May',
+        'Jun': 'June',
+        'Jul': 'July',
+        'Aug': 'August',
+        'Sep': 'September',
+        'Oct': 'October',
+        'Nov': 'November',
+        'Dec': 'December'
+    };
 
-        console.log("trying 122");
-        // Update Monthly History Chart
-        if (selectedRegion === "") {
-            const totalMonthlyCounts = Array(12).fill(0);
-            for (const region in monthlyCountsByRegion) {
-                for (let i = 0; i < 12; i++) {
-                    totalMonthlyCounts[i] += monthlyCountsByRegion[region][i];
+
+    // --- REWRITTEN & FULLY BI-DIRECTIONAL UPDATE FUNCTION ---
+    function updateAllVisuals() {
+        const selectedRegion = document.getElementById('regionSelect').value;
+        const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+
+
+        // =================================================================
+        // --- DATA CALCULATION (This is where the major changes are) ---
+        // =================================================================
+        let monthlyData = Array(12).fill(0);
+        let yearlyData = {};
+
+        // --- CASE 1: A MONTH IS SELECTED ---
+        // We need to calculate the yearly data based on this month.
+        if (selectedMonth) {
+            const targetMonthIndex = monthLabels.indexOf(selectedMonth);
+
+            // Loop through the raw data to build the yearly totals for the selected month
+            rawCsvData.forEach(row => {
+                // Apply region filter first if one is active
+                if (selectedRegion && row.region !== selectedRegion) {
+                    return; // Skip if region doesn't match
                 }
-            }
-            historyChart.data.datasets[0].data = totalMonthlyCounts;
-        } else if (monthlyCountsByRegion[selectedRegion]) {
-            historyChart.data.datasets[0].data = monthlyCountsByRegion[selectedRegion];
-        } else {
-            historyChart.data.datasets[0].data = Array(12).fill(0); // Default to zeros if no data
-        }
-        historyChart.update();
 
-        // Update Yearly History Chart
-        if (selectedRegion === "") {
-            // Recalculate total for "All Regions"
-            const totalYearlyCounts = {};
-            for (const region in yearlyCountsByRegion) {
-                for (const year in yearlyCountsByRegion[region]) {
-                    totalYearlyCounts[year] = (totalYearlyCounts[year] || 0) + yearlyCountsByRegion[region][year];
+                if (row.date) {
+                    const dateParts = row.date.split('/');
+                    if (dateParts.length === 3) {
+                        const year = dateParts[2];
+                        const monthIndex = parseInt(dateParts[1], 10) - 1;
+
+                        // If the row's month matches our target, add it to the yearly count
+                        if (year && monthIndex === targetMonthIndex) {
+                            yearlyData[year] = (yearlyData[year] || 0) + 1;
+                        }
+                    }
                 }
-            }
-            const sortedYears = Object.keys(totalYearlyCounts).sort();
-            historyChartYearly.data.labels = sortedYears;
-            historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
+            });
 
-            console.log("trying 5");
-        } else if (yearlyCountsByRegion[selectedRegion]) {
-            // Data for a specific region
-            const regionData = yearlyCountsByRegion[selectedRegion];
-            const sortedYears = Object.keys(regionData).sort();
-            historyChartYearly.data.labels = sortedYears;
-            historyChartYearly.data.datasets[0].data = sortedYears.map(year => regionData[year]);
+            // The monthly chart should just highlight the selected month
+            monthlyData = (selectedRegion && monthlyCountsByRegion[selectedRegion])
+                ? monthlyCountsByRegion[selectedRegion]
+                : Object.values(monthlyCountsByRegion).reduce((acc, counts) => {
+                    counts.forEach((c, i) => acc[i] += c);
+                    return acc;
+                }, Array(12).fill(0));
+
+            // --- CASE 2: A YEAR IS SELECTED ---
+            // This logic remains the same: calculate the monthly data for this year.
+        } else if (selectedYear) {
+            rawCsvData.forEach(row => {
+                if (selectedRegion && row.region !== selectedRegion) {
+                    return;
+                }
+                if (row.date) {
+                    const dateParts = row.date.split('/');
+                    const year = dateParts[2];
+                    if (year === selectedYear) {
+                        const monthIndex = parseInt(dateParts[1], 10) - 1;
+                        if (monthIndex >= 0 && monthIndex < 12) {
+                            monthlyData[monthIndex]++;
+                        }
+                    }
+                }
+            });
+
+            // The yearly chart should show all years to provide context
+            yearlyData = (selectedRegion && yearlyCountsByRegion[selectedRegion])
+                ? yearlyCountsByRegion[selectedRegion]
+                : Object.values(yearlyCountsByRegion).reduce((acc, regionYears) => {
+                    for (const year in regionYears) {
+                        acc[year] = (acc[year] || 0) + regionYears[year];
+                    }
+                    return acc;
+                }, {});
+
+            // --- CASE 3: NO FILTERS (DEFAULT VIEW) ---
         } else {
-            // No data for the selected region
-            historyChartYearly.data.labels = [];
-            historyChartYearly.data.datasets[0].data = [];
+            // Calculate total monthly data
+            monthlyData = (selectedRegion && monthlyCountsByRegion[selectedRegion])
+                ? monthlyCountsByRegion[selectedRegion]
+                : Object.values(monthlyCountsByRegion).reduce((acc, counts) => {
+                    counts.forEach((c, i) => acc[i] += c);
+                    return acc;
+                }, Array(12).fill(0));
+
+            // Calculate total yearly data
+            yearlyData = (selectedRegion && yearlyCountsByRegion[selectedRegion])
+                ? yearlyCountsByRegion[selectedRegion]
+                : Object.values(yearlyCountsByRegion).reduce((acc, regionYears) => {
+                    for (const year in regionYears) {
+                        acc[year] = (acc[year] || 0) + regionYears[year];
+                    }
+                    return acc;
+                }, {});
         }
+
+        console.log("testing the new header - 1");
+
+        // ===================================
+        // --- CHART & UI UPDATES ---
+        // ===================================
+
+        // --- NEW VERSION ---
+        // Update the HTML header titles to reflect the current filter
+        let yearlyChartTitle = selectedMonth
+            ? `Landslides in ${monthMap[selectedMonth]} (by Year)`
+            : 'History of All Landslides (Yearly)';
+        let monthlyChartTitle = selectedYear
+            ? `Monthly Landslides in ${selectedYear}`
+            : 'History of All Landslides (Monthly)';
+
+        // Assign the new titles to your HTML elements
+        yearlyHeaderTitle.textContent = yearlyChartTitle;
+        monthlyHeaderTitle.textContent = monthlyChartTitle;
+
+        console.log("testing the new header");
+
+        // --- Finalize and Update Yearly Chart ---
+        const sortedYears = Object.keys(yearlyData).sort();
+        historyChartYearly.data.labels = sortedYears;
+        historyChartYearly.data.datasets[0].data = sortedYears.map(year => yearlyData[year]);
+        historyChartYearly.data.datasets[0].backgroundColor = sortedYears.map(year => year === selectedYear ? '#FF6384' : '#4BC0C0');
         historyChartYearly.update();
 
+        // --- Finalize and Update Monthly Chart ---
+        historyChart.data.labels = monthLabels;
+        historyChart.data.datasets[0].data = monthlyData;
+        historyChart.data.datasets[0].backgroundColor = monthLabels.map(month => month === selectedMonth ? '#FF6384' : '#E67300');
+        historyChart.update();
 
-        // Update Mapbox Filter
+        // --- Update Mapbox Filter and Reset Button (No changes needed here) ---
         if (selectedRegion === "") {
-            map.setFilter('landslide-layer', null); // Show all points
+            map.setFilter('landslide-layer', null);
         } else {
             map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
         }
-        console.log("Testing mapbox filter");
+        const resetButton = document.getElementById('resetFilters');
+        if (selectedYear || selectedMonth) {
+            resetButton.style.display = 'inline-block';
+        } else {
+            resetButton.style.display = 'none';
+        }
     }
 
 
 
-    // --- Step 2: Set up the event listener to call the named function ---
+
+
+    // --- FINAL EVENT LISTENERS ---
+
+    // 1. Listen for changes on the region dropdown
     const regionSelect = document.getElementById('regionSelect');
-    regionSelect.addEventListener('change', function () {
-        // "this.value" refers to the selected option's value
-        updateDashboard(this.value);
-    });
+    console.log("Region select content: ", regionSelect)
+    if (regionSelect) {
+        regionSelect.addEventListener('change', () => {
+            // When region changes, it's best to clear the year/month filters
+            selectedYear = null;
+            selectedMonth = null;
+            updateAllVisuals();
+        });
+    }
+
+    // 2. Listen for clicks on the reset button
+    const resetButton = document.getElementById('resetFilters');
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            selectedYear = null;
+            selectedMonth = null;
+            regionSelect.value = ""; // Reset dropdown to "Show All"
+            updateAllVisuals();
+        });
+    }
 
 
 
-//     // Data for the boxplots, estimated from the image.
-//     // The plugin can calculate these stats from raw data, but here we provide them directly.
-//     const boxplotData = [
-//         // clay
-//         { min: 0.02, q1: 0.14, median: 0.19, q3: 0.64, max: 0.98, outliers: [] },
-//         // clay_loam
-//         { min: 0.03, q1: 0.18, median: 0.42, q3: 0.86, max: 0.99, outliers: [] },
-//         // loam
-//         { min: 0.04, q1: 0.28, median: 0.80, q3: 0.94, max: 0.99, outliers: [] },
-//         // sandy_loam
-//         { min: 0.01, q1: 0.17, median: 0.19, q3: 0.22, max: 0.33, outliers: [0.58, 0.62, 0.77, 0.92, 0.96, 0.98] }
-//     ];
+    // OLD CODE ----------
 
-//     // --- Chart Configuration ---
-//     const box_plot = {
-//         type: 'boxplot', // This type is enabled by the plugin
-//         data: {
-//             labels: ['clay', 'clay_loam', 'loam', 'sandy_loam'],
-//             datasets: [{
-//                 label: 'Predicted Probability',
-//                 data: boxplotData, // Use the pre-calculated stats
-//                 backgroundColor: [
-//                     'rgba(157, 187, 237, 0.7)', // clay
-//                     'rgba(209, 222, 245, 0.7)', // clay_loam
-//                     'rgba(235, 209, 196, 0.7)', // loam
-//                     'rgba(240, 169, 161, 0.7)'  // sandy_loam
-//                 ],
-//                 borderColor: [
-//                     'rgba(66, 110, 194, 1)',
-//                     'rgba(141, 168, 217, 1)',
-//                     'rgba(214, 151, 126, 1)',
-//                     'rgba(224, 102, 90, 1)'
-//                 ],
-//                 borderWidth: 1,
-//                 itemRadius: 3, // Radius of the outlier points
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             maintainAspectRatio: true,
-//             plugins: {
-//                 title: {
-//                     display: true,
-//                     text: 'Predicted Probability by Soil Type',
-//                     font: { size: 18 }
-//                 },
-//                 legend: {
-//                     display: false // Hide legend as it's redundant
-//                 }
-//             },
-//             scales: {
-//                 x: {
-//                     title: {
-//                         display: true,
-//                         text: 'Soil Type'
-//                     },
-//                     ticks: {
-//                         // Rotate labels to match the image
-//                         maxRotation: 45,
-//                         minRotation: 45
-//                     }
-//                 },
-//                 y: {
-//                     title: {
-//                         display: true,
-//                         text: 'Predicted Probability'
-//                     },
-//                     min: 0,
-//                     max: 1.0,
-//                     grid: {
-//                         // Replicate the grid style from the image
-//                         color: 'rgba(0, 0, 0, 0.1)'
-//                     }
-//                 }
-//             }
-//         }
-//     };
+    // function updateDashboard(selectedRegion) {
 
-//     console.log("testing boxplot 1");
 
-//     // --- Render Chart ---
-//     const soilBoxPlot = document.getElementById('soilPieChart').getContext('2d');
-//     new Chart(soilBoxPlot, box_plot);
+    //     // Update Monthly History Chart
+    //     if (selectedRegion === "") {
+    //         const totalMonthlyCounts = Array(12).fill(0);
+    //         for (const region in monthlyCountsByRegion) {
+    //             for (let i = 0; i < 12; i++) {
+    //                 totalMonthlyCounts[i] += monthlyCountsByRegion[region][i];
+    //             }
+    //         }
+    //         historyChart.data.datasets[0].data = totalMonthlyCounts;
+    //     } else if (monthlyCountsByRegion[selectedRegion]) {
+    //         historyChart.data.datasets[0].data = monthlyCountsByRegion[selectedRegion];
+    //     } else {
+    //         historyChart.data.datasets[0].data = Array(12).fill(0); // Default to zeros if no data
+    //     }
+    //     historyChart.update();
 
-//   console.log("testing boxplot 2");
+    //     // Update Yearly History Chart
+    //     if (selectedRegion === "") {
+    //         // Recalculate total for "All Regions"
+    //         const totalYearlyCounts = {};
+    //         for (const region in yearlyCountsByRegion) {
+    //             for (const year in yearlyCountsByRegion[region]) {
+    //                 totalYearlyCounts[year] = (totalYearlyCounts[year] || 0) + yearlyCountsByRegion[region][year];
+    //             }
+    //         }
+    //         const sortedYears = Object.keys(totalYearlyCounts).sort();
+    //         historyChartYearly.data.labels = sortedYears;
+    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => totalYearlyCounts[year]);
+
+    //         console.log("trying 5");
+    //     } else if (yearlyCountsByRegion[selectedRegion]) {
+    //         // Data for a specific region
+    //         const regionData = yearlyCountsByRegion[selectedRegion];
+    //         const sortedYears = Object.keys(regionData).sort();
+    //         historyChartYearly.data.labels = sortedYears;
+    //         historyChartYearly.data.datasets[0].data = sortedYears.map(year => regionData[year]);
+    //     } else {
+    //         // No data for the selected region
+    //         historyChartYearly.data.labels = [];
+    //         historyChartYearly.data.datasets[0].data = [];
+    //     }
+    //     historyChartYearly.update();
+
+
+    //     // Update Mapbox Filter
+    //     if (selectedRegion === "") {
+    //         map.setFilter('landslide-layer', null); // Show all points
+    //     } else {
+    //         map.setFilter('landslide-layer', ['==', ['get', 'region'], selectedRegion]);
+    //     }
+    //     console.log("Testing mapbox filter");
+    // }
+
+
+
+    // // --- Step 2: Set up the event listener to call the named function ---
+    // const regionSelect = document.getElementById('regionSelect');
+    // regionSelect.addEventListener('change', function () {
+    //     // "this.value" refers to the selected option's value
+    //     updateDashboard(this.value);
+    // });
+
+
 
 
 }); // End DOMContentLoaded
 
 
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("trying 2");
-    updateDashboard("");
-});
 
 
 
