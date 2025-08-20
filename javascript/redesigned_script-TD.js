@@ -787,12 +787,31 @@ Do you wish to proceed?`;
     const date_today = today.toISOString().split('T')[0];
 
 
+      let slopeReport;
+      let slopeCheck = fetchedLocationData?.slope;
+
+    if (slopeCheck === 1){
+        slopeReport = "below 10 degerees"
+    } else if (slopeCheck === 2){
+        slopeReport = "between 10 to 20 degrees"
+    } else if (slopeCheck === 3){
+        slopeReport = "between 30 to 40 degrees"
+    } else if (slopeCheck === 4) {
+        slopeReport = "between 40 to 50 degrees"
+    } else {
+        slopeReport = "above 50 degrees"
+    }
+
+
+    console.log("slope to check: ", slopeCheck);
+    console.log("Slope REPORT: ", slopeReport);
+
     // You can copy the validation and data gathering logic from the other button
     // --- 1. Validation & Data Gathering ---
     const requestData = {
         // === Data from User Selection & Location Fetch ===
         soil_type: fetchedLocationData?.soil_type_label,
-        slope: fetchedLocationData?.slope,
+        slope: slopeReport,
         prediction_date: (selectedPredictionDate && selectedPredictionTime)
             ? `${selectedPredictionDate} at ${selectedPredictionTime}`
             : "N/A",
