@@ -779,6 +779,13 @@ Do you wish to proceed?`;
         return; // <-- This is the crucial part. It stops the function from continuing.
     }
 
+    // 1. Get today's date
+    const today = new Date();
+
+    // 2. Format it as YYYY-MM-DD
+    // .toISOString() gives "YYYY-MM-DDTHH:mm:ss.sssZ", so we split at 'T' and take the first part.
+    const date_today = today.toISOString().split('T')[0];
+
 
     // You can copy the validation and data gathering logic from the other button
     // --- 1. Validation & Data Gathering ---
@@ -792,6 +799,7 @@ Do you wish to proceed?`;
         location_name: selectedLocation.name,
         location_lat: selectedLocation.lat,
         location_lng: selectedLocation.lng,
+        date_today,
 
 
         // === Data from Initial Prediction Model ===
