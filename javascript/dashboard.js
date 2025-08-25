@@ -1,18 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
 
-    console.log("testing");
-
-    // const yearlyHeaderTitle = document.getElementById("yearly-chart-header-title");
-    // const monthlyHeaderTitle = document.getElementById("monthly-chart-header-title");
-    // if (!yearlyHeaderTitle || !monthlyHeaderTitle) {
-    //     console.log("trying to find it yearly: ", yearlyHeaderTitle, "  monthly: ", monthlyHeaderTitle);
-    //     console.error("CRITICAL ERROR: Could not find the header title elements! Check your HTML IDs.");
-    //     return; // Stop the script if they aren't found
-    // } else {
-    //     console.log("FOUND IT!!");
-    // }
-
     // --- CHART & MAP INITIALIZATION ---
     let map;
     let allData = []; // To store CSV data
@@ -204,11 +192,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
     });
-     let agriChart; // Will be created after data loads
+    let agriChart; // Will be created after data loads
 
 
     let monthlyCountsByRegion = {};
     let yearlyCountsByRegion = {};
+    let invalidRowsCount = 0;
 
     // --- DATA LOADING & PROCESSING (DEBUGGING VERSION) ---
     console.log("Starting Papa.parse for datas.csv...");
@@ -276,14 +265,19 @@ document.addEventListener('DOMContentLoaded', function () {
                             // a. Process for Monthly Chart
                             if (!monthlyCountsByRegion[region]) {
                                 monthlyCountsByRegion[region] = Array(12).fill(0);
+                                console.log("invalid month");
                             }
                             monthlyCountsByRegion[region][monthIndex]++;
 
                             // b. Process for Yearly Chart
                             if (!yearlyCountsByRegion[region]) {
                                 yearlyCountsByRegion[region] = {};
+                                console.log("invalid year");
                             }
                             yearlyCountsByRegion[region][year] = (yearlyCountsByRegion[region][year] || 0) + 1;
+                        } else {
+                            console.log("Invalid row (bad date format or value):", row);
+                            invalidRowsCount = invalidRowsCount + 1;
                         }
                     }
                 }
@@ -297,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("   - Total valid rows for map:", validMapDataRowCount);
             console.log("   - Monthly counts by region:", monthlyCountsByRegion);
             console.log("   - Yearly counts by region:", yearlyCountsByRegion);
+            console.log("number of invalid rows: ", invalidRowsCount);
 
             // --- Part 3: Update UI elements with the processed data ---
 
