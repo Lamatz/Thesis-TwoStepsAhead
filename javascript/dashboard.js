@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (row.date) {
+                    //DD/MM/YYYY
                     const dateParts = row.date.split('/'); // e.g., "23/10/2024"
 
                     if (dateParts.length === 3) {
