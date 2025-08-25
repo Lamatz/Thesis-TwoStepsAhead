@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let allData = []; // To store CSV data
     let geojsonData = { type: 'FeatureCollection', features: [] }; // For Mapbox
 
-    let rawCsvData = []; // <-- ADD THIS LINE to store the raw data
+    let rawCsvData = [];
 
-    // --- NEW: State Management for Filters ---
     let selectedYear = null;
     let selectedMonth = null;
 
@@ -34,19 +33,46 @@ document.addEventListener('DOMContentLoaded', function () {
             data: geojsonData
         });
 
-        // Add the layer to visualize the points
+        // --- MODIFICATION START: Update Map Layer with Dynamic Coloring ---
+        // The 'circle-color' is now a 'step' expression.
+        // It checks the 'year' property of each point and assigns a color based on its value.
+        // This makes recent landslides appear in "hotter" colors (red) and older ones in cooler colors.
         map.addLayer({
             id: 'landslide-layer',
             type: 'circle',
             source: 'landslide-points',
             paint: {
                 'circle-radius': 6,
-                'circle-color': '#FF4136',
+                'circle-color': [
+                    'step',
+                    ['to-number', ['get', 'year']], // Use the 'year' property we'll add to the data
+                    '#aaaaaa',   // Default color for landslides before 2014 or with no date
+                    2014, '#FDB813', // Yellow for landslides from 2014-2018
+                    2019, '#F26522', // Orange for landslides from 2019-2021
+                    2022, '#D93B24', // Orange-Red for landslides from 2022-2023
+                    2024, '#B30000'  // Bright Red for landslides in 2024
+                ],
                 'circle-stroke-color': 'white',
                 'circle-stroke-width': 1,
                 'circle-opacity': 0.8
             }
         });
+        // --- MODIFICATION END ---
+
+
+        // Add the layer to visualize the points
+        // map.addLayer({
+        //     id: 'landslide-layer',
+        //     type: 'circle',
+        //     source: 'landslide-points',
+        //     paint: {
+        //         'circle-radius': 6,
+        //         'circle-color': '#FF4136',
+        //         'circle-stroke-color': 'white',
+        //         'circle-stroke-width': 1,
+        //         'circle-opacity': 0.8
+        //     }
+        // });
 
         // Create a popup, but don't add it to the map yet.
         const popup = new mapboxgl.Popup({
@@ -59,7 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
             map.getCanvas().style.cursor = 'pointer';
 
             const coordinates = e.features[0].geometry.coordinates.slice();
-            const region = e.features[0].properties.region;
+            // const region = e.features[0].properties.region;
+
+
+            // --- MODIFICATION START: Enhance Popup with Date Information ---
+            // Get all properties from the feature
+            const properties = e.features[0].properties;
+            const region = properties.region;
+            const date = properties.date; // Get the date property we added
+            // --- MODIFICATION END ---
+
 
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
@@ -68,8 +103,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
 
-            // Populate the popup and set its coordinates
-            popup.setLngLat(coordinates).setHTML(`<strong>Region:</strong> ${region}`).addTo(map);
+            // --- MODIFICATION START: Update Popup HTML ---
+            // Populate the popup with both region and date
+            popup.setLngLat(coordinates).setHTML(`<strong>Region:</strong> ${region}<br><strong>Date:</strong> ${date}`).addTo(map);
+            // --- MODIFICATION END ---
         });
 
         map.on('mouseleave', 'landslide-layer', () => {
@@ -201,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- DATA LOADING & PROCESSING (DEBUGGING VERSION) ---
     console.log("Starting Papa.parse for datas.csv...");
-    Papa.parse("../datas_final_standardized_withTime.csv", {
+    Papa.parse("../complete_landslide_1.csv", {
         download: true,
         header: true,
         complete: function (results) {
@@ -235,15 +272,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 // This replaces the first .filter() and .map()
                 if (row.lat && row.long) {
                     validMapDataRowCount++;
-                    // a. Convert to GeoJSON Feature
+
+                    // --- MODIFICATION START: Add date and year properties to GeoJSON for the map ---
+                    // This is the key step. We parse the year from the date string and add both
+                    // the full 'date' and the extracted 'year' to the feature's properties.
+                    // The map will use the 'year' property to decide the color.
+                    const year = row.date ? parseInt(row.date.split('/')[2], 10) : null;
+
                     geojsonFeatures.push({
                         type: 'Feature',
                         geometry: {
                             type: 'Point',
                             coordinates: [parseFloat(row.long), parseFloat(row.lat)]
                         },
-                        properties: { region: region }
+                        properties: { 
+                            region: region,
+                            date: row.date || 'N/A', // Store full date for the popup
+                            year: year                  // Store year for coloring
+                        }
                     });
+                    // --- MODIFICATION END ---
 
                     // b. Count occurrences for the "Top Regions" chart
                     regionCounts[region] = (regionCounts[region] || 0) + 1;
