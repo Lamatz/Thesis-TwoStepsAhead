@@ -133,3 +133,32 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+
+.legend {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    bottom: 30px;
+    right: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+}
+
+.legend h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
