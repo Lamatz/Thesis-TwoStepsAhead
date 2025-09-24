@@ -449,9 +449,7 @@ def generate_report():
             Your analysis should consider all the environmental data provided below.
             Crucially, you should also consider the output from our initial, simpler prediction model and comment on whether your detailed analysis agrees with it.
             Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations for Local Government Units (LGUs) and residents.
-
-            You Should not mention about landslide risk level as that is not your job to do
-
+            
             ---
             **DISCLAIMER:**
             This report is based on the available data and predictive models. Ground conditions can change rapidly. Furthermore, this report was made using the gemini model. This assessment should be used as a guide for disaster preparedness and mitigation and not as a substitute for on-site engineering and geological assessments.
