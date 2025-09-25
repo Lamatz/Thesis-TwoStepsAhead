@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let invalidRowsCount = 0;
 
     // --- DATA LOADING & PROCESSING (DEBUGGING VERSION) ---
-    console.log("Starting Papa.parse for datas.csv...");
-    Papa.parse("../complete_landslide_1.csv", {
+    console.log("Starting Papa.parse for complete_landslide_1.csv...");
+    Papa.parse("../csv/complete_landslide_1.csv", {
         download: true,
         header: true,
         complete: function (results) {
