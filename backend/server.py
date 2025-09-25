@@ -1,10 +1,7 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 
-# Keep imports if used elsewhere, but openmeteo_requests, requests_cache, retry are not used in the current fetch_weather_data
-import openmeteo_requests
-import requests_cache
-from retry_requests import retry
+
 from datetime import datetime, timedelta
 from flask_cors import CORS
 import numpy as np
@@ -20,8 +17,7 @@ import os
 from flask import Response
 from dotenv import load_dotenv
 
-# import google.generativeai as genai
-# pip install -U google-genai
+
 from google import genai
 from google.genai import types
 
