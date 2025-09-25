@@ -447,7 +447,6 @@ def generate_report():
             Generate a comprehensive risk assessment report for a potential landslide.
             The report should be structured, professional, and easy for a non-expert to understand.
             Your analysis should consider all the environmental data provided below.
-            Crucially, you should also consider the output from our initial, simpler prediction model and comment on whether your detailed analysis agrees with it.
             Conclude with a clear risk level (e.g., Low, Moderate, High, Critical) and a list of actionable recommendations for Local Government Units (LGUs) and residents.
             
             ---
