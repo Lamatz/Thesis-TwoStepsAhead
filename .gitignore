@@ -1,7 +1,4 @@
-Slope Map/
-Slope Map/slope.tif
-backend/Slope Map/
 venv/
 .ipynb_checkpoints/
 .env
-
+.gitattributes
