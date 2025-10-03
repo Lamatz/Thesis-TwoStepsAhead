@@ -1,0 +1,117 @@
+/* --- 8. USER GUIDE PAGE STYLES --- */
+
+.main-content {
+    padding-top: var(--navbar-height); /* Push content down below fixed navbar */
+    background-color: #ece2c7;
+}
+
+.page-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Side Navigation (for Scrollspy) */
+.side-nav {
+    top: 100px; /* Position below navbar */
+    z-index: 99;
+}
+
+.side-nav .list-group-item {
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.side-nav .list-group-item:hover {
+    color: var(--primary-color);
+    background-color: var(--background-light);
+}
+
+.side-nav .list-group-item.active {
+    color: var(--primary-color);
+    background-color: transparent;
+    border-left-color: var(--primary-color);
+}
+
+/* Guide Content Sections */
+.guide-section .card {
+    border: none;
+    border-radius: 0.75rem;
+}
+
+.guide-section .card-body {
+    padding: 2rem;
+}
+
+.guide-section h2.card-title {
+    font-weight: 700;
+}
+
+ul.list-styled {
+    padding-left: 1.5rem;
+}
+
+ul.list-styled li {
+    margin-bottom: 0.5rem;
+}
+
+/* Tip Box Styling */
+.tip-box {
+    background-color: #e9ecef;
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+}
+
+/* Step-by-Step Styling */
+.step-number {
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+/* Table styling */
+.table {
+    margin-top: 1.5rem;
+}
+.table td {
+    vertical-align: middle;
+}
+
+/* Accordion (FAQ) Customization */
+.accordion-item {
+    border: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem !important; /* Override Bootstrap */
+}
+.accordion-button {
+    font-weight: 600;
+}
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: var(--primary-color);
+}
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Responsive adjustments for the guide page */
+@media (max-width: 991.98px) {
+    .side-nav {
+        position: static; /* Remove sticky behavior on smaller screens */
+        margin-bottom: 2rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+    }
+}
