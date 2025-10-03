@@ -1,12 +1,11 @@
 
 /* 1. GLOBAL SETTINGS & VARIABLES */
 :root {
-    --primary-color: #0d6efd;
+    --primary-color: #8B4513;
     --secondary-color: #6c757d;
+    --accent-color: #ce9f66;
     --text-gradient-start: #8B4513;
     --text-gradient-end:#D2B48C;
-    --button-gradient-start: #4E342E;
-    --button-gradient-end: #A1887F;
     --background: #ece2c7;
     --text-dark: #212529;
     --navbar-height: 61px;
@@ -21,7 +20,7 @@
 
 /* Title Page */
 .title-page {
-    color: var(--text-gradient-start);
+    color: var(--primary-color);
 }
 .page-header .lead{
     font-weight: 400;
@@ -31,6 +30,11 @@
 /* Side Nav */
 #guideNav{
     top: 70px;
+}
+
+#guideNav .active{
+    background-color: var(--accent-color);
+    border: none;
 }
 
 
