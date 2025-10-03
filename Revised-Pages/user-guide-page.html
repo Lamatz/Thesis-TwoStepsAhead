@@ -20,7 +20,7 @@
     <!-- Custom CSS HERE -->
     <!-- <link rel="stylesheet" href="../css/homepage_style-v2.css"> -->
     <link rel="stylesheet" href="../css/navbar-style.css">
-    <!-- <link rel="stylesheet" href="../css/guidePage.css"> -->
+    <link rel="stylesheet" href="../css/guidePage.css">
 
 
 </head>
@@ -70,8 +70,8 @@
     <main class="main-content">
         <div class="container py-5">
             <div class="page-header pb-4 mb-5">
-                    <h1 class="display-4 fw-bold title-page">User Guide</h1>
-                    <p class="lead text-muted">Learn how to use the Philippines Landslide Forecasting System</p>
+                <h1 class="display-4 fw-bold title-page">User Guide</h1>
+                <p class="lead text-muted">Learn how to use the Philippines Landslide Forecasting System</p>
             </div>
 
             <div class="row">
@@ -131,142 +131,135 @@
                     </div>
 
                     <!-- Using the Map Section -->
-                    <div id="using-map" class="guide-section mb-5">
+                    <section id="using-map" class="guide-section mb-5">
                         <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h2 class="card-title text-success">
+                            <div class="card-body p-4">
+                                <h2 class="card-title text-success mb-3">
                                     <i class="bi bi-map me-2"></i>Using the Map
                                 </h2>
 
                                 <h5 class="mt-4">1. Selecting a Location</h5>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-7">
                                         <p>You can select a location in two ways:</p>
                                         <ul>
-                                            <li><strong>Search:</strong> Type a city name in the search box (e.g.,
-                                                "Manila", "Cebu", "Davao")</li>
+                                            <li><strong>Search:</strong> Type a city name in the search box
+                                                (e.g.,"Manila", "Cebu", "Davao")</li>
                                             <li><strong>Click:</strong> Click anywhere on the map to select that
                                                 location</li>
                                         </ul>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="p-3 rounded">
-                                            <strong>Tip:</strong> The map covers the entire Philippines. You can
-                                            zoom in/out and pan around to explore different areas.
+                                    <div class="col-md-5">
+                                        <div class="tip-box">
+                                            <i class="bi bi-lightbulb-fill me-2"></i><strong>Tip:</strong> The map
+                                            covers the entire Philippines. You can zoom in/out and pan around to explore
+                                            different areas.
                                         </div>
                                     </div>
                                 </div>
-
                                 <h5 class="mt-4">2. Understanding Map Markers</h5>
-                                <div class="row">
-                                    <div class="col-md-12 ">
-                                        <p>Above the marker, information about the selected or searched location is
-                                            displayed.</p>
-                                        <ul>
-                                            <li><strong>Location: </strong> This displays the location name</li>
-                                            <li><strong>Slope: </strong> This displays the slope angle of the location
-                                            </li>
-                                            <li><strong>Soil: </strong> This displays the soil composition of the
-                                                location</li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                <p>When a location is selected, key geospatial data is displayed:</p>
+                                <ul class="list-styled">
+                                    <li><strong>Location: </strong> This displays the location name</li>
+                                    <li><strong>Slope: </strong> This displays the slope angle of the location</li>
+                                    <li><strong>Soil: </strong> This displays the soil composition of the location</li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- Making Predictions Section -->
-                    <div id="predictions" class="guide-section mb-5">
+                    <section id="predictions" class="guide-section mb-5">
                         <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h2 class="card-title text-warning">
+                            <div class="card-body p-4">
+                                <h2 class="card-title text-warning mb-3">
                                     <i class="bi bi-graph-up me-2"></i>Making Predictions
                                 </h2>
 
-                                <h5 class="mt-4">Step-by-Step Process</h5>
+
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <h5 class="mt-2 mb-4">Step-by-Step Process</h5>
+
                                         <div class="step-item d-flex mb-3">
-                                            <div class="step-number bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 30px; height: 30px;">1</div>
+                                            <div class="step-number bg-primary me-3 ">
+                                                1
+                                            </div>
                                             <div>
                                                 <strong>Select Location</strong>
-                                                <p class="mb-0 text-muted">Search or click on the map</p>
+                                                <p class="mb-0 text-muted small">Search or click on the map</p>
                                             </div>
                                         </div>
                                         <div class="step-item d-flex mb-3">
-                                            <div class="step-number bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 30px; height: 30px;">2</div>
+                                            <div class="step-number bg-success me-3 ">
+                                                2
+                                            </div>
                                             <div>
                                                 <strong>Choose Date</strong>
-                                                <p class="mb-0 text-muted">Select forecast date (up to 5 days ahead)
+                                                <p class="mb-0 text-muted small">Select forecast date (up to 5 days
+                                                    ahead)
                                                 </p>
                                             </div>
                                         </div>
                                         <div class="step-item d-flex mb-3">
-                                            <div class="step-number bg-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 30px; height: 30px;">3</div>
+                                            <div class="step-number bg-warning me-3 ">
+                                                3
+                                            </div>
                                             <div>
                                                 <strong>Select Period</strong>
-                                                <p class="mb-0 text-muted">Choose from 3hrs to 5 days</p>
+                                                <p class="mb-0 text-muted small">Choose from 3hrs to 5 days</p>
                                             </div>
                                         </div>
                                         <div class="step-item d-flex">
-                                            <div class="step-number bg-danger text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 30px; height: 30px;">4</div>
+                                            <div class="step-number bg-danger me-3 ">
+                                                4
+                                            </div>
                                             <div>
                                                 <strong>Get Prediction</strong>
-                                                <p class="mb-0 text-muted">Click "Predict Landslide "</p>
+                                                <p class="mb-0 text-muted small">Click "Predict Landslide "</p>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="p-3 rounded">
-                                            <h6>Available Time Periods:</h6>
-                                            <ul class="mb-0">
-                                                <li>3 Hours - Short-term immediate risk</li>
-                                                <li>6 Hours - Extended immediate risk</li>
-                                                <li>12 Hours - Half-day forecast</li>
-                                                <li>1 Day - Daily forecast</li>
-                                                <li>3 Days - Medium-term planning</li>
-                                                <li>5 Days - Long-term planning</li>
+                                    <div class="col-lg-6 mt-4 mt-lg-0">
+                                        <div class="tip-box">
+                                            <h6 class="fw-bold">Available Time Periods:</h6>
+                                            <ul class="mb-0 small">
+                                                <li> <strong>3 Hours</strong> - Short-term immediate risk</li>
+                                                <li><strong>6 Hours</strong> - Extended immediate risk</li>
+                                                <li><strong>12 Hours</strong> - Half-day forecast</li>
+                                                <li><strong>1 Day</strong> - Daily forecast</li>
+                                                <li><strong>3 Days</strong> - Medium-term planning</li>
+                                                <li><strong>5 Days</strong> - Long-term planning</li>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- Understanding Results Section -->
-                    <div id="understanding-results" class="guide-section mb-5">
+                    <section id="understanding-results" class="guide-section mb-5">
                         <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h2 class="card-title text-info">
+                            <div class="card-body p-4">
+                                <h2 class="card-title text-info mb-3">
                                     <i class="bi bi-info-circle me-2"></i>Understanding Results
                                 </h2>
-
                                 <h5 class="mt-4">Prediction Result Explained</h5>
                                 <div class="row mb-4">
-                                    <div class="col-md-10">
-                                        <div class="alert alert-success">
-                                            <h6><strong>Landslide</strong></h6>
-                                            <p class="mb-0">Minimal landslide probability. Normal conditions with
-                                                low rainfall and stable soil.</p>
-                                        </div>
-                                        <div class="alert alert-warning">
-                                            <h6><strong>Non-landslide</strong></h6>
-                                            <p class="mb-0">Increased probability. Monitor conditions and prepare
-                                                precautionary measures.</p>
-                                        </div>
+                                    <div class="col-lg-6">
+                                        <div class="alert alert-danger"><strong>Landslide Predicted:</strong> A high
+                                            probability of a landslide event. Take immediate precautions.</div>
                                     </div>
-
+                                    <div class="col-lg-6">
+                                        <div class="alert alert-success"><strong>No Landslide Predicted:</strong>
+                                            Conditions are currently stable with low probability.</div>
+                                    </div>
                                 </div>
-
                                 <h5 class="mt-4">Contributing Factors</h5>
                                 <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-dark">
                                             <tr>
                                                 <th>Factor</th>
                                                 <th>Description</th>
@@ -275,80 +268,76 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><i class="bi bi-droplet-fill text-primary me-2"></i>Rainfall
+                                                <td><i
+                                                        class="bi bi-cloud-rain-heavy-fill text-primary me-2"></i>Rainfall
                                                 </td>
-                                                <td>Cumulative rainfall (mm) and intensity (mm/hr)</td>
-                                                <td>Higher values increase landslide risk</td>
+                                                <td>Cumulative rainfall (mm) and intensity.</td>
+                                                <td>High values significantly increase risk.</td>
+                                            </tr>
                                             </tr>
                                             <tr>
-                                                <td><i class="bi bi-moisture text-success me-2"></i>Soil Moisture
-                                                </td>
-                                                <td>Percentage of water content in soil at 100-200cm depth</td>
-                                                <td>Saturated soil is more prone to landslides</td>
+                                                <td><i class="bi bi-moisture text-success me-2"></i>Soil Moisture</td>
+                                                <td>Water content in the soil (%).</td>
+                                                <td>Saturated soil is less stable.</td>
                                             </tr>
                                             <tr>
-                                                <td><i class="bi bi-mountain text-warning me-2"></i>Slope</td>
-                                                <td>Angle of terrain in degrees</td>
-                                                <td>Steeper slopes have higher risk</td>
+                                                <td><i class="bi bi-triangle-half text-warning me-2"></i>Slope</td>
+                                                <td>Angle of the terrain in degrees.</td>
+                                                <td>Steeper slopes have higher risk.</td>
                                             </tr>
                                             <tr>
-                                                <td><i class="bi bi-layers text-info me-2"></i>Soil Type</td>
-                                                <td>Composition and characteristics of soil</td>
-                                                <td>Clay soils are more susceptible</td>
+                                                <td><i class="bi bi-layers-fill text-info me-2"></i>Soil Type</td>
+                                                <td>Composition and characteristics of the soil.</td>
+                                                <td>Clay-heavy soils are more susceptible.</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- Dashboard Features Section -->
-                    <div id="dashboard" class="guide-section mb-5">
+                    <section id="dashboard" class="guide-section mb-5">
                         <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h2 class="card-title text-primary">
+                            <div class="card-body p-4">
+                                <h2 class="card-title text-primary mb-3">
                                     <i class="bi bi-speedometer2 me-2"></i>Dashboard Features
                                 </h2>
-                                <p>The dashboard provides comprehensive system monitoring and historical analysis.
-                                </p>
-
+                                <p>The dashboard provides comprehensive system monitoring and historical analysis.</p>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <h5>Key Metrics</h5>
-                                        <ul>
-                                            <li><strong>Historical Landslide Occurrences: </strong> Yearly and monthly
-                                                landslide count</li>
-                                            <li><strong>Map for landslide occurrences:</strong> Locates where landslide
-                                                occur based on historical data </li>
-                                            <li><strong>Regions with most landslide occurences:</strong> Displays
-                                                regions where landslides mostly occurred</li>
-
+                                        <h5 class="mt-4">Key Metrics</h5>
+                                        <ul class="list-styled">
+                                            <li><strong>Historical Occurrences:</strong> Yearly/monthly landslide
+                                                counts.</li>
+                                            <li><strong>Geospatial Map:</strong> Location of past landslide events.</li>
+                                            <li><strong>Regional Hotspots:</strong> Regions with the highest frequency
+                                                of landslides.</li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5>Charts & Analysis</h5>
-                                        <ul>
-                                            <li><strong>Soil Vulnerability Type:</strong> The count of each soil type
-                                                which causes landslide</li>
-                                            <li><strong>Slope Type:</strong> Types of slope in degrees and their
-                                                relation to landslide occurrences</li>
+                                        <h5 class="mt-4">Charts & Analysis</h5>
+                                        <ul class="list-styled">
+                                             <li><strong>Soil Vulnerability:</strong> Count of landslides per soil type.
+                                            </li>
+                                            <li><strong>Slope Analysis:</strong> Relation of slope angle to landslide
+                                                occurrences.</li>
 
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- FAQ Section -->
-                    <div id="faq" class="guide-section mb-5">
+                    <section id="faq" class="guide-section mb-5">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <h2 class="card-title text-secondary">
+                                <h2 class="card-title text-secondary mb-3">
                                     <i class="bi bi-question-circle me-2"></i>Frequently Asked Questions
                                 </h2>
-
                                 <div class="accordion" id="faqAccordion">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -421,7 +410,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
+
                 </div>
             </div>
         </div>
