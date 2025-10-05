@@ -2,42 +2,239 @@
   --text-color: #190809;
   /* --background-color: #fcf5f5; */
   --background-color: #ece2c7;
-  --primary-color: #603F26;
+  --text-gradient-start: #8B4513;
+  --text-gradient-end: #D2B48C;
+  --background-color: #ece2c7;
+  --primary-color: #8B4513;
   --secondary-color: #FFDBB5;
   --accent-color: #ce9f66;
-  --card-color: #FAF8F2;
+  --text-dark: #212529;
+  --navbar-height: 61px;
+  --border-color: #dee2e6;
 }
 
-
-#guidePage {
-  /* background-color: ; */
-  background-color: #ece2c7;
-}
-
-
-.title-page {
-  color: #8B4513;
-}
-
-.card-header,
-.card-body,
-.guide-section {
-  background-color: var(--card-color);
-}
 
 body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+/* --- Main Content Layout --- */
+.dashboard-main {
+  padding-top: calc(2rem);
+  padding-bottom: 2rem;
+}
+
+/* --- Page Header --- */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header .lead {
+  font-weight: 400;
+}
+
+.title-page {
+  color: var(--primary-color);
+}
+
+.header-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+
+/* --- Cards --- */
+.card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 100%;
+  /* Ensures cards in a row have the same height */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-color);
+  /* padding: 1.25rem; */
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: 1.5rem; */
+}
+
+
+/* --- Map Section --- */
+#map-container {
+  position: relative;
+  height: 70vh;
+  max-height: 700px;
+  min-height: 450px;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+/* --- Map Legend --- */
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  z-index: 1;
+}
+
+.legend h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.legend div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend div:last-child {
+  margin-bottom: 0;
+}
+
+.legend span {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+/* For Tablets and smaller devices (<= 992px) */
+@media (max-width: 992px) {
+  .page-header .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1.5rem;
+  }
+
+  .header-controls {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  #regionSelect {
+    width: 100%;
+  }
+}
+
+/* For Mobile devices (<= 768px) */
+@media (max-width: 768px) {
+  .dashboard-main {
+    padding-top: calc(var(--navbar-height) + 1rem);
+  }
+
+  .title-page {
+    font-size: 2rem;
+  }
+
+  .lead {
+    font-size: 1rem;
+  }
+
+  #map-container {
+    height: 60vh;
+    /* Reduce map height on mobile */
+    min-height: 400px;
+  }
+
+  .legend {
+    bottom: 10px;
+    left: 10px;
+    padding: 10px;
+  }
+
+  .legend h4 {
+    font-size: 0.9rem;
+  }
+}
+
+/* body {
   padding-top: 80px;
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: 'Segoe UI', sans-serif;
+} */
+
+
+/* .chart-container {
+  width: 90%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
+
+/* 
+.legend {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    bottom: 30px;
+    right: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
 }
+
+.legend h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    margin-right: 8px;
+    vertical-align: middle;
+} */
+
 
 
 
 /* --- Tutorial Modal Styles --- */
-.tutorial-modal {
+/* .tutorial-modal {
   display: none;
-  /* Hidden by default */
   position: fixed;
   z-index: 1050;
   left: 0;
@@ -73,7 +270,6 @@ body {
   justify-content: space-around;
 }
 
-/* --- Shepherd Button & Tour Styles --- */
 .shepherd-button {
   padding: .375rem .75rem !important;
   border-radius: .25rem !important;
@@ -121,44 +317,4 @@ body {
 
 .my-custom-step-background .shepherd-text {
   color: var(--text-color) !important;
-}
-
-
-
-.chart-container {
-  width: 90%;
-  max-width: 800px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-.legend {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 5px;
-    bottom: 30px;
-    right: 10px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    position: absolute;
-    z-index: 1;
-    font-family: Arial, sans-serif;
-    line-height: 1.5;
-}
-
-.legend h4 {
-    margin: 0 0 10px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.legend div span {
-    border-radius: 50%;
-    display: inline-block;
-    height: 12px;
-    width: 12px;
-    margin-right: 8px;
-    vertical-align: middle;
-}
+} */
