@@ -1,6 +1,5 @@
-<!-- FIX THE RESET VIEW BUTTON -->
-<!-- MAKE THE LEGEND RESPONSIVE -->
 <!-- MAKE IT REFLECT ON THE MAP WHEN YOU FILTER THROUGH MONTH OR YEAR -->
+<!-- CLEAN UP CODE -->
 
 
 <!DOCTYPE html>
@@ -74,19 +73,21 @@
         <div class="container-fluid">
 
             <!-- Header Section -->
-            <header class="page-header d-flex justify-content-between align-items-center flex-wrap">
-                <div>
+            <header class="page-header d-flex justify-content-between align-items-center flex-wrap ">
+                <div class="mb-0">
                     <h1 class="display-5 fw-bold title-page">Historical Landslides Dashboard</h1>
                     <p class="lead text-muted">Historical analysis and visualization of landslide data.</p>
                 </div>
 
-
-                <!-- <div>
+            </header>
+            <!-- <div>
                     <button id="resetFilters" class="btn btn-primary" style="display: block;">Reset View</button>
                 </div> -->
 
-                <div class="header-controls">
+            <div class="header-controls mb-4">
 
+                <div class="control-item">
+                    <i class="bi bi-globe-americas"></i>
                     <select id="regionSelect" class="form-select form-select-lg">
                         <option value="" selected>Choose Region (Show All)</option>
                         <option value="Region I - Ilocos Region">Region I - Ilocos Region</option>
@@ -104,14 +105,20 @@
                         <option value="Region XII - SOCCSKSARGEN">Region XII - SOCCSKSARGEN</option>
                         <option value="Region XIII - Caraga">Region XIII - Caraga</option>
                         <option value="NCR - National Capital Region">NCR - National Capital Region</option>
-                        <option value="CAR - Cordillera Administrative Region">CAR - Cordillera Administrative Region
+                        <option value="CAR - Cordillera Administrative Region">CAR - Cordillera Administrative
+                            Region
                         </option>
                         <option value="BARMM - Bangsamoro Autonomous Region in Muslim Mindanao">BARMM - Bangsamoro
                             Autonomous Region in Muslim Mindanao</option>
                     </select>
-                    <button id="resetFilters" class="btn btn-primary" style="display: none;">Reset View</button>
                 </div>
-            </header>
+
+                <button id="resetFilters" class="btn" style="display: none;">
+                    <i class="fas fa-sync-alt"></i>Reset View
+                </button>
+
+            </div>
+
 
             <!-- Top Charts -->
             <section id="top-charts-container" class="row g-4 mb-4">
@@ -124,7 +131,7 @@
                             </h5>
                             <small class="text-muted d-block ">Click on a Year to filter the data.</small>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-0">
                             <canvas id="structureChart"></canvas>
                         </div>
                     </div>
@@ -138,7 +145,7 @@
                             </h5>
                             <small class="text-muted d-block ">Click on a Month to filter the data.</small>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-0">
                             <canvas id="roadsChart"></canvas>
                         </div>
                     </div>
@@ -151,7 +158,7 @@
                                 <span>Regions with Most Landslide Occurrences</span>
                             </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-0">
                             <canvas id="agriChart"></canvas>
                         </div>
                     </div>
