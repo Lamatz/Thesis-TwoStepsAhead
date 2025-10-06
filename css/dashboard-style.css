@@ -98,23 +98,23 @@ body {
 /* --- Map Legend --- */
 .legend {
   position: absolute;
-  bottom: 20px;
+  bottom: 40px;
   left: 20px;
   background: rgba(255, 255, 255, 0.9);
-  padding: 15px;
+  padding: 15px 5px 15px 15px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   font-family: Arial, sans-serif;
   z-index: 1;
 }
 
-.legend h4 {
-  margin: 0 0 10px 0;
+.legend .legend-header h4 {
+  /* margin: 0 0 10px 0; */
   font-size: 1rem;
   font-weight: bold;
 }
 
-.legend div {
+.legend .legend-content div {
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -124,13 +124,84 @@ body {
   margin-bottom: 0;
 }
 
-.legend span {
+.legend .legend-content span {
   border-radius: 50%;
   width: 18px;
   height: 18px;
   margin-right: 10px;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+/* --- COLLAPSIBLE & RESPONSIVE MAP LEGEND --- */
+.legend {
+    /* Add transitions for smooth collapsing */
+    transition: all 0.4s ease-in-out;
+    overflow: hidden; /* Important for the max-height trick */
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* Indicates the whole header is clickable */
+    padding-right: 5px; /* Spacing for the button */
+}
+
+.legend-header h4 {
+    margin-bottom: 0; /* Remove default margin */
+}
+
+.legend-toggle {
+    background: transparent;
+    border: none;
+    padding: 0 5px;
+    cursor: pointer;
+    color: #555;
+}
+
+.legend-toggle i {
+    transition: transform 0.4s ease-in-out; /* Smooth icon rotation */
+}
+
+.legend-content {
+    /* Use max-height for a smooth CSS transition. Set a value larger than it will ever need. */
+    max-height: 200px; 
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.4s ease;
+    margin-top: 10px; /* Space between header and content */
+    opacity: 1;
+}
+
+
+/* --- STYLES FOR THE COLLAPSED STATE --- */
+.legend.is-collapsed {
+    /* Optional: make the legend smaller when collapsed */
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.legend.is-collapsed .legend-content {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+}
+
+.legend.is-collapsed .legend-toggle i {
+    /* Rotate the chevron icon to point down */
+    transform: rotate(180deg);
+}
+
+/* On smaller screens, make the legend less intrusive */
+@media (max-width: 768px) {
+    .legend {
+        /* Take up less width on mobile */
+        max-width: 180px;
+        padding: 10px;
+        left: 10px;
+        bottom: 10px;
+    }
+}
+
 
 
 /* For Tablets and smaller devices (<= 992px) */

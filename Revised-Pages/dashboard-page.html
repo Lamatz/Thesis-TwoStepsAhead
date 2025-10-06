@@ -1,8 +1,7 @@
+<!-- FIX THE RESET VIEW BUTTON -->
+<!-- MAKE THE LEGEND RESPONSIVE -->
+<!-- MAKE IT REFLECT ON THE MAP WHEN YOU FILTER THROUGH MONTH OR YEAR -->
 
- <!-- FIX THE RESET VIEW BUTTON -->
- <!-- MAKE THE LEGEND RESPONSIVE -->
- <!-- MAKE IT REFLECT ON THE MAP WHEN YOU FILTER THROUGH MONTH OR YEAR -->
- <!-- FIX THE ICONS IN THE YEARLY AND MONTHLY CHART NOT SHOWING -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +86,7 @@
                 </div> -->
 
                 <div class="header-controls">
-                    
+
                     <select id="regionSelect" class="form-select form-select-lg">
                         <option value="" selected>Choose Region (Show All)</option>
                         <option value="Region I - Ilocos Region">Region I - Ilocos Region</option>
@@ -119,7 +118,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0" >
+                            <h5 class="card-title mb-0">
                                 <i class="bi bi-calendar3 me-1"></i>
                                 <span id="yearly-chart-header-title">History of Landslides (Yearly)</span>
                             </h5>
@@ -133,7 +132,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0" >
+                            <h5 class="card-title mb-0">
                                 <i class="bi bi-calendar3-week me-1"></i>
                                 <span id="monthly-chart-header-title">History of Landslides (Monthly)</span>
                             </h5>
@@ -171,13 +170,21 @@
                         <div class="card-body p-2" id="map-container">
                             <div id="map"></div>
                             <div id='map-legend' class='legend'>
-                                <h4>Landslide Recency</h4>
-                                <div><span style='background-color: #B30000'></span>2024</div>
-                                <div><span style='background-color: #D93B24'></span>2022 - 2023</div>
-                                <div><span style='background-color: #F26522'></span>2019 - 2021</div>
-                                <div><span style='background-color: #FDB813'></span>2014 - 2018</div>
-                                <div><span style='background-color: #aaaaaa'></span>Before 2014</div>
+                                <div class="legend-header">
+                                    <h4>Landslide Recency</h4>
+                                    <button id="legend-toggle-btn" class="legend-toggle" aria-label="Toggle Legend">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                </div>
+                                <div class="legend-content">
+                                    <div><span style='background-color: #B30000'></span>2024</div>
+                                    <div><span style='background-color: #D93B24'></span>2022 - 2023</div>
+                                    <div><span style='background-color: #F26522'></span>2019 - 2021</div>
+                                    <div><span style='background-color: #FDB813'></span>2014 - 2018</div>
+                                    <div><span style='background-color: #aaaaaa'></span>Before 2014</div>
+                                </div>
                             </div>
+                            <!-- END OF UPDATED LEGEND -->
                         </div>
                     </div>
                 </div>
@@ -186,7 +193,7 @@
         </div>
     </main>
 
-    
+
     <!-- Tutorial Modal -->
     <!-- <div id="tutorial-modal" class="tutorial-modal">
         <div class="tutorial-modal-content">
@@ -214,6 +221,24 @@
 
     <!-- Custom Main Script -->
     <script src="../javascript/dashboard.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- MAP LEGEND TOGGLE FUNCTIONALITY ---
+            const legend = document.getElementById('map-legend');
+            const legendHeader = legend.querySelector('.legend-header');
+
+            if (legendHeader) {
+                legendHeader.addEventListener('click', () => {
+                    legend.classList.toggle('is-collapsed');
+                });
+            }
+
+            // Your other dashboard.js code goes here...
+            // e.g., map initialization, chart creation, etc.
+
+        });
+    </script>
 
 </body>
 
