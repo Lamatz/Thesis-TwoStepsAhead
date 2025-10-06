@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const resetButton = document.getElementById('resetFilters');
         if (selectedYear || selectedMonth) {
-            resetButton.style.display = 'inline-block';
+            resetButton.style.display = 'flex';
         } else {
             resetButton.style.display = 'none';
         }

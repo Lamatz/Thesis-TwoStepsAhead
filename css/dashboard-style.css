@@ -30,7 +30,7 @@ body {
 
 /* --- Page Header --- */
 .page-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .page-header .lead {
@@ -45,6 +45,57 @@ body {
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: space-between;
+}
+
+.control-item i {
+  color: #888;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding-left: 15px;
+  flex-grow: 1;
+  /* Allows it to take up available space */
+  max-width: 400px;
+  /* Prevents it from getting too wide */
+}
+
+#regionSelect {
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  border: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  /* Removes default OS styling */
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+#resetFilters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  background-color: #8B4513;
+  color: #f5f0e1;
+}
+
+#resetFilters:hover {
+  background-color: #65320d;
 }
 
 
@@ -134,72 +185,78 @@ body {
 
 /* --- COLLAPSIBLE & RESPONSIVE MAP LEGEND --- */
 .legend {
-    /* Add transitions for smooth collapsing */
-    transition: all 0.4s ease-in-out;
-    overflow: hidden; /* Important for the max-height trick */
+  /* Add transitions for smooth collapsing */
+  transition: all 0.4s ease-in-out;
+  overflow: hidden;
+  /* Important for the max-height trick */
 }
 
 .legend-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer; /* Indicates the whole header is clickable */
-    padding-right: 5px; /* Spacing for the button */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  /* Indicates the whole header is clickable */
+  padding-right: 5px;
+  /* Spacing for the button */
 }
 
 .legend-header h4 {
-    margin-bottom: 0; /* Remove default margin */
+  margin-bottom: 0;
+  /* Remove default margin */
 }
 
 .legend-toggle {
-    background: transparent;
-    border: none;
-    padding: 0 5px;
-    cursor: pointer;
-    color: #555;
+  background: transparent;
+  border: none;
+  padding: 0 5px;
+  cursor: pointer;
+  color: #555;
 }
 
 .legend-toggle i {
-    transition: transform 0.4s ease-in-out; /* Smooth icon rotation */
+  transition: transform 0.4s ease-in-out;
+  /* Smooth icon rotation */
 }
 
 .legend-content {
-    /* Use max-height for a smooth CSS transition. Set a value larger than it will ever need. */
-    max-height: 200px; 
-    overflow: hidden;
-    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.4s ease;
-    margin-top: 10px; /* Space between header and content */
-    opacity: 1;
+  /* Use max-height for a smooth CSS transition. Set a value larger than it will ever need. */
+  max-height: 200px;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.4s ease;
+  margin-top: 10px;
+  /* Space between header and content */
+  opacity: 1;
 }
 
 
 /* --- STYLES FOR THE COLLAPSED STATE --- */
 .legend.is-collapsed {
-    /* Optional: make the legend smaller when collapsed */
-    padding-top: 10px;
-    padding-bottom: 10px;
+  /* Optional: make the legend smaller when collapsed */
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .legend.is-collapsed .legend-content {
-    max-height: 0;
-    margin-top: 0;
-    opacity: 0;
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
 }
 
 .legend.is-collapsed .legend-toggle i {
-    /* Rotate the chevron icon to point down */
-    transform: rotate(180deg);
+  /* Rotate the chevron icon to point down */
+  transform: rotate(180deg);
 }
 
 /* On smaller screens, make the legend less intrusive */
 @media (max-width: 768px) {
-    .legend {
-        /* Take up less width on mobile */
-        max-width: 180px;
-        padding: 10px;
-        left: 10px;
-        bottom: 10px;
-    }
+  .legend {
+    /* Take up less width on mobile */
+    max-width: 180px;
+    padding: 10px;
+    left: 10px;
+    bottom: 10px;
+  }
 }
 
 
@@ -235,6 +292,18 @@ body {
 
   .lead {
     font-size: 1rem;
+  }
+
+  .controls-bar {
+    flex-direction: column;
+    /* Stack items vertically */
+    align-items: stretch;
+    /* Make items full-width */
+  }
+
+  .control-item {
+    max-width: 100%;
+    /* Allow dropdown to be full width */
   }
 
   #map-container {
