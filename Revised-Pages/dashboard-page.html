@@ -87,7 +87,7 @@
                 </div> -->
 
                 <div class="header-controls">
-                    <button id="resetFilters" class="btn btn-primary" style="display: none;">Reset View</button>
+                    
                     <select id="regionSelect" class="form-select form-select-lg">
                         <option value="" selected>Choose Region (Show All)</option>
                         <option value="Region I - Ilocos Region">Region I - Ilocos Region</option>
@@ -110,16 +110,18 @@
                         <option value="BARMM - Bangsamoro Autonomous Region in Muslim Mindanao">BARMM - Bangsamoro
                             Autonomous Region in Muslim Mindanao</option>
                     </select>
+                    <button id="resetFilters" class="btn btn-primary" style="display: none;">Reset View</button>
                 </div>
             </header>
 
-            <!-- Top Charts - Added ID for tutorial targeting -->
+            <!-- Top Charts -->
             <section id="top-charts-container" class="row g-4 mb-4">
                 <div class="col-lg-4 col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0" id="yearly-chart-header-title">
-                                <i class="bi bi-calendar-month-fill me-2"></i>History of Landslides (Yearly)
+                            <h5 class="card-title mb-0" >
+                                <i class="bi bi-calendar3 me-1"></i>
+                                <span id="yearly-chart-header-title">History of Landslides (Yearly)</span>
                             </h5>
                             <small class="text-muted d-block ">Click on a Year to filter the data.</small>
                         </div>
@@ -131,8 +133,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0" id="monthly-chart-header-title">
-                                <i class="bi bi-calendar-month-fill me-2"></i>History of Landslides (Monthly)
+                            <h5 class="card-title mb-0" >
+                                <i class="bi bi-calendar3-week me-1"></i>
+                                <span id="monthly-chart-header-title">History of Landslides (Monthly)</span>
                             </h5>
                             <small class="text-muted d-block ">Click on a Month to filter the data.</small>
                         </div>
@@ -145,7 +148,8 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="bi bi-graph-up-arrow me-2"></i>Regions with Most Landslide Occurrences
+                                <i class="bi bi-graph-up-arrow me-1"></i>
+                                <span>Regions with Most Landslide Occurrences</span>
                             </h5>
                         </div>
                         <div class="card-body">
