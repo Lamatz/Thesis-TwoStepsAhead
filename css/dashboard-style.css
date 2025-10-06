@@ -24,7 +24,7 @@ body {
 
 /* --- Main Content Layout --- */
 .dashboard-main {
-  padding-top: calc(2rem);
+  padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
@@ -155,7 +155,7 @@ body {
 /* For Mobile devices (<= 768px) */
 @media (max-width: 768px) {
   .dashboard-main {
-    padding-top: calc(var(--navbar-height) + 1rem);
+    padding-top: 1rem;
   }
 
   .title-page {
