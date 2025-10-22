@@ -223,13 +223,97 @@
                                         <div class="tip-box">
                                             <h6 class="fw-bold">Available Time Periods:</h6>
                                             <ul class="mb-0 small">
-                                                <li> <strong>3 Hours - Urgent / Immediate Risk</strong><br><em>Use for immediate safety decisions.</em></li>
-                                                <li><strong>6 Hours - Extended immediate risk</strong><br><em>Use for advanced warnings to specific areas.</em></li>
-                                                <li><strong>12 Hours - Half-day forecast</strong><br><em>Use for making decisions that affect a whole day.</em></li>
-                                                <li><strong>1 Day - Full day forecast</strong><br><em>Use for strategic planning and general awareness.</em></li>
+                                                <li> <strong>3 Hours - Urgent / Immediate Risk</strong><br><em>Use for
+                                                        immediate safety decisions.</em></li>
+                                                <li><strong>6 Hours - Extended immediate risk</strong><br><em>Use for
+                                                        advanced warnings to specific areas.</em></li>
+                                                <li><strong>12 Hours - Half-day forecast</strong><br><em>Use for making
+                                                        decisions that affect a whole day.</em></li>
+                                                <li><strong>1 Day - Full day forecast</strong><br><em>Use for strategic
+                                                        planning and general awareness.</em></li>
                                             </ul>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+
+
+                    <!-- TIME PERIOD SECTION -->
+                    <section id="time-period" class="guide-section mb-5">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+
+                                <h2 class="card-title text-secondary mb-3">
+                                    <i class="bi bi-gear-fill me-2"></i>The Use Of Time Period
+                                </h2>
+
+                                <!-- Step-by-Step Process Title -->
+                                <h3 class="h5 fw-bold mb-3">Step-by-Step Process</h3>
+
+                                <!-- Step 1 -->
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="step-circle bg-primary">1</div>
+                                    <div>
+                                        <h4 class="h6 fw-bold mb-1">The "Snapshot" Prediction</h4>
+                                        <p class="mb-0 text-muted">First, our AI system takes a "snapshot" of all
+                                            current
+                                            conditions (rainfall, soil, slope) to calculate the landslide risk for one
+                                            specific
+                                            moment in time.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="step-circle bg-success">2</div>
+                                    <div>
+                                        <h4 class="h6 fw-bold mb-1">Checking Every Hour</h4>
+                                        <p class="mb-0 text-muted">To forecast over a time range (e.g., 6 hours), we run
+                                            a
+                                            snapshot prediction for <strong>every single hour</strong> in that period.
+                                            It's
+                                            like
+                                            checking every frame of a movie instead of just one picture.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="d-flex align-items-start mb-4">
+                                    <div class="step-circle" style="background-color: #f59e0b;">3</div>
+                                    <div>
+                                        <h4 class="h6 fw-bold mb-1">Reporting the Peak Risk</h4>
+                                        <p class="mb-0 text-muted">Finally, the system reviews all the hourly scores and
+                                            shows
+                                            you the <strong>single highest risk value</strong>. This ensures you are
+                                            always
+                                            alerted to the moment of peak danger.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Example Box -->
+                                <div class="bg-light border rounded p-3">
+                                    <h4 class="h6 fw-bold">An Example in Action: A 6-Hour Forecast</h4>
+                                    <p class="small text-muted mb-2">If you request a forecast for the 6 hours ending at
+                                        9:00
+                                        AM, here's what the system does internally:</p>
+                                    <ul class="list-unstyled small text-muted">
+                                        <li>3:00 AM Risk Score: 15%</li>
+                                        <li>4:00 AM Risk Score: 25%</li>
+                                        <li>5:00 AM Risk Score: 40%</li>
+                                        <li>6:00 AM Risk Score: 65%</li>
+                                        <li><strong class="text-danger">7:00 AM Risk Score: 85% (Peak Risk)</strong>
+                                        </li>
+                                        <li>8:00 AM Risk Score: 70%</li>
+                                        <li>9:00 AM Risk Score: 60%</li>
+                                    </ul>
+                                    <hr>
+                                    <p class="small mb-0"><strong>The Final Result You See:</strong> The system will
+                                        report
+                                        a
+                                        landslide risk of <strong>85%</strong> for this time period.</p>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +400,7 @@
                                     <div class="col-md-6">
                                         <h5 class="mt-4">Charts & Analysis</h5>
                                         <ul class="list-styled">
-                                             <li><strong>Soil Vulnerability:</strong> Count of landslides per soil type.
+                                            <li><strong>Soil Vulnerability:</strong> Count of landslides per soil type.
                                             </li>
                                             <li><strong>Slope Analysis:</strong> Relation of slope angle to landslide
                                                 occurrences.</li>
