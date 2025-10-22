@@ -1,11 +1,10 @@
-
 /* 1. GLOBAL SETTINGS & VARIABLES */
 :root {
     --primary-color: #8B4513;
     --secondary-color: #6c757d;
     --accent-color: #ce9f66;
     --text-gradient-start: #8B4513;
-    --text-gradient-end:#D2B48C;
+    --text-gradient-end: #D2B48C;
     --background: #ece2c7;
     --text-dark: #212529;
     --navbar-height: 61px;
@@ -22,17 +21,18 @@
 .title-page {
     color: var(--primary-color);
 }
-.page-header .lead{
+
+.page-header .lead {
     font-weight: 400;
 }
 
 
 /* Side Nav */
-#guideNav{
+#guideNav {
     top: 70px;
 }
 
-#guideNav .active{
+#guideNav .active {
     background-color: var(--accent-color);
     border: none;
 }
@@ -90,6 +90,7 @@ ul.list-styled li {
 .table {
     margin-top: 1.5rem;
 }
+
 .table td {
     vertical-align: middle;
 }
@@ -98,28 +99,48 @@ ul.list-styled li {
 .accordion-item {
     border: 1px solid #dee2e6;
     margin-bottom: 0.5rem;
-    border-radius: 0.5rem !important; /* Override Bootstrap */
+    border-radius: 0.5rem !important;
+    /* Override Bootstrap */
 }
+
 .accordion-button {
     font-weight: 600;
 }
+
 .accordion-button:not(.collapsed) {
     background-color: #e7f1ff;
     color: var(--primary-color);
 }
+
 .accordion-button:focus {
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+/* TIME PERIOD STYLING */
+.step-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Prevents the circle from shrinking */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 1rem;
 }
 
 
 /* Responsive adjustments for the guide page */
 @media (max-width: 991.98px) {
     .side-nav {
-        position: static; /* Remove sticky behavior on smaller screens */
+        position: static;
+        /* Remove sticky behavior on smaller screens */
         margin-bottom: 2rem;
         border: 1px solid #dee2e6;
         border-radius: 0.5rem;
     }
 }
-
-
