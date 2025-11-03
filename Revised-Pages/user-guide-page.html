@@ -271,12 +271,13 @@
                                     <div class="step-circle bg-success">2</div>
                                     <div>
                                         <h4 class="h6 fw-bold mb-1">Checking Every Hour</h4>
-                                        <p class="mb-0 text-muted">To forecast over a time range (e.g., 6 hours), we run
-                                            a
-                                            snapshot prediction for <strong>every single hour</strong> in that period.
-                                            It's
+                                        <p class="mb-0 text-muted">To forecast over a time range (e.g., 6 hours), the
+                                            system runs
+                                            a snapshot prediction for <strong>every single hour</strong> in that period.
+                                        </p>
+                                        <!-- It's
                                             like
-                                            checking every frame of a movie instead of just one picture.</p>
+                                            checking every frame of a movie instead of just one picture.</p> -->
                                     </div>
                                 </div>
 
@@ -284,37 +285,45 @@
                                 <div class="d-flex align-items-start mb-4">
                                     <div class="step-circle" style="background-color: #f59e0b;">3</div>
                                     <div>
-                                        <h4 class="h6 fw-bold mb-1">Reporting the Peak Risk</h4>
-                                        <p class="mb-0 text-muted">Finally, the system reviews all the hourly scores and
-                                            shows
-                                            you the <strong>single highest risk value</strong>. This ensures you are
-                                            always
-                                            alerted to the moment of peak danger.</p>
+                                        <h4 class="h6 fw-bold mb-1">Identifying the Moment of Highest Confidence</h4>
+                                        <p class="text-muted mb-2">At each hourly check, our model provides two key
+                                            pieces of information:</p>
+                                        <ul class="text-muted small">
+                                            <li><strong>A Prediction:</strong> Either "Landslide" or "No Landslide".
+                                            </li>
+                                            <li><strong>A Confidence Score:</strong> A percentage telling us how certain
+                                                the model is about its prediction.</li>
+                                        </ul>
+                                        <p class="text-muted mb-0">Our system is designed for safety, so it reviews all
+                                            the hourly checks and shows you the <strong>single highest "Landslide"
+                                                confidence score</strong> it found. This ensures you are always alerted
+                                            to the moment of peak danger.</p>
                                     </div>
                                 </div>
 
-                                <!-- Example Box -->
-                                <div class="bg-light border rounded p-3">
+                                <!-- Example Box (REVISED) -->
+                                <!-- <div class="bg-light border rounded p-3">
                                     <h4 class="h6 fw-bold">An Example in Action: A 6-Hour Forecast</h4>
                                     <p class="small text-muted mb-2">If you request a forecast for the 6 hours ending at
-                                        9:00
-                                        AM, here's what the system does internally:</p>
+                                        9:00 AM, here's what the system does internally:</p>
                                     <ul class="list-unstyled small text-muted">
-                                        <li>3:00 AM Risk Score: 15%</li>
-                                        <li>4:00 AM Risk Score: 25%</li>
-                                        <li>5:00 AM Risk Score: 40%</li>
-                                        <li>6:00 AM Risk Score: 65%</li>
-                                        <li><strong class="text-danger">7:00 AM Risk Score: 85% (Peak Risk)</strong>
-                                        </li>
-                                        <li>8:00 AM Risk Score: 70%</li>
-                                        <li>9:00 AM Risk Score: 60%</li>
+                                        <li>3:00 AM: Predicts "No Landslide" (85% confidence). 
+                                           
+                                        <li>4:00 AM: Predicts "No Landslide" (75% confidence). 
+                                          
+                                        <li>5:00 AM: Predicts "No Landslide" (60% confidence ). 
+                                           
+                                        <li>6:00 AM: Predicts "Landslide" with <strong>65% confidence</strong>.</li>
+                                        <li><strong class="text-danger">7:00 AM: Predicts "Landslide" with 85%
+                                                confidence. (Peak Confidence)</strong></li>
+                                        <li>8:00 AM: Predicts "Landslide" with <strong>70% confidence</strong>.</li>
+                                        <li>9:00 AM: Predicts "Landslide" with <strong>60% confidence</strong>.</li>
                                     </ul>
                                     <hr>
                                     <p class="small mb-0"><strong>The Final Result You See:</strong> The system will
-                                        report
-                                        a
-                                        landslide risk of <strong>85%</strong> for this time period.</p>
-                                </div>
+                                        report a peak landslide confidence of <strong>85%</strong> for this time period.
+                                    </p>
+                                </div> -->
                             </div>
                         </div>
                     </section>
