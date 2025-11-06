@@ -73,7 +73,7 @@
         <div class="row">
 
             <!-- =================================== -->
-            <!-- == NEW: LEFT CONTROL PANEL (col-4) == -->
+            <!-- == LEFT CONTROL PANEL (col-4) == -->
             <!-- =================================== -->
             <div class="col-lg-3 col-md-4 p-0">
                 <div class="control-panel">
@@ -120,20 +120,10 @@
                             <div class="mb-3">
                                 <label for="date-picker" class="form-label"><strong>Forecast Date &
                                         Time:</strong>
-
                                 </label>
 
 
-                                <!-- CLASSIC STYLE        -->
-                                <!-- <div class="input-group form-step">
-                                    <select id="date-picker" class="form-control">
-                                    </select>
-                                    <input type="time" id="time-picker" class="form-control">
-                                </div> -->
-                                <!-- CLASSIC STYLE        -->
-
                                 <div id="pickers-wrapper" class="mb-3">
-
 
                                     <!-- Overlay for disabled state -->
                                     <div class="overlay" id="picker-overlay">
@@ -249,8 +239,9 @@
 
 
     <!-- ======================================================= -->
-    <!-- == REPLACE THE OLD REPORT SECTION WITH THIS ENTIRE BLOCK == -->
+    <!-- == THE REPORT SECTION WITH THIS ENTIRE BLOCK == -->
     <!-- ======================================================= -->
+    <!-- This section only pops up when the user has made a prediction -->
 
     <div class="container" id="report-summary-section" style="display: none;">
         <h2 class="text-center mb-4 report-title">Prediction Report Summary</h2>
@@ -301,19 +292,6 @@
                 </div>
                 <div class="card-body">
 
-                    <!-- =================
-                    CHANGES - I am still not sure about the design (I'll change it later)
-                    ================= -->
-                    <!-- <div class="row ">
-                        <div class="d-flex justify-content-center align-items-center mb-3">
-                            <p class="fw-bold m-0 pe-3">Time Range: </p>
-                            <p class="chart-summary-text m-0 text-center fw-bold"></p>
-                        </div>
-                    </div> -->
-
-                    <!-- =================
-                    CHANGES
-                    ================= -->
                     <div class="row">
                         <!-- THESE ARE THE 4 CANVAS IDs THE SCRIPT NEEDS -->
                         <div class="col-md-6 mb-4">
