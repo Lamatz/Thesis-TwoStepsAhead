@@ -22,11 +22,7 @@ body {
     width: 100%;
 }
 
-main.col-lg-9 {
-    height: calc(100vh - 56px);
-    /* Full viewport height minus navbar height */
-    overflow: hidden;
-}
+
 
 .control-panel {
     height: 92vh;
