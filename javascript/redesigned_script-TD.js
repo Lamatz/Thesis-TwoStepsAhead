@@ -234,9 +234,33 @@ async function fetchWeatherData(lat, lon, date, time) {
     }
 }
 
-// ===================================
-// == CORRECTED JAVASCRIPT FUNCTION
-// ===================================
+
+// HELPER FUNCTIONS FOR CONVERTING SLOPE AND SOIL MOISTURE FOR USER READABILITY
+// ========================
+
+function convertSlope(slope) {
+    const slopeMap = {
+        1: "0-10 degrees",
+        2: "10-20 degrees",
+        3: "20-30 degrees",
+        4: "30-40 degrees",
+        5: "40-50 degrees",
+        6: "above 50 degrees"
+    };
+
+    return slopeMap[slope] || "Invalid slope data";
+}
+
+function convertSoilMoisture(soil_moisture) {
+    // Add a safety check for null/undefined/non-number values
+    if (soil_moisture == null || typeof soil_moisture !== 'number') {
+        return "N/A";
+    }
+    const percentage = soil_moisture * 100;
+    return Math.floor(percentage) + "%";
+}
+
+// ========================
 
 const chartForecastText = document.getElementsByClassName("chart-summary-text");
 
@@ -253,15 +277,17 @@ function populateReportSummary() {
     reportSection.style.display = "block";
 
 
+
+
     // --- 3. Populate all text fields ---
     document.getElementById("report-location-name").innerText = selectedLocation.name || "N/A";
     document.getElementById("report-coords").innerText = selectedLocation.lat ? `${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)}` : "N/A";
     document.getElementById("report-prediction-date").innerText = (selectedPredictionDate && selectedPredictionTime) ? `${selectedPredictionDate} at ${selectedPredictionTime}` : "N/A";
     document.getElementById("report-prediction").innerText = lastPredictionResult.prediction || "N/A";
     document.getElementById("report-confidence").innerText = lastPredictionResult.confidence || "N/A";
-    document.getElementById("report-slope").innerText = fetchedLocationData.slope ?? "N/A";
+    document.getElementById("report-slope").innerText = convertSlope(fetchedLocationData.slope) ?? "N/A";
     document.getElementById("report-soil-type").innerText = fetchedLocationData.soil_type_label || "N/A";
-    document.getElementById("report-soil-moisture").innerText = lastFetchedWeatherData.soil_moisture?.toFixed(1) ?? "N/A";
+    document.getElementById("report-soil-moisture").innerText = convertSoilMoisture(lastFetchedWeatherData.soil_moisture);
 
 
 
@@ -495,7 +521,7 @@ document.addEventListener("click", (e) => {
 });
 document.getElementById('search-btn-icon').addEventListener('click', () => searchInput.dispatchEvent(new Event('input')));
 // ===================================
-// == END OF SEARCH FUNCTIONALITY (Corrected & Enhanced)
+// == END OF SEARCH FUNCTIONALITY 
 // ===================================
 
 
