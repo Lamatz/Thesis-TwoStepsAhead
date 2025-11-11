@@ -28,7 +28,6 @@
 
 
     <style>
-
         html,
         body {
             height: 100%;
@@ -54,7 +53,7 @@
 
         .offcanvas-lg.offcanvas-end {
             height: calc(100vh - 61px);
-            top:61px;
+            top: 61px;
         }
 
         /* Style for the floating button on mobile */
@@ -76,11 +75,8 @@
 
         .offcanvas-body {
             background-color: rgb(250, 248, 242);
-            /* padding: 0; */
             height: calc(100vh - 61px) !important;
-
             overflow-y: auto;
-
         }
 
         /* --- General Card Styling --- */
@@ -157,17 +153,12 @@
         /* == MEDIA QUERIES FOR RESPONSIVENESS == */
         /* ========================================= */
 
-
-                /* For tablets and smaller (screen width less than 768px) */
         @media (max-width: 991.98px) {
             .control-panel {
-                 box-shadow:none;
-                 border: none;
+                box-shadow: none;
+                border: none;
             }
-
-     
         }
-
 
         /* For tablets and smaller (screen width less than 768px) */
         @media (max-width: 767.98px) {
@@ -214,39 +205,41 @@
                 margin-bottom: 0;
             }
         }
-
     </style>
 
 </head>
 
 <body>
-    <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark ">
+    <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand d-flex justify-content-center align-items-center" href="#">
-                <img src="../icons/thesis-logo-v2-try1.png" alt="logo">Two Steps Ahead
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../icons/thesis-logo-v2-try1.png" alt="Two Steps Ahead Logo">
+                <span class="d-none d-sm-inline ms-2">Two Steps Ahead</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto d-flex gap-3">
                     <li class="nav-item">
-                        <a class="nav-link " href="home.html"><i class="fas fa-home me-1"></i> Home</a>
+                        <a class="nav-link" href="../Revised-Pages/home.html"><i class="fas fa-home me-1"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.html"><i class="fa-solid fa-map-location-dot me-1"></i>
+                        <a class="nav-link active" aria-current="page" href="#"><i
+                                class="fa-solid fa-map-location-dot me-1"></i>
                             Dynamic Map</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="user-guide-page.html"><i class="fa-solid fa-circle-info me-1"></i>
+                        <a class="nav-link" href="../Revised-Pages/user-guide-page.html"><i class="fa-solid fa-circle-info me-1"></i>
                             User Guide</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard-page.html"><i class="bi bi-grid-1x2-fill me-1"></i>
+                        <a class="nav-link" href="../Revised-Pages/dashboard-page.html"><i class="bi bi-grid-1x2-fill me-1"></i>
                             Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="training-page.html"><i class="bi bi-diagram-3-fill me-1"></i>
+                        <a class="nav-link" href="../Revised-Pages/training-page.html"><i class="bi bi-diagram-3-fill me-1"></i>
                             Training Result</a>
                     </li>
                 </ul>

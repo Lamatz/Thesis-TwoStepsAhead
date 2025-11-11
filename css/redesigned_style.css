@@ -145,7 +145,7 @@ body {
     margin: 10px 0;
 }
 
-/* Report Summary Section Styling */
+/* Report Summary Section Styling -------------------------------------*/
 #report-summary-section {
     background-color: var(--background-1);
     padding: 40px 20px;
@@ -263,12 +263,10 @@ body {
 
 
 
-/* Visual Summary Timeline */
+/* Visual Summary Timeline --------------------------------------*/
 .visual-summary {
-    /* background-color: #fafafa; */
     border-radius: 6px;
     padding: 16px;
-    /* border: 1px solid #eee; */
 }
 
 .visual-summary p {
@@ -308,10 +306,8 @@ body {
 [contenteditable][aria-placeholder]:empty:before {
     content: attr(aria-placeholder);
     color: #6c757d;
-    /* Standard bootstrap placeholder color */
     opacity: 1;
     pointer-events: none;
-    /* Allows clicks to go "through" the placeholder */
 }
 
 #report-detailed-description {
@@ -343,9 +339,7 @@ body {
 
 }
 
-
-
-/* Overlay styles */
+/* Overlay styles -----------------------------------------*/
 .overlay {
     position: absolute;
     top: 0;
@@ -374,13 +368,10 @@ body {
     color: #DC3545;
 }
 
-/* Input styling */
 .form-control:disabled {
     background-color: #f8f9fa;
 }
 
-
-/* A helper class to hide the overlay with JavaScript */
 #picker-overlay.hidden {
     display: none;
 }

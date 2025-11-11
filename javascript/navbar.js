@@ -1,19 +1,39 @@
 
-// Select the navbar element by its ID
-const nav = document.querySelector("#mainNavbar");
+document.addEventListener("DOMContentLoaded", function () {
+    const mainNavbar = document.querySelector('#mainNavbar');
+    const body = document.querySelector('body');
 
-// Store the last scroll position
-let lastScrollY = window.scrollY;
+    // --- 1. Dynamic Padding Function ---
+    // This ensures the body's top padding always matches the navbar's height.
+    const setBodyPadding = () => {
+        const navbarHeight = mainNavbar.offsetHeight;
+        body.style.paddingTop = `${navbarHeight}px`;
+    };
 
-window.addEventListener("scroll", () => {
-    // If the user scrolls down, hide the navbar
-    if (lastScrollY < window.scrollY && window.scrollY > 100) {
-        nav.classList.add("navbar--hidden");
-    } else {
-        // If the user scrolls up, show the navbar
-        nav.classList.remove("navbar--hidden");
-    }
+    // Set padding on initial load
+    setBodyPadding();
 
-    // Update the last scroll position
-    lastScrollY = window.scrollY;
+    // Recalculate padding if the window is resized
+    window.addEventListener('resize', setBodyPadding);
+
+
+    // --- 2. Hide Navbar on Scroll Function ---
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener("scroll", () => {
+        // Always show navbar if at the very top of the page
+        if (window.scrollY <= 0) {
+            mainNavbar.classList.remove("navbar--hidden");
+            return;
+        }
+
+        // Hide when scrolling down, show when scrolling up
+        if (lastScrollY < window.scrollY) {
+            mainNavbar.classList.add("navbar--hidden");
+        } else {
+            mainNavbar.classList.remove("navbar--hidden");
+        }
+
+        lastScrollY = window.scrollY;
+    });
 });
