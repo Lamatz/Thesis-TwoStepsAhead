@@ -26,19 +26,15 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- ADDED: Custom styles for the new layout -->
+
     <style>
-        /* 1. Set up the body to manage the entire viewport height */
+
         html,
         body {
             height: 100%;
-            /* margin: 0; */
-            /* padding: 0; */
             overflow: hidden;
-            /* Prevent any unwanted scrollbars on the body */
         }
 
-        /* 2. Make the body a flex container that stacks its children vertically */
         body {
             display: flex;
             flex-direction: column;
@@ -50,23 +46,16 @@
             min-height: 0;
         }
 
-
         #map {
             height: calc(100vh-61px);
             width: 100%;
             flex-grow: 1;
         }
 
-
-        /* On large screens, the offcanvas takes up space */
         .offcanvas-lg.offcanvas-end {
-            /* width: px; */
-            /* margin-top: 61px; */
-            height: calc(100vh -61px);
+            height: calc(100vh - 61px);
             top:61px;
         }
-
-
 
         /* Style for the floating button on mobile */
         .open-panel-btn {
@@ -132,24 +121,14 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
 
-        /* 
-        #report-summary-section {
-            overflow-y: auto;
-            width: 100%;
-        } */
-
         .report-section {
             overflow-y: auto;
             height: 100vh;
-            /* padding-top: 61px; */
-            /* margin-top: 61px; */
-            /* Make the section as tall as the viewport */
         }
 
         /* --- Scroll to Top Button --- */
         #scrollTopBtn {
             display: none;
-            /* Hidden by default, shown with JS */
             position: fixed;
             bottom: 20px;
             right: 30px;
@@ -158,7 +137,6 @@
             border: none;
             outline: none;
             background-color: #0dcaf0;
-            /* Same as btn-info */
             color: white;
             cursor: pointer;
             padding: 15px;
@@ -178,6 +156,18 @@
         /* ========================================= */
         /* == MEDIA QUERIES FOR RESPONSIVENESS == */
         /* ========================================= */
+
+
+                /* For tablets and smaller (screen width less than 768px) */
+        @media (max-width: 991.98px) {
+            .control-panel {
+                 box-shadow:none;
+                 border: none;
+            }
+
+     
+        }
+
 
         /* For tablets and smaller (screen width less than 768px) */
         @media (max-width: 767.98px) {
@@ -224,6 +214,7 @@
                 margin-bottom: 0;
             }
         }
+
     </style>
 
 </head>
@@ -456,7 +447,6 @@
                 </div>
 
                 <!-- Card: Environmental Variables -->
-                <!-- No changes needed here, col-md-12 already works fine on all screen sizes -->
                 <div class="card report-card mb-4">
                     <div class="card-header">
                         <strong><i class="fas fa-mountain me-2"></i>Environmental Variables</strong>
