@@ -19,7 +19,8 @@ body {
 
 
 .control-panel {
-    height: calc(100vh-61px);
+    height: calc(100vh - 61px);
+    width: 400px;
     background-color: var(--background-1);
     padding: 0 20px 20px 20px;
     overflow-y: auto;
