@@ -466,7 +466,7 @@ def generate_report():
 
             - **Geological Assessment:** [Provide a brief description of the area's geology, e.g., "The area is underlain by [rock formation], which is known for its susceptibility to weathering and erosion."]
             - **Soil Type:** {data.get('soil_type', 'N/A')} 
-            - **Slope Angle (degrees):** {data.get('slope', 'N/A')} if the slope is 1 then the slope is less than 10 degress it is 2 the slope value is between 10 to 20 degress if it is 3 then the value is between 20 to 30 degrees if the value is 4 then the value is between 30 to 40 degress if it is 5 then the value is 40 to 50 degress if it is 6 then the value is more than 50 degrees
+            - **Slope Angle (degrees):** {data.get('slope', 'N/A')} 
  
 
             ---
