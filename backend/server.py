@@ -415,8 +415,8 @@ def predict():
 
 
 # In order to use this properly you need to first:
-# 1. Have an api key for the gemini model (you can use mine but I recommend you have you own so that mine doesn't reach the rate limit. AIzaSyB-rg3sokaltFw2IHB8eiR1hbjNFaGxMpQ )
-# 2. create a ' .env ' file and the content should be ' GEMINI_API_KEY="your_api_key" '
+# 1. Have an api key for the gemini model
+# 2. create a ' .env ' file and the content should be ' GEMINI_API_KEY = "your_api_key" '
 # 3. the .env file and the server.py file should be in the same directory/within the same folder
 # 4. It should now work but if it doesn't make sure to save everything and reload you work
 load_dotenv()
