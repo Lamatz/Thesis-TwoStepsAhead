@@ -815,8 +815,8 @@ Do you wish to proceed?`;
     const date_today = today.toISOString().split('T')[0];
 
 
-      let slopeReport;
-      let slopeCheck = fetchedLocationData?.slope;
+    let slopeReport;
+    let slopeCheck = fetchedLocationData?.slope;
 
     if (slopeCheck === 1){
         slopeReport = "below 10 degerees"
@@ -829,6 +829,8 @@ Do you wish to proceed?`;
     } else {
         slopeReport = "above 50 degrees"
     }
+
+   let soil_moisture_percent = Math.round((lastFetchedWeatherData?.soil_moisture ?? 0) * 100);
 
 
     console.log("slope to check: ", slopeCheck);
@@ -855,7 +857,7 @@ Do you wish to proceed?`;
         original_model_confidence: lastPredictionResult?.confidence ?? "Not run",
 
         // === Data from Weather API Fetch ===
-        soil_moisture: lastFetchedWeatherData?.soil_moisture,
+        soil_moisture: soil_moisture_percent,
         "rainfall-3_hr": lastFetchedWeatherData?.cumulative_rainfall?.['3_hr'],
         "rainfall-6_hr": lastFetchedWeatherData?.cumulative_rainfall?.['6_hr'],
         "rainfall-12_hr": lastFetchedWeatherData?.cumulative_rainfall?.['12_hr'],
