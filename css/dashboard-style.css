@@ -28,12 +28,16 @@ body {
     color: #333; /* A dark gray is often easier on the eyes than pure black */
 }
 
+html,
+body{
+  overflow-x: hidden;
+}
+
 /* 2. Define the elegant serif headings (H1 & H2) */
 h1, h2 {
     font-family: var(--font-primary); 
     font-weight: 700; /* Bold */
     line-height: 1.2;
-    margin-top: 1em;
     margin-bottom: 0.5em;
 }
 
