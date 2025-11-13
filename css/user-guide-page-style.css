@@ -12,6 +12,55 @@
 }
 
 
+:root {
+    --font-primary: 'Poppins', sans-serif;
+    --font-heading: 'Playfair Display', serif;
+}
+
+/* 1. Set the default body font */
+body {
+    font-family: var(--font-primary); /* Poppins is the primary font, sans-serif is the fallback */
+    font-weight: 400; /* Regular weight */
+    line-height: 1.6; /* Improves readability */
+    color: #333; /* A dark gray is often easier on the eyes than pure black */
+}
+
+/* 2. Define the elegant serif headings (H1 & H2) */
+h1, h2 {
+    font-family: var(--font-primary); 
+    font-weight: 700; /* Bold */
+    line-height: 1.2;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-weight: 900; 
+    font-size: 3rem; 
+}
+
+h2 {
+    font-size: 2.25rem; /* Example size */
+}
+
+h3 {
+    font-weight: 600; /* SemiBold */
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-weight: 600; /* SemiBold */
+    font-size: 1.25rem;
+    text-transform: uppercase; /* An optional style to make H4s stand out */
+    letter-spacing: 0.05em;
+}
+
+h5, h6 {
+    font-weight: 500; /* Medium */
+    font-size: 1rem;
+}
+
+
 .main-content {
     background-color: var(--background);
 }
