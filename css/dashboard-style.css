@@ -1,135 +1,122 @@
+/* ==========================================================================
+   1. Root Variables & Configuration
+   ========================================================================== */
 :root {
-  --text-color: #190809;
-  /* --background-color: #fcf5f5; */
-  --background-color: #ece2c7;
-  --text-gradient-start: #8B4513;
-  --text-gradient-end: #D2B48C;
-  --background-color: #ece2c7;
-  --primary-color: #8B4513;
-  --secondary-color: #FFDBB5;
-  --accent-color: #ce9f66;
-  --text-dark: #212529;
+  /* Color Palette */
+  --primary-color: #8B4513;      /* SaddleBrown - Main brand color for titles, buttons */
+  --secondary-color: #FFDBB5;    /* A light, complementary color */
+  --accent-color: #ce9f66;       /* A mid-tone accent */
+  --background-color: #ece2c7;   /* Main page background */
+  --text-color: #190809;         /* Main text color, almost black */
+  --text-dark: #212529;          /* A standard dark grey, good for contrast */
+  --border-color: #dee2e6;       /* Standard border color for cards, inputs */
+  --shadow-color: rgba(0, 0, 0, 0.075); /* A soft shadow color */
+
+  /* Typography */
+  --font-primary: 'Poppins', sans-serif;
+
+  /* Layout */
   --navbar-height: 61px;
-  --border-color: #dee2e6;
 }
 
 
-
-:root {
-    --font-primary: 'Poppins', sans-serif;
-}
-
+/* ==========================================================================
+   2. Base & Global Styles
+   ========================================================================== */
 html,
-body{
+body {
   overflow-x: hidden;
 }
 
-/* 1. Set the default font for the entire site */
 body {
-    font-family: var(--font-primary); /* Poppins is our one and only font family */
-    font-weight: 400; /* Regular weight for all body text */
-    line-height: 1.6;
-    color: #222; /* A slightly softer black */
-}
-
-/* 2. Style the headings to create a clear hierarchy */
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-}
-
-/* Make H1 extra punchy for the main page title */
-h1 {
-    font-weight: 800; /* ExtraBold */
-    font-size: 3.2rem; /* Large and in charge */
-    letter-spacing: -0.02em; /* Slightly tighten the letters for a modern look */
-}
-
-/* H2 for major section titles */
-h2 {
-    font-weight: 700; /* Bold */
-    font-size: 2.25rem;
-}
-
-/* H3 for sub-section titles */
-h3 {
-    font-weight: 600; /* SemiBold */
-    font-size: 1.75rem;
-}
-
-/* H4 for smaller labels or group titles */
-h4 {
-    font-weight: 600; /* SemiBold */
-    font-size: 1.25rem;
-    text-transform: uppercase; /* Use uppercase to make it distinct */
-    letter-spacing: 0.05em;  /* Add some space for a "label" feel */
-}
-
-/* H5 & H6 for minor details */
-h5, h6 {
-    font-weight: 500; /* Medium */
-    font-size: 1rem;
-}
-
-body {
-  background-color: var(--background-color);
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.6;
   color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 
+/* ==========================================================================
+   3. Typography Hierarchy
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  margin-top: 0;
+  /* Resetting margin for consistency */
+  margin-bottom: 0.5rem;
+}
 
-/* --- Main Content Layout --- */
+h1 {
+  font-weight: 800; /* ExtraBold */
+  font-size: 3.2rem;
+  letter-spacing: -0.02em;
+  color: var(--primary-color);
+}
+
+h2 {
+  font-weight: 700; /* Bold */
+  font-size: 2.25rem;
+}
+
+h3 {
+  font-weight: 600; /* SemiBold */
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-weight: 600; /* SemiBold */
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+h5, h6 {
+  font-weight: 500; /* Medium */
+  font-size: 1rem;
+}
+
+
+/* ==========================================================================
+   4. Layout & Main Components
+   ========================================================================== */
 .dashboard-main {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
-/* --- Page Header --- */
+/* --- Page Header & Controls --- */
 .page-header {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .page-header .lead {
   font-weight: 400;
 }
 
-.title-page {
-  color: var(--primary-color);
-}
-
 .header-controls {
   display: flex;
   gap: 1rem;
   align-items: center;
-  justify-content: space-between;
-}
-
-.control-item i {
-  color: #888;
 }
 
 .control-item {
   display: flex;
   align-items: center;
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding-left: 15px;
   flex-grow: 1;
-  /* Allows it to take up available space */
   max-width: 400px;
-  /* Prevents it from getting too wide */
 }
 
 #regionSelect {
   width: 100%;
   padding: 12px 10px;
   font-size: 1rem;
-  /* font-family: 'Nunito', sans-serif; */
   border: none;
   background-color: transparent;
-  -webkit-appearance: none;
-  /* Removes default OS styling */
-  -moz-appearance: none;
   appearance: none;
   cursor: pointer;
 }
@@ -141,16 +128,16 @@ body {
   padding: 12px 24px;
   font-size: 1rem;
   font-weight: 700;
+  color: #f5f0e1;
+  background-color: var(--primary-color); /* Using variable */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
-  background-color: #8B4513;
-  color: #f5f0e1;
 }
 
 #resetFilters:hover {
-  background-color: #65320d;
+  background-color: #65320d; /* Consider making this a variable, e.g., --primary-color-dark */
 }
 
 
@@ -161,7 +148,6 @@ body {
   box-shadow: 0 4px 15px var(--shadow-color);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   height: 100%;
-  /* Ensures cards in a row have the same height */
 }
 
 .card:hover {
@@ -172,22 +158,16 @@ body {
 .card-header {
   background-color: transparent;
   border-bottom: 1px solid var(--border-color);
-  /* padding: 1.25rem; */
 }
 
 .card-title {
   font-weight: 600;
 }
 
-.card-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* padding: 1.5rem; */
-}
 
-
-/* --- Map Section --- */
+/* ==========================================================================
+   5. Map & Legend Component
+   ========================================================================== */
 #map-container {
   position: relative;
   height: 70vh;
@@ -201,49 +181,18 @@ body {
   border-radius: 5px;
 }
 
-/* --- Map Legend --- */
+/* --- Legend Base Styles --- */
 .legend {
   position: absolute;
   bottom: 40px;
   left: 20px;
+  z-index: 1000; /* Ensure it's on top of map tiles */
   background: rgba(255, 255, 255, 0.9);
-  padding: 15px 5px 15px 15px;
+  padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  /* font-family: Arial, sans-serif; */
-  z-index: 1;
-}
-
-.legend .legend-header h4 {
-  /* margin: 0 0 10px 0; */
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.legend .legend-content div {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.legend div:last-child {
-  margin-bottom: 0;
-}
-
-.legend .legend-content span {
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  margin-right: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* --- COLLAPSIBLE & RESPONSIVE MAP LEGEND --- */
-.legend {
-  /* Add transitions for smooth collapsing */
   transition: all 0.4s ease-in-out;
   overflow: hidden;
-  /* Important for the max-height trick */
 }
 
 .legend-header {
@@ -251,18 +200,16 @@ body {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  /* Indicates the whole header is clickable */
-  padding-right: 5px;
-  /* Spacing for the button */
 }
 
 .legend-header h4 {
-  margin-bottom: 0;
-  /* Remove default margin */
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .legend-toggle {
-  background: transparent;
+  background: none;
   border: none;
   padding: 0 5px;
   cursor: pointer;
@@ -271,23 +218,37 @@ body {
 
 .legend-toggle i {
   transition: transform 0.4s ease-in-out;
-  /* Smooth icon rotation */
 }
 
 .legend-content {
-  /* Use max-height for a smooth CSS transition. Set a value larger than it will ever need. */
-  max-height: 200px;
+  max-height: 200px; /* A value larger than the content will ever be */
+  margin-top: 10px;
+  opacity: 1;
   overflow: hidden;
   transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.4s ease;
-  margin-top: 10px;
-  /* Space between header and content */
-  opacity: 1;
 }
 
+.legend-content div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
 
-/* --- STYLES FOR THE COLLAPSED STATE --- */
+.legend-content div:last-child {
+  margin-bottom: 0;
+}
+
+.legend-content span {
+  flex-shrink: 0; /* Prevents the circle from shrinking */
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* --- Legend Collapsed State --- */
 .legend.is-collapsed {
-  /* Optional: make the legend smaller when collapsed */
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -299,26 +260,17 @@ body {
 }
 
 .legend.is-collapsed .legend-toggle i {
-  /* Rotate the chevron icon to point down */
   transform: rotate(180deg);
 }
 
-/* On smaller screens, make the legend less intrusive */
-@media (max-width: 768px) {
-  .legend {
-    /* Take up less width on mobile */
-    max-width: 180px;
-    padding: 10px;
-    left: 10px;
-    bottom: 10px;
-  }
-}
 
-
+/* ==========================================================================
+   6. Media Queries & Responsiveness
+   ========================================================================== */
 
 /* For Tablets and smaller devices (<= 992px) */
 @media (max-width: 992px) {
-  .page-header .d-flex {
+  .page-header > .d-flex {
     flex-direction: column;
     align-items: flex-start !important;
     gap: 1.5rem;
@@ -329,41 +281,24 @@ body {
     flex-direction: column;
     align-items: stretch !important;
   }
-
-  #regionSelect {
-    width: 100%;
-  }
 }
 
 /* For Mobile devices (<= 768px) */
 @media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
   .dashboard-main {
     padding-top: 1rem;
   }
 
-  .title-page {
-    font-size: 2rem;
-  }
-
-  .lead {
-    font-size: 1rem;
-  }
-
-  .controls-bar {
-    flex-direction: column;
-    /* Stack items vertically */
-    align-items: stretch;
-    /* Make items full-width */
-  }
-
   .control-item {
     max-width: 100%;
-    /* Allow dropdown to be full width */
   }
 
   #map-container {
     height: 60vh;
-    /* Reduce map height on mobile */
     min-height: 400px;
   }
 
@@ -371,145 +306,6 @@ body {
     bottom: 10px;
     left: 10px;
     padding: 10px;
-  }
-
-  .legend h4 {
-    font-size: 0.9rem;
+    max-width: 180px;
   }
 }
-
-/* body {
-  padding-top: 80px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  font-family: 'Segoe UI', sans-serif;
-} */
-
-
-/* .chart-container {
-  width: 90%;
-  max-width: 800px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-} */
-
-/* 
-.legend {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 5px;
-    bottom: 30px;
-    right: 10px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    position: absolute;
-    z-index: 1;
-    font-family: Arial, sans-serif;
-    line-height: 1.5;
-}
-
-.legend h4 {
-    margin: 0 0 10px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.legend div span {
-    border-radius: 50%;
-    display: inline-block;
-    height: 12px;
-    width: 12px;
-    margin-right: 8px;
-    vertical-align: middle;
-} */
-
-
-
-
-/* --- Tutorial Modal Styles --- */
-/* .tutorial-modal {
-  display: none;
-  position: fixed;
-  z-index: 1050;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-.tutorial-modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 90%;
-  max-width: 400px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.tutorial-modal-content h2 {
-  margin-top: 0;
-  color: var(--primary-color);
-}
-
-.tutorial-modal-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-around;
-}
-
-.shepherd-button {
-  padding: .375rem .75rem !important;
-  border-radius: .25rem !important;
-  font-size: 1rem !important;
-  line-height: 1.5 !important;
-  cursor: pointer !important;
-  border: 1px solid transparent !important;
-}
-
-.shepherd-button.shepherd-button-primary {
-  color: #fff !important;
-  background-color: #6C4E31 !important;
-  border-color: #6C4E31 !important;
-}
-
-.shepherd-button.shepherd-button-primary:hover {
-  background-color: #533c27 !important;
-  border-color: #533c27 !important;
-}
-
-.shepherd-button.shepherd-button-secondary {
-  color: #6C4E31 !important;
-  background-color: transparent !important;
-  border-color: #6C4E31 !important;
-}
-
-.shepherd-button.shepherd-button-secondary:hover {
-  color: #fff !important;
-  background-color: #6C4E31 !important;
-  border-color: #6C4E31 !important;
-}
-
-.shepherd-modal-overlay {
-  z-index: 99998 !important;
-}
-
-.shepherd-element {
-  z-index: 99999 !important;
-}
-
-.my-custom-step-background {
-  background-color: #fff;
-  color: var(--text-color);
-}
-
-.my-custom-step-background .shepherd-text {
-  color: var(--text-color) !important;
-} */
