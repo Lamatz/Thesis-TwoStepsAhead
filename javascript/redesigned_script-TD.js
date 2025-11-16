@@ -974,8 +974,12 @@ let scrollTopButton = document.getElementById("scrollTopBtn");
 // When the user clicks on the button, scroll to the top of the document smoothly
 scrollTopButton.addEventListener("click", function () {
     
-    document.getElementById("main-cont").style.display = "flex";
     document.getElementById("report-sect").style.display="none";
+    document.getElementById("main-cont").style.display = "flex";
+    
+     setTimeout(function() {
+        map.invalidateSize();
+    }, 100); // A 100ms delay is usually safe and unnoticeable.
 
     window.scrollTo({
         top: 0,
