@@ -1,4 +1,10 @@
+/* ==========================================================================
+   User Guide & Dashboard Page Styles
+   ========================================================================== */
+
+/* --- 1. Global Setup & Variables --- */
 :root {
+    /* Colors */
     --text-color: #190809;
     --text-gradient-start: #8B4513;
     --text-gradient-end: #D2B48C;
@@ -7,71 +13,73 @@
     --secondary-color: #FFDBB5;
     --accent-color: #ce9f66;
     --text-dark: #212529;
+
+    /* Fonts */
+    --font-primary: 'Poppins', sans-serif;
+
+    /* Layout (Note: --navbar-height is defined but not used in this file) */
     --navbar-height: 61px;
 }
 
-
-:root {
-    --font-primary: 'Poppins', sans-serif;
+html,
+body{
+  overflow-x: hidden;
 }
 
-/* 1. Set the default font for the entire site */
+/* Base body styles */
 body {
-    font-family: var(--font-primary); /* Poppins is our one and only font family */
-    font-weight: 400; /* Regular weight for all body text */
+    font-family: var(--font-primary);
+    font-weight: 400;
     line-height: 1.6;
-    color: #222; /* A slightly softer black */
+    color: #222; /* A softer black for better readability */
+    background-color: var(--background-color);
 }
 
-/* 2. Style the headings to create a clear hierarchy */
+
+/* --- 2. Typography --- */
+
+/* Default line-height for all headings */
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
 }
 
-/* Make H1 extra punchy for the main page title */
+/* Main page title */
 h1 {
     font-weight: 800; /* ExtraBold */
-    font-size: 3.2rem; /* Large and in charge */
-    letter-spacing: -0.02em; /* Slightly tighten the letters for a modern look */
+    font-size: 3.2rem;
+    letter-spacing: -0.02em;
 }
 
-/* H2 for major section titles */
+/* Major section titles */
 h2 {
     font-weight: 700; /* Bold */
     font-size: 2.25rem;
 }
 
-/* H3 for sub-section titles */
+/* Sub-section titles */
 h3 {
     font-weight: 600; /* SemiBold */
     font-size: 1.75rem;
 }
 
-/* H4 for smaller labels or group titles */
+/* Smaller labels or group titles */
 h4 {
     font-weight: 600; /* SemiBold */
     font-size: 1.25rem;
-    text-transform: uppercase; /* Use uppercase to make it distinct */
-    letter-spacing: 0.05em;  /* Add some space for a "label" feel */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-/* H5 & H6 for minor details */
+/* Minor detail headings */
 h5, h6 {
     font-weight: 500; /* Medium */
     font-size: 1rem;
 }
 
 
-body {
-    background-color: var(--background-color);
-}
-html,
-body{
-  overflow-x: hidden;
-}
+/* --- 3. Layout Components --- */
 
-
-/* --- Page Header --- */
+/* Page Header (e.g., "User Guide") */
 .page-header {
     border-bottom: 1px solid var(--accent-color);
     padding-bottom: 1rem;
@@ -82,17 +90,17 @@ body{
     color: var(--primary-color);
 }
 
-.page-header .lead{
+.page-header .lead {
     font-weight: 400;
 }
 
-/* --- Card Styles --- */
+/* General Card Styling */
 .card {
     border: none;
     border-radius: 0.75rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%;
+    height: 100%; /* Ensures cards in the same row have equal height */
 }
 
 .card:hover {
@@ -105,8 +113,6 @@ body{
     border-bottom: 1px solid #e9ecef;
     font-weight: 500;
     padding: 1.25rem;
-    border-top-left-radius: 0.75rem;
-    border-top-right-radius: 0.75rem;
 }
 
 .card-header .card-title {
@@ -118,7 +124,9 @@ body{
 }
 
 
-/* --- Stat Card (Top Row) --- */
+/* --- 4. Specific Component Styles --- */
+
+/* Stat Cards (Top row of dashboard) */
 .stat-card .card-body {
     display: flex;
     align-items: center;
@@ -146,50 +154,20 @@ body{
 }
 
 /* Gradient backgrounds for stat cards */
-.bg-gradient-accuracy {
-    background: linear-gradient(45deg, #1abc9c, #16a085);
-}
+.bg-gradient-accuracy { background: linear-gradient(45deg, #1abc9c, #16a085); }
+.bg-gradient-precision { background: linear-gradient(45deg, #3498db, #2980b9); }
+.bg-gradient-f1score { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
 
-.bg-gradient-precision {
-    background: linear-gradient(45deg, #3498db, #2980b9);
-}
 
-.bg-gradient-f1score {
-    background: linear-gradient(45deg, #9b59b6, #8e44ad);
-}
-
-/* This css was used for charts but since the web app now uses images its not needed anymore */
-/* --- Chart Card Placeholder --- */
-/* .chart-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e9ecef;
-    color: #6c757d;
-    min-height: 250px;
-    border-radius: 0.5rem;
-}
-.placeholder-img img {
-    width: 300px;
-} */
-
-/* --- Classification Report & Model Params --- */
+/* Classification Report & Model Parameters */
 .classification-report pre {
     background-color: #663f1a;
-    /* Dark background for code block */
     color: #ecf0f1;
     padding: 1.5rem;
     border-radius: 0.5rem;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.9rem;
-    /* white-space: pre-wrap; */
-    /* Allows text to wrap */
-    overflow-x: auto;
-    /* Adds horizontal scroll on small screens */
-}
-
-.classification-report {
-    overflow-x: auto;
+    overflow-x: auto; /* Adds horizontal scroll only to this code block if needed */
 }
 
 .model-params .param-item {
@@ -204,10 +182,7 @@ body{
     border-bottom: none;
 }
 
-.model-params .param-label {
-    color: #6c757d;
-}
-
+.model-params .param-label { color: #6c757d; }
 .model-params .param-value {
     font-weight: 500;
     color: #2c3e50;
@@ -217,20 +192,19 @@ body{
     font-size: 0.9rem;
 }
 
-
-/* --- Feature Importance --- */
+/* Chart Container (Feature Importance, etc.) */
 .chart-container {
     position: relative;
+    /* Fixed height is common for chart libraries but may need adjustment */
     height: 600px; 
     width: 100%;
 }
 
 
-/* --- Responsive Design --- */
+/* --- 5. Responsive Design --- */
 @media (max-width: 768px) {
     .page-header h1 {
         font-size: 2.25rem;
-        /* Reduce heading size on smaller screens */
     }
 
     .stat-card .stat-icon {
@@ -245,15 +219,3 @@ body{
         height: 450px; /* Use a smaller height on mobile devices */
     }
 }
-
-
-
-
-
-/* .chart-container {
-    height: 600px;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-} */

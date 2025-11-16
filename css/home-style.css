@@ -152,7 +152,7 @@ h5, h6 {
 
 .btn-outline-primary:hover {
     background-color: var(--primary-color);
-    color: #fff !important; /* The !important is likely needed to override Bootstrap's default styles */
+    color: #fff !important;
 }
 
 
