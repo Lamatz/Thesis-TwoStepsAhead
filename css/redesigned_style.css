@@ -1,116 +1,180 @@
-/* General Body & Layout */
+/* =========================================
+   0. GLOBAL STYLES & VARIABLES
+   ========================================= */
 
 :root {
+    /* Colors */
     --background-1: #FAF8F2;
-}
+    --text-primary: #222;
+    --text-secondary: #343a40;
+    --border-color: #dee2e6;
+    --border-color-light: #ced4da;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --white: #fff;
+    --blue: #0d6efd;
+    --red: #dc3545;
+    --green: #198754;
 
-
-:root {
+    /* Fonts */
     --font-primary: 'Poppins', sans-serif;
 }
 
-/* 1. Set the default font for the entire site */
+html,
 body {
-    font-family: var(--font-primary); /* Poppins is our one and only font family */
-    font-weight: 400; /* Regular weight for all body text */
+    height: 100%;
+    overflow: hidden; /* Prevents scrolling on the main page container */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-primary);
+    font-weight: 400;
     line-height: 1.6;
-    color: #222; /* A slightly softer black */
-}
-
-/* 2. Style the headings to create a clear hierarchy */
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-}
-
-/* Make H1 extra punchy for the main page title */
-h1 {
-    font-weight: 800; /* ExtraBold */
-    font-size: 3.2rem; /* Large and in charge */
-    letter-spacing: -0.02em; /* Slightly tighten the letters for a modern look */
-}
-
-/* H2 for major section titles */
-h2 {
-    font-weight: 700; /* Bold */
-    font-size: 2.25rem;
-}
-
-/* H3 for sub-section titles */
-h3 {
-    font-weight: 600; /* SemiBold */
-    font-size: 1.75rem;
-}
-
-/* H4 for smaller labels or group titles */
-h4 {
-    font-weight: 600; /* SemiBold */
-    font-size: 1.25rem;
-    text-transform: uppercase; /* Use uppercase to make it distinct */
-    letter-spacing: 0.05em;  /* Add some space for a "label" feel */
-}
-
-/* H5 & H6 for minor details */
-h5, h6 {
-    font-weight: 500; /* Medium */
-    font-size: 1rem;
-}
-
-
-body {
+    color: var(--text-primary);
     background-color: var(--background-1);
 }
 
+
+/* =========================================
+   1. TYPOGRAPHY
+   ========================================= */
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    color: var(--text-secondary);
+}
+
+/* Main page title */
+h1 {
+    font-size: 3.2rem;
+    font-weight: 800; /* ExtraBold */
+    letter-spacing: -0.02em;
+}
+
+/* Major section titles */
+h2 {
+    font-size: 2.25rem;
+    font-weight: 700; /* Bold */
+}
+
+/* Sub-section titles */
+h3 {
+    font-size: 1.75rem;
+    font-weight: 600; /* SemiBold */
+}
+
+/* Smaller labels or group titles */
+h4 {
+    font-size: 1.25rem;
+    font-weight: 600; /* SemiBold */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Minor details */
+h5, h6 {
+    font-size: 1rem;
+    font-weight: 500; /* Medium */
+}
+
+.app-title,
+.report-title {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.report-title {
+    border-bottom: 2px solid var(--border-color-light);
+    padding-bottom: 15px;
+}
+
+
+/* =========================================
+   2. LAYOUT & STRUCTURE
+   ========================================= */
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    min-height: 0; /* Important for flexbox children scrolling */
+}
+
 #map {
-    height: calc(100vh-61px);
+    height: calc(100vh - 61px);
     width: 100%;
     flex-grow: 1;
 }
 
-
+.leaflet-container img.leaflet-tile {
+    max-width: none !important;
+    height: auto !important;
+}
 
 .control-panel {
     height: calc(100vh - 61px);
     width: 400px;
     background-color: var(--background-1);
-    padding: 0 20px 20px 20px;
+    padding: 0 20px 20px;
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    border-right: 1px solid #dee2e6;
+    box-shadow: 2px 0 10px var(--shadow-color);
+    border-right: 1px solid var(--border-color);
     box-sizing: border-box;
 }
 
-.app-title {
-    color: #343a40;
-    font-weight: 600;
+/* Report section uses full viewport height for scrolling */
+.report-section {
+    overflow-y: auto;
+    height: 100vh;
+}
+
+/* Offcanvas styles for responsive layout */
+.offcanvas-lg.offcanvas-end {
+    height: calc(100vh - 61px);
+    top: 61px;
+}
+
+.offcanvas-body {
+    background-color: var(--background-1);
+    height: calc(100vh - 61px) !important;
+    overflow-y: hidden;
 }
 
 
-/* Card Styling */
-.card {
-    border: 1px solid #dee2e6;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* =========================================
+   3. COMPONENTS
+   ========================================= */
+
+/* --- Cards --- */
+.card,
+.report-card {
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border-radius: 0.5rem;
+    background-color: var(--white);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
-.card-body {
-    background-color: rgba(255, 255, 255, 0.9);
+.report-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
     font-weight: bold;
-    color: #fff;
     font-size: 1.1rem;
+    color: var(--white);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.card-header-blue {
-    background-color: #0d6efd;
-}
+/* Header color variations */
+.card-header-blue  { background-color: var(--blue); }
+.card-header-red   { background-color: var(--red); }
+.card-header-green { background-color: var(--green); }
 
-.card-header-red {
-    background-color: #dc3545;
-}
-
-.card-header-green {
-    background-color: #198754;
+/* Specific card header style for reports */
+.report-card .card-header {
+    background-color: #f8f9fa;
+    color: #495057;
 }
 
 #selected-location-body p {
@@ -119,66 +183,34 @@ body {
 
 #selected-location-body strong {
     display: inline-block;
-    min-width: 70px;
-    /* Align text */
+    min-width: 70px; /* Aligns text neatly */
 }
 
-/* Search Suggestions */
-.suggestions-container {
-    position: absolute;
-    background: white;
-    width: calc(100% - 42px);
-    /* Adjust width to fit inside the card body next to the button */
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1100;
-    border: 1px solid #ddd;
-    border-radius: 0 0 5px 5px;
-    font-size: 14px;
-}
-
-/* Modal Styling */
+/* --- Modals --- */
 .modal-container {
     display: none;
     position: fixed;
     z-index: 1050;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
 }
 
-
 .modal-content-custom {
-    background-color: white;
+    background-color: var(--white);
     padding: 30px;
     border-radius: 8px;
     width: 90%;
     max-width: 500px;
-    /* Limit max width */
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
 .close-btn {
-    color: #aaa;
     float: right;
+    color: #aaa;
     font-size: 28px;
     font-weight: bold;
     line-height: 1;
@@ -196,207 +228,122 @@ body {
     margin: 10px 0;
 }
 
-/* Report Summary Section Styling -------------------------------------*/
-#report-summary-section {
-    background-color: var(--background-1);
-    padding: 40px 20px;
-}
-
-.report-title {
-    color: #343a40;
-    font-weight: 600;
-    border-bottom: 2px solid #ced4da;
-    padding-bottom: 15px;
-}
-
-.report-card {
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 0.375rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-
-.report-card .card-header {
-    background-color: #f8f9fa;
-    color: #495057;
-    font-size: 1.1rem;
-    border-bottom: 1px solid #ced4da;
-}
-
-.report-card p {
+/* --- Forms & Inputs --- */
+#date-picker,
+#report-detailed-description {
+    padding: 10px;
     font-size: 1rem;
-    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-color-light);
+    border-radius: 6px;
+    background-color: var(--white);
 }
 
-.report-card strong {
-    color: #343a40;
+#hour-picker-input,
+#forecast-date {
+    caret-color: transparent; /* Hide blinking cursor */
 }
 
+/* Remove border radius for input group elements */
+#hour-picker-input,
+#forecast-date,
+.input-group-text {
+    border-radius: 0;
+}
 
+.form-control:disabled {
+    background-color: #f8f9fa;
+}
+
+#report-detailed-description {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+#report-detailed-description:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Placeholder styling for contenteditable div */
+#report-detailed-description:empty:before {
+    content: attr(aria-placeholder);
+    color: #6c757d;
+    pointer-events: none;
+}
+
+/* --- Search Suggestions --- */
+.suggestions-container {
+    position: absolute;
+    background: var(--white);
+    width: calc(100% - 42px);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1100;
+    border: 1px solid #ddd;
+    border-radius: 0 0 5px 5px;
+    font-size: 14px;
+}
+
+/* --- Buttons --- */
 #scrollTopBtn {
     display: none;
-    /* Hidden by default */
     position: fixed;
-    /* Stays in the same place on the screen */
-    bottom: 30px;
-    right: 200px;
+    bottom: 20px;
+    right: 30px;
     z-index: 99;
-    /* Stays on top of other content */
-    border: none;
-    outline: none;
-    background-color: #A0522D;
+    background-color: #0dcaf0;
     color: white;
-    cursor: pointer;
-    padding: 0px;
+    border: none;
     border-radius: 50%;
-    font-size: 18px;
     width: 50px;
     height: 50px;
-    transition: opacity 0.4s, background-color 0.3s;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
 }
 
 #scrollTopBtn:hover {
-    background-color: #5C4033;
+    background-color: #0b9fb5;
 }
 
-
-#date-picker {
-    /* width: 100%; */
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: white;
+/* Floating button for mobile to open the control panel */
+.open-panel-btn {
+    position: fixed;
+    top: 70px;
+    left: 10px;
+    z-index: 1050;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-/* =============================== */
-/* STYLE FOR THE LOADING SPINNER*/
-/* =============================== */
-/* Simple CSS spinner for loading indication */
+/* --- Loading Spinner --- */
 .spinner {
     display: inline-block;
     width: 16px;
     height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    /* Light part of the circle */
     border-radius: 50%;
-    border-top-color: #fff;
-    /* Opaque part of the circle */
+    border-top-color: var(--white);
     animation: spin 1s ease-in-out infinite;
     margin-left: 10px;
-    /* Space between text and spinner */
     vertical-align: middle;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Style for the button when it's disabled */
 #predict-btn:disabled {
     cursor: not-allowed;
     opacity: 0.7;
 }
 
-
-.tempus-dominus-widget {
-    transition: none !important;
-}
-
-#hour-picker-input,
-#forecast-date {
-    caret-color: transparent;
-}
-
-
-
-
-/* Visual Summary Timeline --------------------------------------*/
-.visual-summary {
-    border-radius: 6px;
-    padding: 16px;
-}
-
-.visual-summary p {
-    margin: 0 0 12px 0;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.visual-summary strong {
-    color: #2E7D32;
-}
-
-
-
-
-/* Add a blinking cursor effect to the end of the textarea while streaming */
-.streaming {
-    caret-color: transparent;
-    /* Hide the default caret */
-}
-
-.streaming::after {
-    content: '▋';
-    /* A solid block character */
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-}
-
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
-}
-
-
-/* Style the placeholder for the contenteditable div */
-[contenteditable][aria-placeholder]:empty:before {
-    content: attr(aria-placeholder);
-    color: #6c757d;
-    opacity: 1;
-    pointer-events: none;
-}
-
-#report-detailed-description {
-    min-height: 150px;
-    overflow-y: auto;
-    resize: none;
-    /* white-space: pre-wrap;  */
-}
-
-#report-detailed-description:empty:before {
-    content: attr(aria-placeholder);
-    color: #6c757d;
-    cursor: text;
-    pointer-events: none;
-}
-
-
-#hour-picker-input,
-#forecast-date,
-.input-group-text{
-    border-radius: 0;
-}
-
-
-/* The wrapper needs to be relative for the absolute positioning of the overlay */
+/* --- Pickers Overlay --- */
 #pickers-wrapper {
     position: relative;
     margin-bottom: 1rem;
-
 }
 
-/* Overlay styles -----------------------------------------*/
 .overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(2px);
     display: flex;
@@ -405,6 +352,10 @@ body {
     z-index: 10;
     border-radius: 0.375rem;
     transition: opacity 0.3s ease;
+}
+
+#picker-overlay.hidden {
+    display: none;
 }
 
 .overlay-content {
@@ -416,13 +367,89 @@ body {
 .overlay-icon {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
-    color: #DC3545;
+    color: var(--red);
 }
 
-.form-control:disabled {
-    background-color: #f8f9fa;
+/* --- Streaming Text Effect --- */
+.streaming::after {
+    content: '▋'; /* Solid block character */
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
 }
 
-#picker-overlay.hidden {
-    display: none;
+
+/* =========================================
+   4. ANIMATIONS & KEYFRAMES
+   ========================================= */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+
+/* =========================================
+   5. RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================= */
+
+/* Large devices (desktops, less than 992px) */
+@media (max-width: 991.98px) {
+    .control-panel {
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Hide the Bootstrap offcanvas header on desktop where it's not needed */
+    #controlPanel .offcanvas-header {
+        display: none;
+    }
+}
+
+/* Medium devices (tablets, less than 768px) */
+@media (max-width: 767.98px) {
+    .report-title {
+        font-size: 1.8rem;
+    }
+
+    .report-card .card-body {
+        padding: 1rem;
+    }
+
+    .report-card .card-body p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Small devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+    .report-title {
+        font-size: 1.5rem;
+    }
+
+    .card-header strong {
+        font-size: 1rem;
+    }
+
+    #generate-report-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* Stack action buttons on mobile */
+    .action-buttons-container .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-buttons-container .btn:last-child {
+        margin-bottom: 0;
+    }
 }
