@@ -409,8 +409,10 @@ function populateReportSummary() {
 // MODIFIED: hideAndClearReportSummary to destroy all four charts
 function hideAndClearReportSummary() {
     const reportSection = document.getElementById("report-summary-section");
+    const mainSection = document.getElementById("main-cont");
     if (reportSection) {
         reportSection.style.display = "none";
+        mainSection.style.display = "flex"
         document.getElementById("report-detailed-description").value = "";
         if (hourlyCumulativeChart) hourlyCumulativeChart.destroy();
         if (hourlyIntensityChart) hourlyIntensityChart.destroy();
@@ -973,6 +975,10 @@ let scrollTopButton = document.getElementById("scrollTopBtn");
 
 // When the user clicks on the button, scroll to the top of the document smoothly
 scrollTopButton.addEventListener("click", function () {
+    
+    // In order to make the scroll smoother i have to find a way to first make the main content
+    // show and then wait for the scroll to go to the top and then thats when you make the 
+    //report section disappear
     
     document.getElementById("report-sect").style.display="none";
     document.getElementById("main-cont").style.display = "flex";
