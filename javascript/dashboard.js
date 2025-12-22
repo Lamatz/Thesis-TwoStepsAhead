@@ -101,7 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     properties: {
                         region: row.region.trim(),
                         date: dateStr,
-                        year: year || 0
+                        year: year || 0,
+                        month: monthIndex
                     }
                 });
             }
@@ -116,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 monthIndex: monthIndex
             };
         }).filter(item => item !== null && item.year !== null && item.monthIndex >= 0 && item.monthIndex < 12);
-        
+
         // Initial Top Regions Chart (Static based on total data)
         renderTopRegionsChart();
     }
@@ -129,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Construct dynamic color expression from CONFIG
             const colorExpression = ['step', ['to-number', ['get', 'year']]];
             CONFIG.colors.mapSteps.forEach(step => {
-                if(step.length === 2) { colorExpression.push(step[0]); colorExpression.push(step[1]); }
+                if (step.length === 2) { colorExpression.push(step[0]); colorExpression.push(step[1]); }
                 else { colorExpression.push(step[0]); }
             });
 
@@ -174,9 +175,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const ctxMonth = document.getElementById('roadsChart').getContext('2d');
         historyChartMonthly = new Chart(ctxMonth, {
             type: 'bar',
-            data: { 
-                labels: CONFIG.months, 
-                datasets: [{ label: 'Landslides', data: [], backgroundColor: CONFIG.colors.primary }] 
+            data: {
+                labels: CONFIG.months,
+                datasets: [{ label: 'Landslides', data: [], backgroundColor: CONFIG.colors.primary }]
             },
             options: {
                 responsive: true,
@@ -186,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 onClick: (e, elements) => {
                     if (!elements.length) return;
                     const index = elements[0].index;
-                    
+
                     // Toggle Filter
                     if (state.filters.month === index) {
                         state.filters.month = null;
@@ -232,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const counts = {};
         state.rawData.forEach(r => counts[r.region] = (counts[r.region] || 0) + 1);
         const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        
+
         const ctx = document.getElementById('agriChart').getContext('2d');
         topRegionsChart = new Chart(ctx, {
             type: 'bar',
@@ -250,8 +251,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 1. Update Map Filter
         if (map.getLayer('landslide-layer')) {
-            const filter = region ? ['==', ['get', 'region'], region] : null;
-            map.setFilter('landslide-layer', filter);
+            // We start with 'all', which means ALL conditions must be true
+            const activeFilters = ['all'];
+
+            // Condition 1: Region
+            if (region) {
+                activeFilters.push(['==', ['get', 'region'], region]);
+            }
+
+            // Condition 2: Year
+            if (year !== null) {
+                activeFilters.push(['==', ['get', 'year'], year]);
+            }
+
+            // Condition 3: Month
+            if (month !== null) {
+                // Note: We use the 'month' property we added in Step 1
+                activeFilters.push(['==', ['get', 'month'], month]);
+            }
+
+            // If we have added any conditions to 'all', apply them. 
+            // Otherwise, pass null to show everything.
+            const finalFilter = activeFilters.length > 1 ? activeFilters : null;
+
+            map.setFilter('landslide-layer', finalFilter);
         }
 
         // 2. Prepare Data for Charts
@@ -274,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 3. Aggregate Data
         const yearlyCounts = {};
         dataForYearlyChart.forEach(d => yearlyCounts[d.year] = (yearlyCounts[d.year] || 0) + 1);
-        
+
         const monthlyCounts = Array(12).fill(0);
         dataForMonthlyChart.forEach(d => monthlyCounts[d.monthIndex]++);
 
@@ -291,17 +314,17 @@ document.addEventListener('DOMContentLoaded', function () {
         historyChartMonthly.update();
 
         // 6. Update Headers
-        document.getElementById("yearly-chart-header-title").textContent = month !== null 
-            ? `Landslides in ${CONFIG.fullMonths[month]} (by Year)` 
+        document.getElementById("yearly-chart-header-title").textContent = month !== null
+            ? `Landslides in ${CONFIG.fullMonths[month]} (by Year)`
             : 'History of All Landslides (Yearly)';
-            
-        document.getElementById("monthly-chart-header-title").textContent = year !== null 
-            ? `Monthly Landslides in ${year}` 
+
+        document.getElementById("monthly-chart-header-title").textContent = year !== null
+            ? `Monthly Landslides in ${year}`
             : 'History of All Landslides (Monthly)';
 
         // 7. Toggle Reset Button
         const resetBtn = document.getElementById('resetFilters');
-        if(resetBtn) resetBtn.style.display = (year || month !== null || region) ? 'flex' : 'none';
+        if (resetBtn) resetBtn.style.display = (year || month !== null || region) ? 'flex' : 'none';
     }
 
     // --- 8. DOM EVENT LISTENERS ---
@@ -321,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
             state.filters.region = '';
             state.filters.year = null;
             state.filters.month = null;
-            if(regionSelect) regionSelect.value = '';
+            if (regionSelect) regionSelect.value = '';
             updateVisuals();
         });
     }
