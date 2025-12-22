@@ -275,6 +275,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const finalFilter = activeFilters.length > 1 ? activeFilters : null;
 
             map.setFilter('landslide-layer', finalFilter);
+            
+            if (region === '' && year === null && month === null) {
+                map.flyTo({ center: [121.7740, 12.8797], zoom: 5 });
+            }
         }
 
         // 2. Prepare Data for Charts
