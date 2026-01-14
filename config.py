@@ -8,7 +8,7 @@ class Config:
     
     # Paths
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    SOIL_SHAPEFILE = os.path.join(BASE_DIR, "static_files/soil map/hays.shp")
-    SLOPE_TIF = os.path.join(BASE_DIR, "static_files/slope map/slope.tif")
+    SOIL_SHAPEFILE = os.path.join(BASE_DIR, "static_files/soil_map/hays.shp")
+    SLOPE_TIF = os.path.join(BASE_DIR, "static_files/slope_map/slope.tif")
     MODEL_PATH = os.path.join(BASE_DIR, "static_files/model_4.pkl")
     SCALER_PATH = os.path.join(BASE_DIR, "static_files/scaler_4.pkl")
