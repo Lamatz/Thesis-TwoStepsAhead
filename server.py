@@ -2,52 +2,85 @@ import os
 import sys
 import threading
 import webbrowser
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
 import logging
 
+# --- SMART PATH FINDER ---
+def find_internal_path(target_name):
+    """Recursively searches for a folder/file inside the _internal directory"""
+    base = sys._MEIPASS if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+    for root, dirs, files in os.walk(base):
+        if target_name in dirs or target_name in files:
+            return os.path.join(root, target_name)
+    return None
+
+# --- ENVIRONMENT FIXES FOR MAPS ---
+if getattr(sys, 'frozen', False):
+    # 1. Setup Backend Path
+    backend_path = os.path.join(sys._MEIPASS, 'backend')
+    sys.path.append(backend_path)
+    
+    # 2. Hunt for PROJ and GDAL data
+    # PyInstaller usually dumps them in share/proj or pyproj/proj_dir/share/proj
+    proj_lib = find_internal_path('proj.db')
+    if proj_lib:
+        os.environ['PROJ_LIB'] = os.path.dirname(proj_lib)
+    
+    # Try to find gdal data
+    gdal_data = find_internal_path('gdal') # Looking for a folder named gdal
+    if gdal_data:
+        os.environ['GDAL_DATA'] = gdal_data
+
 from config import Config
+# Import services safely
+try:
+    from backend.services.spatial_service import SpatialService 
+    from backend.services.weather_service import WeatherService
+    from backend.services.ml_service import MLService
+    from backend.services.gemini_service import GeminiService
+except Exception as e:
+    print(f"IMPORT ERROR: {e}")
 
-from backend.services.spatial_service import SpatialService 
-from backend.services.weather_service import WeatherService
-from backend.services.ml_service import MLService
-from backend.services.gemini_service import GeminiService
-
-# Configure Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
-CORS(app)
-
-# 1. SETUP STATIC FOLDER FOR EXE
+# --- FRONTEND SETUP ---
 if getattr(sys, 'frozen', False):
-    # If .exe, look in temp folder
     frontend_folder = os.path.join(sys._MEIPASS, 'frontend')
 else:
-    # If script, look in local folder
     frontend_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend')
 
 app = Flask(__name__, static_folder=frontend_folder)
 CORS(app)
 
-# Initialize Services
-spatial_service = SpatialService(Config.SOIL_SHAPEFILE, Config.SLOPE_TIF)
-weather_service = WeatherService()
-ml_service = MLService(Config.MODEL_PATH, Config.SCALER_PATH)
-llm_service = GeminiService(Config.GEMINI_API_KEY)
+# --- SERVICES ---
+try:
+    spatial_service = SpatialService(Config.SOIL_SHAPEFILE, Config.SLOPE_TIF)
+    weather_service = WeatherService()
+    ml_service = MLService(Config.MODEL_PATH, Config.SCALER_PATH)
+    llm_service = GeminiService(Config.GEMINI_API_KEY)
+except Exception as e:
+    logger.error(f"Service Init Failed: {e}")
 
-
-# --- SERVING HTML/CSS/JS ---
-
+# --- ROUTES ---
 @app.route('/')
 def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
+    # Explicitly look for index.html in the static folder
+    return send_from_directory(app.static_folder, 'WebPages/index.html')
 
-# This magically serves css/, javascript/, icons/, and other html pages
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory(app.static_folder, path)
+    # 1. Try finding the file in the root of frontend (e.g. css/style.css)
+    full_path = os.path.join(app.static_folder, path)
+    if os.path.exists(full_path):
+        return send_from_directory(app.static_folder, path)
+    
+    # 2. If not found, try looking inside 'WebPages' (e.g. dashboard.html)
+    return send_from_directory(os.path.join(app.static_folder, 'WebPages'), path)
+
+
+
 
 # --- ROUTES TO OTHER FUNCTIONS ---
 
@@ -126,14 +159,13 @@ def generate_report():
         logger.error(f"Report Gen Error: {e}")
         return jsonify({"error": "Report generation failed"}), 500
 
+
+
 # --- STARTUP LOGIC ---
+
 def open_browser():
     webbrowser.open_new("http://127.0.0.1:5000")
 
 if __name__ == "__main__":
-    # Ensure backend folder exists as python package if needed
-    if not os.path.exists(os.path.join('backend', '__init__.py')):
-        open(os.path.join('backend', '__init__.py'), 'a').close()
-
     threading.Timer(1, open_browser).start()
     app.run(port=5000, debug=False)
