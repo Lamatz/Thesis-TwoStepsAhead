@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify
+import os
+import sys
+import threading
+import webbrowser
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import requests
 import logging
 
 from config import Config
-from services.spatial_service import SpatialService
-from services.weather_service import WeatherService
-from services.ml_service import MLService
-from services.gemini_service import GeminiService
+
+from backend.services.spatial_service import SpatialService 
+from backend.services.weather_service import WeatherService
+from backend.services.ml_service import MLService
+from backend.services.gemini_service import GeminiService
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO)
@@ -16,13 +20,36 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
 
+# 1. SETUP STATIC FOLDER FOR EXE
+if getattr(sys, 'frozen', False):
+    # If .exe, look in temp folder
+    frontend_folder = os.path.join(sys._MEIPASS, 'frontend')
+else:
+    # If script, look in local folder
+    frontend_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend')
+
+app = Flask(__name__, static_folder=frontend_folder)
+CORS(app)
+
 # Initialize Services
 spatial_service = SpatialService(Config.SOIL_SHAPEFILE, Config.SLOPE_TIF)
 weather_service = WeatherService()
 ml_service = MLService(Config.MODEL_PATH, Config.SCALER_PATH)
 llm_service = GeminiService(Config.GEMINI_API_KEY)
 
-# --- ROUTES ---
+
+# --- SERVING HTML/CSS/JS ---
+
+@app.route('/')
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# This magically serves css/, javascript/, icons/, and other html pages
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
+
+# --- ROUTES TO OTHER FUNCTIONS ---
 
 @app.route("/get_location_data", methods=["GET"])
 def get_location_data():
@@ -99,5 +126,14 @@ def generate_report():
         logger.error(f"Report Gen Error: {e}")
         return jsonify({"error": "Report generation failed"}), 500
 
+# --- STARTUP LOGIC ---
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:5000")
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Ensure backend folder exists as python package if needed
+    if not os.path.exists(os.path.join('backend', '__init__.py')):
+        open(os.path.join('backend', '__init__.py'), 'a').close()
+
+    threading.Timer(1, open_browser).start()
+    app.run(port=5000, debug=False)
